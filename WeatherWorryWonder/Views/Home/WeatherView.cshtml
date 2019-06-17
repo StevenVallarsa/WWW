@@ -6,6 +6,9 @@
 
 }
 
+
+@Session["AQI"]
+
 <h2>View</h2>
 
 <p>
@@ -15,7 +18,7 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Temperature)
+            @Html.DisplayNameFor(model => model.TemperatureC)
         </th>
 
         <th>
@@ -48,7 +51,7 @@
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Temperature)
+                @Html.DisplayFor(modelItem => item.TemperatureC)
             </td>
 
             <td>
