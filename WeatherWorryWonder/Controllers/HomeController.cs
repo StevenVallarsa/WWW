@@ -16,11 +16,13 @@ namespace WeatherWorryWonder.Controllers
         {
             JToken weather = WeatherAPIDAL.Json();
 
+            decimal whatever = PollutantController.CalculateAQI((decimal)0.0, (decimal)0.088);
+
             //WeatherDataFromAPI wd = new WeatherDataFromAPI(weather);
 
             //Session["weather"] = wd.Temperature;
 
-            return View();
+            return View((object)whatever);
         }
 
         public ActionResult EnterAddress()
@@ -210,37 +212,6 @@ namespace WeatherWorryWonder.Controllers
             return View(OSTData);
 
         }
-        public static decimal ConvertPPBtoPPM(decimal PollutantPPB)
-        {
-            //1 ppm = 1000 ppb
-            decimal PollutantPPM = PollutantPPB / 1000;
 
-            return PollutantPPM;
-        }
-
-        public static decimal EightorOneHour(decimal oneHrPollutantPPB, decimal eightHrPollutantPPB)
-        {
-
-            if (oneHrPollutantPPB >= 0)
-          
-
-                
-
-            decimal input = 0;
-            return input;
-        }
-
-
-        static decimal PollutantAQI(decimal PollutantPPM)
-        {
-
-
-
-
-
-
-            decimal input = 0;
-            return input;
-        }
     }
 }

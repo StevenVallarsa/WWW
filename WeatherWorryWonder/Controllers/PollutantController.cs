@@ -49,45 +49,38 @@ namespace WeatherWorryWonder.Controllers
             }
             return num;
         }
-        public static decimal CalculateAQI(int index, decimal oneHrPollutantPPM, decimal eightHrPollutantPPM)
+        public static decimal CalculateAQI(decimal oneHrPollutantPPM, decimal eightHrPollutantPPM)
         {
+            int index = EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
+            decimal oneHr = Math.Round(oneHrPollutantPPM, 3);
+            decimal eightHr = Math.Round(eightHrPollutantPPM, 3);
             decimal Ihi = 0;
             decimal Ilo = 0;
             decimal BPhi = 0;
             decimal BPlow = 0;
+            decimal Cp = 0;
             if (oneHrPollutantPPM <= (decimal)0.125)
             {
-                Ihi = (decimal) pollutants[6].High[index];
-                Ilo = (decimal) pollutants[6].Low[index];
+                Ihi = (decimal) pollutants[7].High[index];
+                Ilo = (decimal) pollutants[7].Low[index];
                 BPhi = (decimal) pollutants[0].High[index];
                 BPlow = (decimal) pollutants[0].Low[index];
+                Cp = eightHr;
 
                 //calculate using 8 hr Ozone
             }
             else
             {
-                Ihi = (decimal)pollutants[6].High[index];
-                Ilo = (decimal)pollutants[6].Low[index];
+                Ihi = (decimal)pollutants[7].High[index];
+                Ilo = (decimal)pollutants[7].Low[index];
                 BPhi = (decimal)pollutants[1].High[index];
                 BPlow = (decimal)pollutants[1].Low[index];
+                Cp = oneHr;
             }
 
-            decimal AQIForPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (eightHrPollutantPPM - BPlow) + Ilo;
+            decimal AQIForPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
 
             return AQIForPollutant;
-        }
-
-
-        public static decimal PollutantAQI(decimal PollutantPPM)
-        {
-
-
-
-
-
-
-            decimal input = 0;
-            return input;
         }
 
     }

@@ -145,6 +145,7 @@
     <Compile Include="Models\ost_data_Jan_June2019.cs">
       <DependentUpon>WWWDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Pollutant.cs" />
     <Compile Include="Models\Sensor.cs" />
     <Compile Include="Models\simms_data_Jan_June2019.cs">
       <DependentUpon>WWWDB.tt</DependentUpon>
