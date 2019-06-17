@@ -39,24 +39,5 @@ namespace WeatherWorryWonder.Models
             new Sensor("0004a30b0023acbc,simms", 42.984136, -85.671280)
         };
 
-        //decided to opt out of dictionary for planning purposes
-        //public static Dictionary<string, Sensor> GetSensors()
-        //{
-        //    var Sensors = new Dictionary<string, Sensor>();
-
-            //Sensors.Add("graqm0106,ost", new LatLong(42.9420703, -85.6847243));
-            //Sensors.Add("graqm0107,ost", new LatLong(42.9547237, -85.6824347));
-            //Sensors.Add("graqm0111,ost", new LatLong(42.9274400, -85.6604877));
-            //Sensors.Add("graqm0101,ost", new LatLong(42.984136, -85.671280));
-            //Sensors.Add("graqm0115,ost", new LatLong(42.9372291, -85.6669082));
-            //Sensors.Add("graqm0105,ost", new LatLong(42.9472356, -85.6822996));
-            //Sensors.Add("graqm0108,ost", new LatLong(42.9201462, -85.6476561));
-            //Sensors.Add("graqm0117,ost", new LatLong(42.9467373, -85.6843539));
-            //Sensors.Add("0004a30b0024358c,simms", new LatLong(42.9273222, -85.6466512));
-            //Sensors.Add("0004a30b00232915,simms", new LatLong(42.904438, -85.5814071));
-            //Sensors.Add("0004a30b0023339e,simms", new LatLong(42.9414937, -85.658029));
-        //    Sensors.Add("0004a30b0023acbc,simms", new LatLong(42.984136, -85.671280));
-        //    return Sensors;
-        //}
     }
 }
