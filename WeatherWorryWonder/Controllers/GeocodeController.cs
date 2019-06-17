@@ -1,0 +1,63 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using WeatherWorryWonder.Controllers;
+using WeatherWorryWonder.Models;
+
+namespace WeatherWorryWonder.Controllers
+{
+    public class GeocodeController
+    {
+        //Haversine formula for distance between two lat/longs
+        public static double LatLongDistance(double lat1, double long1, double lat2, double long2)
+        {
+            //mean earth Radius in statute(normal) miles
+            double earthRadius = 3958.8;
+            //turn the difference between the two lats and longs into radians
+            double degreeLat = degreesToRadians(lat1 - lat2);
+            double degreeLong = degreesToRadians(long1 - long2);
+            //turn it all into a haversine, no biggie
+            double Haversine =
+                Math.Pow(Math.Sin(degreeLat / 2), 2)
+                + Math.Cos(degreesToRadians(lat1))
+                * Math.Cos(degreesToRadians(lat2))
+                * Math.Sin(degreeLong / 2)
+                * Math.Sin(degreeLong / 2);
+            //final calculation to complete the formula
+            double c = 2 * Math.Atan2(Math.Sqrt(Haversine), Math.Sqrt(1 - Haversine));
+            //trigonometry is fun for everyone
+            double jeezFinally = earthRadius * c;
+
+            return jeezFinally;
+
+        }
+
+        private static double degreesToRadians(double deg)
+        {
+            return deg * (Math.PI / 180);
+        }
+
+        //finds the sensor that is closest to given lat and long and returns the object
+        public static Sensor ShortestDistanceSensor(double latitude, double longitude)
+        {
+            double closestSensorD = double.MaxValue;
+            Sensor closestSensor = new Sensor();
+            List<Sensor> sensors = Sensor.Sensors;
+            //will return sensor named "Error" if foreach doesn't work
+            closestSensor.Name = "Error";
+            //compares distance to each of the sensors and finds the closests and returns the closest sensor. 
+            foreach(Sensor s in sensors)
+            {
+                double sensorDistance = LatLongDistance(latitude, longitude, s.Lat, s.Long);
+                if(sensorDistance < closestSensorD)
+                {
+                    closestSensorD = sensorDistance;
+                    closestSensor = s;
+                }
+            }
+
+            return closestSensor;
+        }
+    }
+}
