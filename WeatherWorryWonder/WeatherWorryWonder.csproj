@@ -47,6 +47,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.TelemetryCorrelation, Version=1.0.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.TelemetryCorrelation.1.0.5\lib\net45\Microsoft.AspNet.TelemetryCorrelation.dll</HintPath>
     </Reference>
@@ -63,6 +69,8 @@
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.5.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -122,14 +130,43 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\GeocodeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PollutantController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\APIKeys.cs" />
+    <Compile Include="Models\EPA_GR_Data.cs">
+      <DependentUpon>WWWDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Factory_Pollution.cs">
+      <DependentUpon>WWWDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GoogleMapDAL.cs" />
+    <Compile Include="Models\ost_data_Jan_June2019.cs">
+      <DependentUpon>WWWDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Pollutant.cs" />
     <Compile Include="Models\Sensor.cs" />
+    <Compile Include="Models\simms_data_Jan_June2019.cs">
+      <DependentUpon>WWWDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\WeatherAPIDAL.cs" />
     <Compile Include="Models\WeatherDataFromAPI.cs" />
+    <Compile Include="Models\WWWDB.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WWWDB.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\WWWDB.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WWWDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\WWWDB.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WWWDB.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +179,16 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Models\WWWDB.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>WWWDB.edmx</DependentUpon>
+      <LastGenOutput>WWWDB.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\WWWDB.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>WWWDB.edmx</DependentUpon>
+      <LastGenOutput>WWWDB.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -164,6 +211,13 @@
     <Content Include="Scripts\esm\popper.js.map" />
     <Content Include="Scripts\esm\popper-utils.min.js.map" />
     <Content Include="Scripts\esm\popper-utils.js.map" />
+    <EntityDeploy Include="Models\WWWDB.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>WWWDB.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\WWWDB.edmx.diagram">
+      <DependentUpon>WWWDB.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -213,12 +267,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Pollutant\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
