@@ -130,18 +130,37 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\GeocodeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PollutantController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\APIKeys.cs" />
+    <Compile Include="Models\EPA_GR_Data.cs">
+      <DependentUpon>WWWDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Factory_Pollution.cs">
+      <DependentUpon>WWWDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\GoogleMapDAL.cs" />
+    <Compile Include="Models\ost_data_Jan_June2019.cs">
+      <DependentUpon>WWWDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Pollutant.cs" />
     <Compile Include="Models\Sensor.cs" />
+    <Compile Include="Models\simms_data_Jan_June2019.cs">
+      <DependentUpon>WWWDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\WeatherAPIDAL.cs" />
     <Compile Include="Models\WeatherDataFromAPI.cs" />
     <Compile Include="Models\WWWDB.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>WWWDB.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\WWWDB.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WWWDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\WWWDB.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -162,7 +181,13 @@
     <Content Include="Content\Site.css" />
     <Content Include="Models\WWWDB.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>WWWDB.edmx</DependentUpon>
       <LastGenOutput>WWWDB.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\WWWDB.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>WWWDB.edmx</DependentUpon>
+      <LastGenOutput>WWWDB.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -190,9 +215,9 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>WWWDB.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="Models\WWWDB.edmx.diagram">
+    <Content Include="Models\WWWDB.edmx.diagram">
       <DependentUpon>WWWDB.edmx</DependentUpon>
-    </None>
+    </Content>
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -242,6 +267,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Pollutant\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

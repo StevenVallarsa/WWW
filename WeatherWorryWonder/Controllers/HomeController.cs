@@ -16,11 +16,13 @@ namespace WeatherWorryWonder.Controllers
         {
             JToken weather = WeatherAPIDAL.Json();
 
+            decimal whatever = PollutantController.CalculateAQI((decimal)0.0, (decimal)0.088);
+
             //WeatherDataFromAPI wd = new WeatherDataFromAPI(weather);
 
             //Session["weather"] = wd.Temperature;
 
-            return View();
+            return View((object)whatever);
         }
 
         public ActionResult EnterAddress()
@@ -125,6 +127,8 @@ namespace WeatherWorryWonder.Controllers
                 //get 8 hr average AQI
                 for (int i = 0; i < 480; i++)
                 {
+
+                    //needs an if statement incase there is no data
                     simms_data_Jan_June2019 AQIdata = db.simms_data_Jan_June2019.Find(x);
                     simsData.Add(AQIdata);
                     x++;
