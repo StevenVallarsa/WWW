@@ -49,6 +49,7 @@ namespace WeatherWorryWonder.Controllers
 
             JToken weather = WeatherAPIDAL.Json();
 
+            // Forecast readings are every 3h: 8=1 day, 24=3days, 39=5days minus 3h
             List<int> indexes = new List<int>() { 0, 8, 24, 39 };
 
             List<WeatherDataFromAPI> weatherTime = new List<WeatherDataFromAPI>();
@@ -103,7 +104,6 @@ namespace WeatherWorryWonder.Controllers
                     ost_data_Jan_June2019 AQIdata = db.ost_data_Jan_June2019.Find(x);
                     OSTData.Add(AQIdata);
                     x++;
-                    i++;
                 }
 
                 //sum all the O3(ozone) AQI readings from the list
@@ -127,6 +127,7 @@ namespace WeatherWorryWonder.Controllers
                 //get 8 hr average AQI
                 for (int i = 0; i < 480; i++)
                 {
+
                     //needs an if statement incase there is no data
                     simms_data_Jan_June2019 AQIdata = db.simms_data_Jan_June2019.Find(x);
                     simsData.Add(AQIdata);
@@ -185,6 +186,7 @@ namespace WeatherWorryWonder.Controllers
             }
             return View();
 
+            //}
         }
 
         public ActionResult Result()
@@ -212,6 +214,5 @@ namespace WeatherWorryWonder.Controllers
             return View(OSTData);
 
         }
-
     }
 }
