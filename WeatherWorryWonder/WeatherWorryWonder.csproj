@@ -130,6 +130,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\GeocodeController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PollutantController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -144,6 +145,7 @@
     <Compile Include="Models\ost_data_Jan_June2019.cs">
       <DependentUpon>WWWDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Pollutant.cs" />
     <Compile Include="Models\Sensor.cs" />
     <Compile Include="Models\simms_data_Jan_June2019.cs">
       <DependentUpon>WWWDB.tt</DependentUpon>
@@ -266,6 +268,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Pollutant\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -4,11 +4,11 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="7d7dc83070d84860986380b3d8eeeff9" Name="Diagram1">
+      <Diagram DiagramId="cb25c4874dda4e60ac3d7ae2ff975ec6" Name="Diagram1">
         <EntityTypeShape EntityType="WeatherWorryWonderDBModel.EPA_GR_Data" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="WeatherWorryWonderDBModel.ost_data_Jan_June2019" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="WeatherWorryWonderDBModel.simms_data_Jan_June2019" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="WeatherWorryWonderDBModel.Factory_Pollution" Width="1.5" PointX="7" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="WeatherWorryWonderDBModel.Factory_Pollution" Width="1.5" PointX="4.75" PointY="5.75" IsExpanded="true" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
