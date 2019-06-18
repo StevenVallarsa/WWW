@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -57,6 +58,17 @@ namespace WeatherWorryWonder.Controllers
                 }
             }
 
+            return closestSensor;
+        }
+
+        public static Sensor ClosestSensor(string address)
+        {
+            JToken jsonAddress = GoogleMapDAL.GoogleJson(address);
+            //latitude and longitude from google maps geocode API
+            double lat = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lat"].ToString());
+            double lng = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lng"].ToString());
+
+            Sensor closestSensor = GeocodeController.ShortestDistanceSensor(lat, lng);
             return closestSensor;
         }
     }
