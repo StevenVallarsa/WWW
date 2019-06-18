@@ -18,12 +18,12 @@ namespace WeatherWorryWonder.Controllers
             //take the current hour            
             string strB = DateTime.Now.ToString("HH");
 
-            DateTime datevalue = (Convert.ToDateTime(strB.ToString()));
-            string dy = datevalue.Day.ToString();
+            //DateTime datevalue = (Convert.ToDateTime(strB.ToString()));
+            //string dy = datevalue.Day.ToString();
 
 
             //take the DeLorean and go back to a date in the past
-            string currentTime = $"2019-03-{dy}T{strB}";
+            string currentTime = $"2019-03-10T{strB}";
    
             string sensorLocation = s.Name;
 
@@ -91,9 +91,10 @@ namespace WeatherWorryWonder.Controllers
         }
 
         public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
-        public static int EightorOneHour(decimal oneHrPollutantPPM, decimal eightHrPollutantPPM)
+        public static List<int> EightorOneHour(decimal oneHrPollutantPPM, decimal eightHrPollutantPPM)
         {
-
+            List<int> indexAndOneOrEight = new List<int>();
+            int oneOrEightHour = 7;
             int num = 0;
             if (oneHrPollutantPPM <= (decimal)0.125)
             {
@@ -103,6 +104,7 @@ namespace WeatherWorryWonder.Controllers
                     double high = pollutants[0].High[i];
                     if (eightHrPollutantPPM >= (decimal)low && eightHrPollutantPPM <= (decimal)high)
                     {
+                        oneOrEightHour = 0;
                         num = i;
                     }
                 }
@@ -116,32 +118,41 @@ namespace WeatherWorryWonder.Controllers
                     double high = pollutants[1].High[i];
                     if (oneHrPollutantPPM >= (decimal)low && oneHrPollutantPPM <= (decimal)high)
                     {
+                        oneOrEightHour = 1;
                         num = i;
                     }
                 }
             }
-            return num;
+
+            indexAndOneOrEight.Add(num);
+            indexAndOneOrEight.Add(oneOrEightHour);
+            return indexAndOneOrEight;
         }
-        public static decimal CalculateAQI(decimal eightHrPollutantPPM, int index, bool isEight)
+        public static decimal CalculateAQI(decimal PollutantPPM, int index, int isEight)
         {
-            int pollutantOneOrEight = 7;
-            if (isEight)
-            {
-                pollutantOneOrEight = 0;
-            }
-            else
-            {
-                pollutantOneOrEight = 1;
-            }
-                decimal eightHr = Math.Round(eightHrPollutantPPM, 3);
+
+                decimal pollutant = Math.Round(PollutantPPM, 3);
                 decimal Ihi = (decimal)pollutants[7].High[index];
                 decimal Ilo = (decimal)pollutants[7].Low[index];
-                decimal BPhi = (decimal)pollutants[pollutantOneOrEight].High[index];
-                decimal BPlow = (decimal)pollutants[pollutantOneOrEight].Low[index];
-                decimal Cp = eightHr;
+                decimal BPhi = (decimal)pollutants[isEight].High[index];
+                decimal BPlow = (decimal)pollutants[isEight].Low[index];
+                decimal Cp = pollutant;
             //calculate using 8 hr Ozone
             decimal AQIForPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
             return AQIForPollutant;
         }
+
+        public static decimal ConvertToUGM3(decimal PPM)
+        {
+            decimal UGM3 = (PPM * 1000) * (decimal)0.0409 * 48;
+            return UGM3;
+        }
+
+        public static decimal UGM3ConvertToPPM(decimal UGM3)
+        {
+            decimal PPM = (UGM3 / ((decimal)0.0409 * 48)) / 1000;
+            return PPM;
+        }
+
     }
 }

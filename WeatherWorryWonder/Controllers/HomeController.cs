@@ -30,20 +30,45 @@ namespace WeatherWorryWonder.Controllers
             return View();
         }
 
-        public ActionResult AQIView(string streetAddress)
+        public ActionResult AQI(string streetAddress)
         {
             Sensor closestSensor = GeocodeController.ClosestSensor(streetAddress);
             Session["ClosestSensor"] = closestSensor;
             decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480);
             decimal oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60);
-            decimal AQIForO3 = PollutantController.EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
+
+            //index zero = index of model pollutant and index one = whether we use one or eight hour
+            List<int> indexAndOneorEight = PollutantController.EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
+
+            List<WeatherDataFromAPI> weather = WeatherController.WeatherData();
+            decimal UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
+            decimal futureAQI = WeatherController.WeatherForecastEquation(weather, 1, UGM3);
+            decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
+            decimal FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+
+            decimal AQIForO3 = 0;
+
+            if (oneHrPollutantPPM > (decimal)0.125)
+            {
+                AQIForO3 = PollutantController.CalculateAQI(oneHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+
+            }
+            else
+            {
+                AQIForO3 = PollutantController.CalculateAQI(eightHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+
+            }
+
 
             ResultView rv = new ResultView();
 
             rv.O3AQI = AQIForO3;
+            rv.PredictedAQITomorrow = FutureAQIForO3;
 
             return View(rv);
         }
+
+
 
 
         public ActionResult Recommendations(decimal reading)
@@ -87,7 +112,6 @@ namespace WeatherWorryWonder.Controllers
             }
             return View();
 
-            //}
         }
 
     }
