@@ -1,3 +1,8 @@
-﻿@model object
+﻿@using WeatherWorryWonder.Models
+<h1>Welcome!</h1>
 
-<p>@Model</p>
+<div id="map"></div>
+
+<script src="~/Content/GoogleMaps.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=@APIKeys.GoogleMapsAPI&callback=initMap"
+        async defer></script>
