@@ -1,11 +1,18 @@
 ﻿@using WeatherWorryWonder.Models
-
 @model ResultView
+
 @{
     ViewBag.Title = "AQI";
 }
 
-<h2>AQI</h2>
-@Model.O3AQI 
+<h1>Air Quality Index</h1>
+
+<p style="font-size:larger"><b>The Ozone AQI For Your Location is:</b><span style="font-size:xx-large; color:@ViewBag.AQIColor"> @Math.Round(Model.O3AQI)</span></p>
+
+<h1 style="color:@ViewBag.AQIColor">@Math.Round(Model.O3AQI)</h1>
+
 @Model.PredictedAQITomorrow
+
+@ViewBag.Suggestions
+@ViewBag.AQIColor
 
