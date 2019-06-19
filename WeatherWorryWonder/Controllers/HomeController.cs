@@ -32,33 +32,47 @@ namespace WeatherWorryWonder.Controllers
 
         public ActionResult AQI(string streetAddress)
         {
-            Sensor closestSensor = GeocodeController.ClosestSensor(streetAddress);
+            //grabs the closest sensor to your address
+            Sensor closestSensor = GeocodeController.ShortestToLongest(streetAddress)[0];
             Session["ClosestSensor"] = closestSensor;
+
+            //get sensor readings from OST and SIMMS
             decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480);
             decimal oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60);
 
             //index zero = index of model pollutant and index one = whether we use one or eight hour
             List<int> indexAndOneorEight = PollutantController.EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
 
+            //got all our weather info here
             List<WeatherDataFromAPI> weather = WeatherController.WeatherData();
+
+            // Convert PPM to UG/M3
             decimal UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
+
+            // using weather data to forecast tomorrow's AQI (index 1 = 24h)
             decimal futureAQI = WeatherController.WeatherForecastEquation(weather, 1, UGM3);
+
+            // convert from UG/M3 to PPM 
             decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
+
+            // 
             decimal FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
 
             decimal AQIForO3 = 0;
 
+            
             if (oneHrPollutantPPM > (decimal)0.125)
             {
+                // using 1h reading
                 AQIForO3 = PollutantController.CalculateAQI(oneHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
 
             }
             else
             {
+                // using 8h reading
                 AQIForO3 = PollutantController.CalculateAQI(eightHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
 
             }
-
 
             ResultView rv = new ResultView();
 
@@ -113,6 +127,10 @@ namespace WeatherWorryWonder.Controllers
             return View();
 
         }
-
+        public ActionResult ProcessAddress(string streetAddress)
+        {
+            List<Sensor> sensors = GeocodeController.ShortestToLongest(streetAddress);
+            return View(sensors);
+        }
     }
 }

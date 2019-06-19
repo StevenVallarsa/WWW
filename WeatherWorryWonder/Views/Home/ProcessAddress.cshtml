@@ -1,13 +1,14 @@
 ﻿@using WeatherWorryWonder.Models
-@model Sensor
+@model List<Sensor>
 @{ 
-    double latitude = (double)Math.Round(Model.Lat, 3);
-    double longitude = (double)Math.Round(Model.Long, 3);
+    double latitude = (double)Math.Round(Model[0].Lat, 3);
+    double longitude = (double)Math.Round(Model[0].Long, 3);
 }
 
-<p>Sensor name: @Model.Name</p>
-<p>Latitude: @Model.Lat</p>
-<p>Longitude: @Model.Long</p>
+@foreach(Sensor s in Model)
+{
+    <p>@s.Name</p>
+}
 
 <div id="map"></div>
 <script>
