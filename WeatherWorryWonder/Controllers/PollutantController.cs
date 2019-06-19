@@ -7,7 +7,7 @@ using WeatherWorryWonder.Models;
 
 namespace WeatherWorryWonder.Controllers
 {
-    public class PollutantController : Controller
+    public class PollutantController : Controller 
     {
         public static WeatherWorryWonderDBEntities db = new WeatherWorryWonderDBEntities();
 

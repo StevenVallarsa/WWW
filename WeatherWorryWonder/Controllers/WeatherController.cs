@@ -12,8 +12,7 @@ namespace WeatherWorryWonder.Controllers
     {
         // GET: Weather
 
-        public ActionResult Index()
-
+        public static List<WeatherDataFromAPI> WeatherData()
         {
             JToken weather = WeatherAPIDAL.Json();
 
@@ -31,25 +30,24 @@ namespace WeatherWorryWonder.Controllers
                 weatherTime.Add(wd);
             }
 
-            //double O3 = (double)Session["O3"];
-            double FutureAQI1Day = (5.3 * weatherTime[1].WindSpeed) + (0.4 * weatherTime[1].TemperatureC) + (0.1 * weatherTime[1].Humidity) + (0.7 * 150);
-
-            Session["AQI"] = FutureAQI1Day;
-            Session["weather"] = weatherTime;
-
-            return View(weatherTime);
+            return weatherTime;
         }
 
-        public ActionResult Equation()
+        //index 1 = next day forecast 24 hrs
+        //index 2 = 3 day
+        //index 3 = 5 day
+        public static decimal WeatherForecastEquation(List<WeatherDataFromAPI> weatherTime, int index, decimal eightHourO3)
         {
-            List<WeatherDataFromAPI> forecast = Session["weather"] as List<WeatherDataFromAPI>;
             //double O3 = (double)Session["O3"];
+            decimal FutureAQI1Day = (decimal)(5.3 * weatherTime[index].WindSpeed) + (decimal)(0.4 * weatherTime[index].TemperatureC) + (decimal)(0.1 * weatherTime[index].Humidity) + ((decimal)0.7 * eightHourO3);
 
+            //new on 6-19-19
 
-            double FutureAQI1Day = (5.3 * forecast[1].WindSpeed) + (0.4 * forecast[1].TemperatureC) + (0.1 * forecast[1].Humidity) + (0.7 * 1.6);
-            Session["AQI"] = FutureAQI1Day;
-            return View(FutureAQI1Day);
+            //decimal FutureAQI3Day = (decimal)(5.3 * weatherTime[index].WindSpeed) + (decimal)(0.4 * weatherTime[index].TemperatureC) + (decimal)(0.1 * weatherTime[index].Humidity) + ((decimal)0.7 * eightHourO3);
+
+            //decimal FutureAQI5Day = (decimal)(5.3 * weatherTime[index].WindSpeed) + (decimal)(0.4 * weatherTime[index].TemperatureC) + (decimal)(0.1 * weatherTime[index].Humidity) + ((decimal)0.7 * eightHourO3);
+            
+            return FutureAQI1Day;
         }
-
     }
 }
