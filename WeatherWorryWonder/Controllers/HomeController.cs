@@ -67,7 +67,7 @@ namespace WeatherWorryWonder.Controllers
 
                 }
 
-                if (AQIForO3 < 5)
+                if (AQIForO3 > 5)
                 {
                     // Convert PPM to UG/M3
                     decimal UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
