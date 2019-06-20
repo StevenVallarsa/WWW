@@ -10,6 +10,7 @@ namespace WeatherWorryWonder.Controllers
     public class PollutantController : Controller
     {
         public static WeatherWorryWonderDBEntities db = new WeatherWorryWonderDBEntities();
+        public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
 
         //Depending on the sensor and user time
         //OST an SIMMS are in seperate database tables therefore we need to know which table to pull using an if/else statement
@@ -33,56 +34,79 @@ namespace WeatherWorryWonder.Controllers
 
             //if contains graq = ost sensor
             bool answer = (sensorLocation.Contains("graq"));
-
-            if (answer == true)
+            try
             {
-                //pulling the data based on user current time and location of sensor
                 List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
-                ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
-                    .Where(ut => ut.time.Contains(currentTime) && ut.dev_id == sensorLocation)
-                    .First();
-
-                //pulls row of data
-                int x = startingPoint.Id;
-                //mins are either 480 or 60
-                for (int i = 0; i < mins; i++)
+                if (answer == true)
                 {
-                    ost_data_Jan_June2019 AQIdata = db.ost_data_Jan_June2019.Find(x);
-                    OSTData.Add(AQIdata);
-                    x++;
+                    //pulling the data based on user current time and location of sensor
+                    ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
+                        .Where(ut => ut.time.Contains(currentTime) && ut.dev_id == sensorLocation)
+                        .First();
+
+                    //pulls row of data
+                    int x = startingPoint.Id;
+                    //mins are either 480 or 60
+                    for (int i = 0; i < mins; i++)
+                    {
+                        ost_data_Jan_June2019 OSTAQIdata = db.ost_data_Jan_June2019.Find(x);
+                        if(OSTAQIdata != null)
+                        {
+                            OSTData.Add(OSTAQIdata);
+                            x++;
+                        }
+                        else
+                        {
+                            x++;
+                            continue;
+                        }
+                    }
+
+                    //sum all the O3(ozone) AQI readings from the list
+                    decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => O3.o3));
+                    //average the AQI readings by dividing by number of readings
+                    decimal OSTAverage = OSTDataO3sum / OSTData.Count;
+
+                    return ConvertPPBtoPPM(OSTAverage);
+
                 }
+                //if sensor name contains simms
+                else
+                {
+                    List<simms_data_Jan_June2019> simsData = new List<simms_data_Jan_June2019>();
+                    simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
+                        .Where(ut => ut.time.Contains(currentTime) && ut.dev_id == sensorLocation)
+                        .First();
 
-                //sum all the O3(ozone) AQI readings from the list
-                decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => O3.o3));
-                //average the AQI readings by dividing by number of readings
-                decimal OSTAverage = OSTDataO3sum / OSTData.Count;
+                    int x = startingPoint.Id;
+                    //get 8 hr average AQI
+                    for (int i = 0; i < mins; i++)
+                    {
+                        simms_data_Jan_June2019 SimmsAQIdata = db.simms_data_Jan_June2019.Find(x);
+                        if (SimmsAQIdata != null)
+                        {
+                            simsData.Add(SimmsAQIdata);
+                            x++;
+                        }
+                        else
+                        {
+                            x++;
+                            continue;
+                        }
+                    }
 
-                return ConvertPPBtoPPM(OSTAverage);
+                    //sum all the O3(ozone) AQI readings from the list
+                    decimal SimsDataO3sum = Convert.ToDecimal(simsData.Sum(O3 => O3.o3));
+                    //average the AQI readings by dividing by number of readings
+                    decimal SimsTOAverage = SimsDataO3sum / simsData.Count;
 
+                    return ConvertPPBtoPPM(SimsTOAverage);
+                }
             }
-            //if sensor name contains simms
-            else
+            //will return 0 which will then be caught by the HomeController loop as unreliable data, moving to the next sensor
+            catch(Exception)
             {
-                List<simms_data_Jan_June2019> simsData = new List<simms_data_Jan_June2019>();
-                simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
-                    .Where(ut => ut.time.Contains(currentTime) && ut.dev_id == sensorLocation)
-                    .First();
-
-                int x = startingPoint.Id;
-                //get 8 hr average AQI
-                for (int i = 0; i < mins; i++)
-                {
-                    simms_data_Jan_June2019 AQIdata = db.simms_data_Jan_June2019.Find(x);
-                    simsData.Add(AQIdata);
-                    x++;
-                }
-
-                //sum all the O3(ozone) AQI readings from the list
-                decimal SimsDataO3sum = Convert.ToDecimal(simsData.Sum(O3 => O3.o3));
-                //average the AQI readings by dividing by number of readings
-                decimal SimsTOAverage = SimsDataO3sum / simsData.Count;
-
-                return ConvertPPBtoPPM(SimsTOAverage);
+                return 0;
             }
         }
         
@@ -94,7 +118,7 @@ namespace WeatherWorryWonder.Controllers
             return PollutantPPM;
         }
 
-        public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
+
         public static List<int> EightorOneHour(decimal oneHrPollutantPPM, decimal eightHrPollutantPPM)
         {
             List<int> indexAndOneOrEight = new List<int>();

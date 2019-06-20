@@ -32,52 +32,62 @@ namespace WeatherWorryWonder.Controllers
 
         public ActionResult AQI(string streetAddress)
         {
+            ResultView rv = new ResultView();
             //grabs the closest sensor to your address
-            Sensor closestSensor = GeocodeController.ShortestToLongest(streetAddress)[0];
-            Session["ClosestSensor"] = closestSensor;
-
-            //get sensor readings from OST and SIMMS
-            decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480);
-            decimal oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60);
-
-            //index zero = index of model pollutant and index one = whether we use one or eight hour
-            List<int> indexAndOneorEight = PollutantController.EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
-
+            List<Sensor> closestSensors = GeocodeController.ShortestToLongest(streetAddress);
             //got all our weather info here
             List<WeatherDataFromAPI> weather = WeatherController.WeatherData();
-
-            // Convert PPM to UG/M3
-            decimal UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
-
-            // using weather data to forecast tomorrow's AQI (index 1 = 24h)
-            decimal futureAQI = WeatherController.WeatherForecastEquation(weather, 1, UGM3);
-
-            // convert from UG/M3 to PPM 
-            decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
-
-            // 
-            decimal FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
-
+            decimal FutureAQIForO3 = 0;
             decimal AQIForO3 = 0;
 
-            
-            if (oneHrPollutantPPM > (decimal)0.125)
+            //skips sensor if data is unreliable
+            for (int i = 0; i < closestSensors.Count; i++)
             {
-                // using 1h reading
-                AQIForO3 = PollutantController.CalculateAQI(oneHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+                Sensor closestSensor = closestSensors[i];
+                Session["ClosestSensor"] = closestSensor;
 
+                //get sensor readings from OST and SIMMS
+                decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480);
+                decimal oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60);
+                //if((eightHrPollutantPPM != null || oneHrPollutantPPM != null) && (eightHrPollutantPPM < 5 && oneHrPollutantPPM)
+                //index zero = index of model pollutant and index one = whether we use one or eight hour
+                List<int> indexAndOneorEight = PollutantController.EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
+
+
+                if (oneHrPollutantPPM > (decimal)0.125)
+                {
+                    // using 1h reading
+                    AQIForO3 = PollutantController.CalculateAQI(oneHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+
+                }
+                else
+                {
+                    // using 8h reading
+                    AQIForO3 = PollutantController.CalculateAQI(eightHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+
+                }
+
+                if (AQIForO3 < 5)
+                {
+                    // Convert PPM to UG/M3
+                    decimal UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
+
+                    // using weather data to forecast tomorrow's AQI (index 1 = 24h)
+                    decimal futureAQI = WeatherController.WeatherForecastEquation(weather, 1, UGM3);
+
+                    // convert from UG/M3 to PPM 
+                    decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
+
+                    // 
+                    FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+                }
+                else
+                {
+                    continue;
+                }
+                rv.O3AQI = AQIForO3;
+                rv.PredictedAQITomorrow = FutureAQIForO3;
             }
-            else
-            {
-                // using 8h reading
-                AQIForO3 = PollutantController.CalculateAQI(eightHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
-
-            }
-
-            ResultView rv = new ResultView();
-
-            rv.O3AQI = AQIForO3;
-            rv.PredictedAQITomorrow = FutureAQIForO3;
 
             return View(rv);
         }
