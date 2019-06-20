@@ -146,6 +146,7 @@
     <Compile Include="Models\ost_data_Jan_June2019.cs">
       <DependentUpon>WWWDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\OzoneRecommendations.cs" />
     <Compile Include="Models\Pollutant.cs" />
     <Compile Include="Models\ResultView.cs" />
     <Compile Include="Models\Sensor.cs" />
@@ -269,6 +270,7 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Weather\Index.cshtml" />
     <Content Include="Views\Home\Equation.cshtml" />
+    <Content Include="Views\Home\AQI.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

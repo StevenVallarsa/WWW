@@ -34,17 +34,40 @@ namespace WeatherWorryWonder.Controllers
 
         }
 
+        public static List<Sensor> ShortestToLongest(string address)
+        {
+            List<Sensor> sensors = Sensor.GetSensors();
+            List<Sensor> shortSensors = new List<Sensor>();
+
+            JToken jsonAddress = GoogleMapDAL.GoogleJson(address);
+
+            double addressLat = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lat"].ToString());
+            double addressLng = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lng"].ToString());
+
+            for(int i = 0; i < Sensor.Sensors.Count; i++)
+            {
+                double lat = Sensor.Sensors[i].Lat;
+                double Lng = Sensor.Sensors[i].Long;
+                Sensor s = ShortestDistanceSensor(addressLat, addressLng, sensors);
+                shortSensors.Add(s);
+                sensors.Remove(s);
+            }
+
+            return shortSensors;
+
+        }
+
         private static double degreesToRadians(double deg)
         {
             return deg * (Math.PI / 180);
         }
 
         //finds the sensor that is closest to given lat and long and returns the object
-        public static Sensor ShortestDistanceSensor(double latitude, double longitude)
+        public static Sensor ShortestDistanceSensor(double latitude, double longitude, List<Sensor> sensors)
         {
             double closestSensorD = double.MaxValue;
             Sensor closestSensor = new Sensor();
-            List<Sensor> sensors = Sensor.Sensors;
+            List<Sensor> listSensors = Sensor.Sensors;
             //will return sensor named "Error" if foreach doesn't work
             closestSensor.Name = "Error";
             //compares distance to each of the sensors and finds the closests and returns the closest sensor. 
@@ -61,15 +84,16 @@ namespace WeatherWorryWonder.Controllers
             return closestSensor;
         }
 
-        public static Sensor ClosestSensor(string address)
-        {
-            JToken jsonAddress = GoogleMapDAL.GoogleJson(address);
-            //latitude and longitude from google maps geocode API
-            double lat = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lat"].ToString());
-            double lng = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lng"].ToString());
+        //public static Sensor ClosestSensor(string address)
+        //{
+        //    //Creates lat and long from google map API response
+        //    JToken jsonAddress = GoogleMapDAL.GoogleJson(address);
+        //    //latitude and longitude from google maps geocode API
+        //    double lat = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lat"].ToString());
+        //    double lng = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lng"].ToString());
 
-            Sensor closestSensor = GeocodeController.ShortestDistanceSensor(lat, lng);
-            return closestSensor;
-        }
+        //    Sensor closestSensor = ShortestDistanceSensor(lat, lng);
+        //    return closestSensor;
+        //}
     }
 }
