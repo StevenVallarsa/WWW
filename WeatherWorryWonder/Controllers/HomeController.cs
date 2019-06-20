@@ -58,7 +58,6 @@ namespace WeatherWorryWonder.Controllers
                 //index zero = index of model pollutant and index one = whether we use one or eight hour
                 List<int> indexAndOneorEight = PollutantController.EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
 
-
                 if (oneHrPollutantPPM > (decimal)0.125)
                 {
                     // using 1h reading
