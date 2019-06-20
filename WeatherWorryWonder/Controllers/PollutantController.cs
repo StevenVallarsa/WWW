@@ -26,7 +26,7 @@ namespace WeatherWorryWonder.Controllers
 
 
             //take the DeLorean and go back to a date in the past
-            string currentTime = $"2019-03-15T{strB}";
+            string currentTime = $"2019-03-20T{strB}";
             //pulls sensor name
             string sensorLocation = s.Name;
 
@@ -35,7 +35,7 @@ namespace WeatherWorryWonder.Controllers
 
             //if contains graq = ost sensor
             bool answer = (sensorLocation.Contains("graq"));
-            try
+            try 
             {
                 List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
                 if (answer == true)
@@ -65,8 +65,8 @@ namespace WeatherWorryWonder.Controllers
 
                 //sum all the O3(ozone) AQI readings from the list
                 // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
-                decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3)));
-                   // *(decimal)0.509
+                decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)));
+                 
                 //average the AQI readings by dividing by number of readings
                 decimal OSTAverage = OSTDataO3sum / OSTData.Count;
 
@@ -179,7 +179,7 @@ namespace WeatherWorryWonder.Controllers
         public static decimal CalculateAQI(decimal PollutantPPM, int index, int isEight)
         {
             // must round to 3 digits for O3 EPA standards
-            decimal Cp = Math.Round(PollutantPPM, 3);
+            decimal Cp = Math.Round(PollutantPPM, 4);
 
             // 7 = AQI standards in Pollutant Model
             decimal Ihi = (decimal)pollutants[7].High[index];
@@ -227,7 +227,7 @@ namespace WeatherWorryWonder.Controllers
 
         public static decimal EPAAQIData()
         {
-            string s = "2019-03-15";
+            string s = "2019-03-20";
 
             DateTime dt = DateTime.ParseExact(s, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
@@ -241,18 +241,42 @@ namespace WeatherWorryWonder.Controllers
             return (EPA03Reading);
         }
 
-        public static decimal CalculateEPA(decimal EPA)
+        public static decimal CalculateEPA(decimal EPA, int breakpointIndex)
         {
 
             decimal pollutant = Math.Round(EPA, 3);
-            decimal Ihi = (decimal)pollutants[7].High[0];
-            decimal Ilo = (decimal)pollutants[7].Low[0];
-            decimal BPhi = (decimal)pollutants[0].High[0];
-            decimal BPlow = (decimal)pollutants[0].Low[0];
+            decimal Ihi = (decimal)pollutants[7].High[breakpointIndex];
+            decimal Ilo = (decimal)pollutants[7].Low[breakpointIndex];
+            decimal BPhi = (decimal)pollutants[0].High[breakpointIndex];
+            decimal BPlow = (decimal)pollutants[0].Low[breakpointIndex];
             decimal Cp = pollutant;
             //calculate using 8 hr Ozone
             decimal AQIForPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
             return AQIForPollutant;
         }
+
+        public static int EPABreakpointTable(decimal eightHrPollutantPPM)
+        {
+            //using 7 for testing purposes to throw an error if if/else does not work
+            int breakpointIndex = 0;
+
+            //8 hr reading: 5 and 6 index are null values on table
+            for (int i = 0; i < 5; i++)
+            {
+                double low = pollutants[0].Low[i];
+                double high = pollutants[0].High[i];
+
+                //takes a reading a looks for the range of low and high
+                if (eightHrPollutantPPM >= (decimal)low && eightHrPollutantPPM <= (decimal)high)
+                {
+                    //take an index for the range of low and high
+                    breakpointIndex = i;
+                    break;
+                }
+            }
+
+            return breakpointIndex;
+        }
+
     }
 }

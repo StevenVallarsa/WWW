@@ -45,6 +45,8 @@ namespace WeatherWorryWonder.Controllers
             List<Sensor> closestSensors = GeocodeController.ShortestToLongest(streetAddress);
             //got all our weather info here
 
+            List<decimal> FutureAQIForO3ThreeAndFiveDays = new List<decimal>();
+
             //skips sensor if data is unreliable
             for (int i = 0; i < closestSensors.Count; i++)
             {
@@ -78,13 +80,20 @@ namespace WeatherWorryWonder.Controllers
                     UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
 
                     // using weather data to forecast tomorrow's AQI (index 1 = 24h)
-                    decimal futureAQI = WeatherController.WeatherForecastEquation(weather, 1, UGM3);
 
                     // convert from UG/M3 to PPM 
-                    decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
                     rv.SensorName = closestSensor.Name;
                     // 
-                    FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+
+                    for (int j = 0; j < 4; j++)
+                    {
+                        decimal futureAQI = WeatherController.WeatherForecastEquation(weather, j, UGM3);
+                        decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
+                        int EPABreakpointIndex = PollutantController.EPABreakpointTable(futureAQIPPM);
+                        FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, EPABreakpointIndex, indexAndOneorEight[0]);
+                        FutureAQIForO3ThreeAndFiveDays.Add(FutureAQIForO3);
+                    }
+
                     break;
                 }
                 else
@@ -93,14 +102,21 @@ namespace WeatherWorryWonder.Controllers
                 }
             }
 
+            //pull list out and attach it to rv
+
+            rv.O3AQI = AQIForO3;
+            rv.PredictedAQITomorrow = FutureAQIForO3ThreeAndFiveDays[1];
+            rv.PredictedAQI3Day = FutureAQIForO3ThreeAndFiveDays[2];
+            rv.PredictedAQI5Day = FutureAQIForO3ThreeAndFiveDays[3];
+
             decimal EPAAQI = PollutantController.EPAAQIData();
-            decimal AQIForEPA = PollutantController.CalculateEPA(EPAAQI);
+            int breakpointIndex = PollutantController.EPABreakpointTable(EPAAQI);
+            decimal AQIForEPA = PollutantController.CalculateEPA(EPAAQI, breakpointIndex);
 
             Recommendations(AQIForO3);
             Recommendations(FutureAQIForO3);
 
             rv.O3AQI = AQIForO3;
-            rv.PredictedAQITomorrow = FutureAQIForO3;
             rv.EpaAQI = AQIForEPA;
             ViewBag.AQI = AQIForO3;
 
