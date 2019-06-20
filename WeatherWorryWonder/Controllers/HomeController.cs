@@ -31,6 +31,12 @@ namespace WeatherWorryWonder.Controllers
             return View();
         }
 
+        public ActionResult AQI()
+        {
+            return View();
+        }
+
+        [HttpPost]
         public ActionResult AQI(string streetAddress)
         {
 
@@ -73,6 +79,10 @@ namespace WeatherWorryWonder.Controllers
 
                 }
 
+                int recommendationIndex = PollutantController.EPABreakpointTable(eightHrPollutantPPM);
+                string recommendation = OzoneRecommendations.OzoneLevels[recommendationIndex];
+                rv.Recommendations = recommendation;
+
                 if (AQIForO3 > 5)
                 {
                     // Convert PPM to UG/M3
@@ -81,7 +91,7 @@ namespace WeatherWorryWonder.Controllers
                     // using weather data to forecast tomorrow's AQI (index 1 = 24h)
 
                     // convert from UG/M3 to PPM 
-                    rv.SensorName = closestSensor.Name;
+                    rv.SensorName = closestSensor.CrossStreet;
                     // 
 
                     for (int j = 0; j < 4; j++)
@@ -107,6 +117,7 @@ namespace WeatherWorryWonder.Controllers
             rv.PredictedAQITomorrow = FutureAQIForO3ThreeAndFiveDays[1];
             rv.PredictedAQI3Day = FutureAQIForO3ThreeAndFiveDays[2];
             rv.PredictedAQI5Day = FutureAQIForO3ThreeAndFiveDays[3];
+            rv.Weather = weather;
 
             decimal EPAAQI = PollutantController.EPAAQIData();
             int breakpointIndex = PollutantController.EPABreakpointTable(EPAAQI);
