@@ -49,7 +49,8 @@ namespace WeatherWorryWonder.Controllers
                 }
 
                 //sum all the O3(ozone) AQI readings from the list
-                decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => O3.o3));
+                // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
+                decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)));
                 //average the AQI readings by dividing by number of readings
                 decimal OSTAverage = OSTDataO3sum / OSTData.Count;
 

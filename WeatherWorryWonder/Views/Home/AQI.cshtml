@@ -7,12 +7,14 @@
 
 <h1>Air Quality Index</h1>
 
-<p style="font-size:larger"><b>The Ozone AQI For Your Location is:</b><span style="font-size:xx-large; color:@ViewBag.AQIColor"> @Math.Round(Model.O3AQI)</span></p>
 
-<h1 style="color:@ViewBag.AQIColor">@Math.Round(Model.O3AQI)</h1>
 
-@Model.PredictedAQITomorrow
+<h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Math.Round(Model.O3AQI)</b></span></h2>
+<h3>
+    @ViewBag.Suggestions
+</h3>
+<h2>
+ Tomorrow's Forecast is:   @Model.PredictedAQITomorrow
+</h2>
 
-@ViewBag.Suggestions
-@ViewBag.AQIColor
 
