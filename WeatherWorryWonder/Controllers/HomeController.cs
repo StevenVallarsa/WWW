@@ -59,11 +59,15 @@ namespace WeatherWorryWonder.Controllers
 
             }
 
+            decimal EPAAQI = PollutantController.EPAAQIData();
+            decimal AQIForEPA = PollutantController.CalculateEPA(EPAAQI);
+
 
             ResultView rv = new ResultView();
 
             rv.O3AQI = AQIForO3;
             rv.PredictedAQITomorrow = FutureAQIForO3;
+            rv.EpaAQI = AQIForEPA;
 
             return View(rv);
         }

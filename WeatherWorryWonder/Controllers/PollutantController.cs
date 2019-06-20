@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -154,5 +155,50 @@ namespace WeatherWorryWonder.Controllers
             return PPM;
         }
 
+        
+        //public static int EPAAQIReading()
+        //{
+        //    string s = "2019-03-10";
+
+        //    DateTime dt = DateTime.ParseExact(s, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+        //    EPA_GR_Data ePADataReading = db.EPA_GR_Data
+        //        .Where(ut => ut.Date == dt)
+        //        .First();
+
+
+        //    int EPAO3DailyReading = ePADataReading.DAILY_AQI_VALUE;
+        //    return (EPAO3DailyReading);
+        //}
+
+        public static decimal EPAAQIData()
+        {
+            string s = "2019-03-10";
+
+            DateTime dt = DateTime.ParseExact(s, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            EPA_GR_Data ePADataReading = db.EPA_GR_Data
+                .Where(ut => ut.Date == dt)
+                .First();
+
+
+            //int EPAO3DailyReading = ePADataReading.DAILY_AQI_VALUE;
+            decimal EPA03Reading = ePADataReading.Daily_Max_8_hour_Ozone_Concentration;
+            return (EPA03Reading);
+        }
+
+        public static decimal CalculateEPA(decimal EPA)
+        {
+
+            decimal pollutant = Math.Round(EPA, 3);
+            decimal Ihi = (decimal)pollutants[7].High[0];
+            decimal Ilo = (decimal)pollutants[7].Low[0];
+            decimal BPhi = (decimal)pollutants[0].High[0];
+            decimal BPlow = (decimal)pollutants[0].Low[0];
+            decimal Cp = pollutant;
+            //calculate using 8 hr Ozone
+            decimal AQIForPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+            return AQIForPollutant;
+        }
     }
 }
