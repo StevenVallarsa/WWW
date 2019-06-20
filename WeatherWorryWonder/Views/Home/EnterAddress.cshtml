@@ -1,8 +1,14 @@
 ﻿
-
-<h2>Enter Your Address</h2>
+<h2>Enter Your Street Address</h2>
 
 <form action="~/Home/AQI">
     <input type="text" placeholder="Enter Address" name="streetAddress" /> , Grand Rapids, MI
+    <input type="submit" />
+</form>
+
+<h2>Enter Address to show shortest distance sensors in closest to longest distance order.</h2>
+
+<form action="~/Home/ProcessAddress">
+    <input type="text" placeholder="Enter Street Address Only" name="streetAddress" />
     <input type="submit" />
 </form>

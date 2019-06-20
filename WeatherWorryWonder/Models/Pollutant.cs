@@ -26,10 +26,13 @@ namespace WeatherWorryWonder.Models
                 "O3/1",
                 new double[] {0, 0.06, 0.076, 0.096, 0.116, 0.00001, 0.00001 },
                 new double[] {0.059, 0.075, 0.095, 0.115, 0.374, 0.00001, 0.00001 }));
-
+            //0.00001 are null values
             pollutants.Add(new Pollutant(
+                //pollutant/hr range
                 "O3/8",
+                //low values break point of O3 value from EPA
                 new double[] {0.00001, 0.00001, 0.125, 0.165, 0.205, 0.405, 0.505 },
+                //high values break point value from EPA
                 new double[] {0.00001, 0.00001, 0.164, 0.204, 0.404, 0.504, 0.604 }));
 
             pollutants.Add(new Pollutant(
@@ -58,7 +61,7 @@ namespace WeatherWorryWonder.Models
                 new double[] {53, 100, 360, 649, 1249, 1649, 2049 }));
 
             pollutants.Add(new Pollutant(
-                "AQO",
+                "AQI",
                 new double[] {0, 51, 101, 151, 201, 301, 401 },
                 new double[] {50, 100, 150, 200, 300, 400, 500 }));
 

@@ -14,13 +14,15 @@ namespace WeatherWorryWonder.Controllers
 
         public static List<WeatherDataFromAPI> WeatherData()
         {
+            //bringing in windspeed, temperature JTokens etc. from the API 
             JToken weather = WeatherAPIDAL.Json();
 
-            // Forecast readings are every 3h: 8=1 day, 24=3days, 39=5days minus 3h
+            // Forecast (with an 'e') readings are every 3h: 8=1 day, 24=3days, 39=5days minus 3h
             List<int> indexes = new List<int>() { 0, 8, 24, 39 };
 
             List<WeatherDataFromAPI> weatherTime = new List<WeatherDataFromAPI>();
 
+            //converting temperature from Kelvin to Celsius and Fahrenheit
             foreach (int index in indexes)
             {
                 WeatherDataFromAPI wd = new WeatherDataFromAPI(weather, index);
@@ -38,8 +40,11 @@ namespace WeatherWorryWonder.Controllers
         //index 3 = 5 day
         public static decimal WeatherForecastEquation(List<WeatherDataFromAPI> weatherTime, int index, decimal eightHourO3)
         {
-            //double O3 = (double)Session["O3"];
-            decimal FutureAQI1Day = (decimal)(5.3 * weatherTime[index].WindSpeed) + (decimal)(0.4 * weatherTime[index].TemperatureC) + (decimal)(0.1 * weatherTime[index].Humidity) + ((decimal)0.7 * eightHourO3);
+            // double O3 = (double)Session["O3"]
+            // eightHourO3 is used because 8h readings are required for the equation
+            // input & output of this equation is UG/M3
+            decimal FutureAQI1Day = (decimal)(5.3 * weatherTime[index].WindSpeed) + (decimal)(0.4 * weatherTime[index].TemperatureC) + 
+                (decimal)(0.1 * weatherTime[index].Humidity) + ((decimal)0.7 * eightHourO3);
 
             return FutureAQI1Day;
         }
