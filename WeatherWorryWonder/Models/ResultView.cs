@@ -21,6 +21,7 @@ namespace WeatherWorryWonder.Models
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public string Address { get; set; }
-        public List<string> Recommendations { get; set; }
+        public string Recommendations { get; set; }
+        public List<WeatherDataFromAPI> Weather { get; set; }
     }
 }

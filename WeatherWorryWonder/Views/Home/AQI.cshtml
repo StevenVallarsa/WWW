@@ -4,26 +4,32 @@
 @{
     ViewBag.Title = "AQI";
 }
-<h2>Sensor Name:</h2>
-<p>@Model.SensorName</p>
-
-<h2>AQI</h2>
-<p>Local AQI: </p>@Model.O3AQI <br />
-<p>EPA AQI: </p>@Model.EpaAQI
-
-<h1>Air Quality Index</h1>
-
-<h3>FORECAST</h3>
-<p>1-Day @Model.PredictedAQITomorrow</p>
-<p>3-Day @Model.PredictedAQI3Day</p>
-<p>5-Day @Model.PredictedAQI5Day</p>
-
 
 <h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Math.Round(Model.O3AQI)</b></span></h2>
-<h3>
-    @ViewBag.Suggestions
-</h3>
-<h2>
- Tomorrow's Forecast is:   @Model.PredictedAQITomorrow
-</h2>
+<h4>EPA AQI: @Math.Round(Model.EpaAQI)</h4>
+<br />
+
+<h2>Forecast:</h2>
+<p>Tomorrow AQI: @Math.Round(Model.PredictedAQITomorrow)</p>
+<p>3-Day AQI: @Math.Round(Model.PredictedAQI3Day)</p>
+<p>5-Day AQI: @Math.Round(Model.PredictedAQI5Day)</p>
+<br />
+
+<h2>Current Weather:</h2>
+<p>Temperature: @Math.Round(Model.Weather[0].TemperatureF) F</p>
+<p>Cloud Coverage: @Model.Weather[0].Clouds</p>
+<p>Wind: @Math.Round(Model.Weather[0].WindDirection) degrees at @Model.Weather[0].WindSpeed m/s</p>
+<p>Humidity: @Model.Weather[0].Humidity %</p>
+<br />
+
+
+<h2>Health Recommendation based on your AQI:</h2>
+<p>
+    @Model.Recommendations
+</p>
+
+<h2>Sensor Location:</h2>
+<p>@Model.SensorName</p>
+<br />
+
 
