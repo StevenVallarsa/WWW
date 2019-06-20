@@ -9,10 +9,14 @@
 
 <h2>AQI</h2>
 <p>Local AQI: </p>@Model.O3AQI <br />
-<p>Tomorrow's AQI: </p>@Model.PredictedAQITomorrow<br />
 <p>EPA AQI: </p>@Model.EpaAQI
+
 <h1>Air Quality Index</h1>
 
+<h3>FORECAST</h3>
+<p>1-Day @Model.PredictedAQITomorrow</p>
+<p>3-Day @Model.PredictedAQI3Day</p>
+<p>5-Day @Model.PredictedAQI5Day</p>
 
 
 <h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Math.Round(Model.O3AQI)</b></span></h2>
