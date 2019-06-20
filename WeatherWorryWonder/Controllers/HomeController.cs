@@ -88,11 +88,16 @@ namespace WeatherWorryWonder.Controllers
                 }
             }
 
-            rv.PredictedAQITomorrow = FutureAQIForO3;
+            decimal EPAAQI = PollutantController.EPAAQIData();
+            decimal AQIForEPA = PollutantController.CalculateEPA(EPAAQI);
 
+            rv.PredictedAQITomorrow = FutureAQIForO3;
             Recommendations(AQIForO3);
             Recommendations(FutureAQIForO3);
 
+            rv.O3AQI = AQIForO3;
+            rv.PredictedAQITomorrow = FutureAQIForO3;
+            rv.EpaAQI = AQIForEPA;
             ViewBag.AQI = AQIForO3;
 
             return View(rv);

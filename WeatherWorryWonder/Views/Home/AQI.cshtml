@@ -5,6 +5,10 @@
     ViewBag.Title = "AQI";
 }
 
+<h2>AQI</h2>
+<p>Local AQI: </p>@Model.O3AQI <br />
+<p>Tomorrow's AQI: </p>@Model.PredictedAQITomorrow<br />
+<p>EPA AQI: </p>@Model.EpaAQI
 <h1>Air Quality Index</h1>
 
 
@@ -16,5 +20,4 @@
 <h2>
  Tomorrow's Forecast is:   @Model.PredictedAQITomorrow
 </h2>
-
 
