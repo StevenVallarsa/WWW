@@ -40,6 +40,8 @@ namespace WeatherWorryWonder.Controllers
         //index 3 = 5 day
         public static decimal WeatherForecastEquation(List<WeatherDataFromAPI> weatherTime, int index, decimal eightHourO3)
         {
+            //double O3 = (double)Session["O3"];
+
             // double O3 = (double)Session["O3"]
             // eightHourO3 is used because 8h readings are required for the equation
             // input & output of this equation is UG/M3
