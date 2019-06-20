@@ -17,6 +17,7 @@ namespace WeatherWorryWonder.Models
         public decimal PredictedAQI3Day { get; set; }
         public decimal PredictedAQI5Day { get; set; }
         public decimal EpaAQI { get; set; }
+        public string SensorName { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public string Address { get; set; }

@@ -33,42 +33,17 @@ namespace WeatherWorryWonder.Controllers
 
         public ActionResult AQI(string streetAddress)
         {
-            Sensor closestSensor = GeocodeController.ClosestSensor(streetAddress);
-            Session["ClosestSensor"] = closestSensor;
-            decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480);
-            decimal oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60);
 
             //index zero = index of model pollutant and index one = whether we use one or eight hour
-            List<int> indexAndOneorEight = PollutantController.EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
-
             List<WeatherDataFromAPI> weather = WeatherController.WeatherData();
-            decimal UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
-            decimal futureAQI = WeatherController.WeatherForecastEquation(weather, 1, UGM3);
-            decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
-            decimal FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
-
             decimal AQIForO3 = 0;
-
-            if (oneHrPollutantPPM > (decimal)0.125)
-            {
-                AQIForO3 = PollutantController.CalculateAQI(oneHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
-
-            }
-            else
-            {
-                AQIForO3 = PollutantController.CalculateAQI(eightHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
-
-            }
-
-            List<int> FutureAQIForO3ThreeAndFiveDays = WeatherController.WeatherForecastEquation(weather, 2, 2, UGM3);
+            decimal UGM3 = 0;
+            decimal FutureAQIForO3 = 0;
 
             ResultView rv = new ResultView();
             //grabs the closest sensor to your address
             List<Sensor> closestSensors = GeocodeController.ShortestToLongest(streetAddress);
             //got all our weather info here
-            List<WeatherDataFromAPI> weather = WeatherController.WeatherData();
-            decimal FutureAQIForO3 = 0;
-            decimal AQIForO3 = 0;
 
             //skips sensor if data is unreliable
             for (int i = 0; i < closestSensors.Count; i++)
@@ -100,16 +75,17 @@ namespace WeatherWorryWonder.Controllers
                 if (AQIForO3 > 5)
                 {
                     // Convert PPM to UG/M3
-                    decimal UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
+                    UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
 
                     // using weather data to forecast tomorrow's AQI (index 1 = 24h)
                     decimal futureAQI = WeatherController.WeatherForecastEquation(weather, 1, UGM3);
 
                     // convert from UG/M3 to PPM 
                     decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
-
+                    rv.SensorName = closestSensor.Name;
                     // 
                     FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+                    break;
                 }
                 else
                 {
@@ -120,7 +96,6 @@ namespace WeatherWorryWonder.Controllers
             decimal EPAAQI = PollutantController.EPAAQIData();
             decimal AQIForEPA = PollutantController.CalculateEPA(EPAAQI);
 
-            rv.PredictedAQITomorrow = FutureAQIForO3;
             Recommendations(AQIForO3);
             Recommendations(FutureAQIForO3);
 

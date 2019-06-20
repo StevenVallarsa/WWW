@@ -65,7 +65,8 @@ namespace WeatherWorryWonder.Controllers
 
                 //sum all the O3(ozone) AQI readings from the list
                 // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
-                decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)));
+                decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3)));
+                   // *(decimal)0.509
                 //average the AQI readings by dividing by number of readings
                 decimal OSTAverage = OSTDataO3sum / OSTData.Count;
 
@@ -132,8 +133,8 @@ namespace WeatherWorryWonder.Controllers
             //using 8 hr reading
             if (oneHrPollutantPPM <= (decimal)0.125)
             {
-                //8 hr reading i = 2 because 0 and 1 index are null values
-                for (int i = 2; i < 7; i++)
+                //8 hr reading: 5 and 6 index are null values on table
+                for (int i = 0; i < 5; i++)
                 {
                     double low = pollutants[0].Low[i];
                     double high = pollutants[0].High[i];
@@ -153,8 +154,8 @@ namespace WeatherWorryWonder.Controllers
             //using 1 hr reading
             else
             {
-                //1 hr readings i = 5 and 6 are null values
-                for (int i = 0; i < 5; i++)
+                //1 hr reading: 1 and 2 are null values on table
+                for (int i = 2; i < 7; i++)
                 {
                     double low = pollutants[1].Low[i];
                     double high = pollutants[1].High[i];
@@ -226,7 +227,7 @@ namespace WeatherWorryWonder.Controllers
 
         public static decimal EPAAQIData()
         {
-            string s = "2019-03-10";
+            string s = "2019-03-15";
 
             DateTime dt = DateTime.ParseExact(s, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
