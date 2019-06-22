@@ -83,7 +83,7 @@ namespace WeatherWorryWonder.Controllers
                     MorePollutantDataReading.Add(ConvertedOSTPM25);
 
                     
-                    return MorePollutantDataReading;
+                   // return MorePollutantDataReading;
 
                 }
                 //if sensor name contains simms
@@ -148,7 +148,7 @@ namespace WeatherWorryWonder.Controllers
                     MorePollutantDataReading.Add(SimsSO2Average);
 
 
-                    return MorePollutantDataReading;
+                    //return MorePollutantDataReading;
                 }
                 
             }
@@ -157,10 +157,13 @@ namespace WeatherWorryWonder.Controllers
             catch(Exception e)
 
             {
-                e.message = "No data.";
-                return message;
+                string Message = "No data.";
+                Message = e.Message;
             }
+                return MorePollutantDataReading;
         }
+        //method that pulls out list of pollutants and run through calculations (depending on which pollutant we want, the method inputs type of pollutant
+        //and outputs averages that are in the list
 
         public static decimal ConvertPPBtoPPM(decimal PollutantPPB)
         {
