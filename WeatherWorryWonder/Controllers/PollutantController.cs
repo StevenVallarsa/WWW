@@ -10,7 +10,7 @@ namespace WeatherWorryWonder.Controllers
 {
     public class PollutantController : Controller 
     {
-        public static WeatherWorryWonderDBEntities db = new WeatherWorryWonderDBEntities();
+        public static WeatherWorryWonderDBEntities2 db = new WeatherWorryWonderDBEntities2();
         public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
 
         //Depending on the sensor and user time
@@ -66,9 +66,9 @@ namespace WeatherWorryWonder.Controllers
                 //sum all the O3(ozone) AQI readings from the list
                 // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
                 decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)));
-                 
-                //average the AQI readings by dividing by number of readings
-                decimal OSTAverage = OSTDataO3sum / OSTData.Count;
+
+                    //average the AQI readings by dividing by number of readings
+                    decimal OSTAverage = OSTDataO3sum / OSTData.Count;
 
 
                     return ConvertPPBtoPPM(OSTAverage);
@@ -101,9 +101,11 @@ namespace WeatherWorryWonder.Controllers
 
                     //sum all the O3(ozone) AQI readings from the list
                     decimal SimsDataO3sum = Convert.ToDecimal(simsData.Sum(O3 => O3.o3));
+
                     //average the AQI readings by dividing by number of readings
                     decimal SimsTOAverage = SimsDataO3sum / simsData.Count;
 
+                    
                     return ConvertPPBtoPPM(SimsTOAverage);
                 }
             }
