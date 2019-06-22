@@ -17,6 +17,8 @@ namespace WeatherWorryWonder.Controllers
         //OST an SIMMS are in seperate database tables therefore we need to know which table to pull using an if/else statement
         public static decimal PollutantDataReading(Sensor s, int mins)
         {
+            List<decimal> MorePollutantDataReading = new List<decimal>();
+
             //example of what the string date looks like "2019 - 03 - 01T"            
             //take the current hour            
             string strB = DateTime.Now.ToString("HH");
@@ -66,9 +68,19 @@ namespace WeatherWorryWonder.Controllers
                 //sum all the O3(ozone) AQI readings from the list
                 // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
                 decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)));
-                 
+
+                decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
+
                 //average the AQI readings by dividing by number of readings
-                decimal OSTAverage = OSTDataO3sum / OSTData.Count;
+                decimal OSTAverage = OSTDataPM25sum / OSTData.Count;
+
+                    MorePollutantDataReading.Add(OSTAverage);
+
+
+                    return ConvertPPBtoPPM(OSTAverage);
+
+                    //average the AQI readings by dividing by number of readings
+                    decimal OSTAverage = OSTDataO3sum / OSTData.Count;
 
 
                     return ConvertPPBtoPPM(OSTAverage);
@@ -102,116 +114,47 @@ namespace WeatherWorryWonder.Controllers
                     //sum all the O3(ozone) AQI readings from the list
                     decimal SimsDataO3sum = Convert.ToDecimal(simsData.Sum(O3 => O3.o3));
                     //average the AQI readings by dividing by number of readings
-                    decimal SimsTOAverage = SimsDataO3sum / simsData.Count;
+                    decimal SimsO3Average = SimsDataO3sum / simsData.Count;
 
-                    return ConvertPPBtoPPM(SimsTOAverage);
+                    //sum all the CO AQI readings from the list
+                    decimal SimsDataCOsum = Convert.ToDecimal(simsData.Sum(CO => CO.co));
+                    //average the AQI readings by dividing by number of readings
+                    decimal SimsCOToAverage = SimsDataCOsum / simsData.Count;
+
+                    //sum all the no2 readings from the list
+                    decimal SimsDataNO2sum = Convert.ToDecimal(simsData.Sum(NO2 => NO2.no2));
+                    //average the AQI readings by dividing by number of readings
+                    decimal SimsNO2Average = SimsDataNO2sum / simsData.Count;
+
+                    //sum all the no2 readings from the list
+                    decimal SimsDataNO2_O3sum = Convert.ToDecimal(simsData.Sum(NO2o3 => NO2o3.no2_o3));
+                    //average the AQI readings by dividing by number of readings
+                    decimal SimsNO2_O3Average = SimsDataNO2_O3sum / simsData.Count;
+
+                    //sum all the no2 readings from the list
+                    decimal SimsDataPM25sum = Convert.ToDecimal(simsData.Sum(PM25 => PM25.pm25));
+                    //average the AQI readings by dividing by number of readings
+                    decimal SimsPM25Average = SimsDataPM25sum / simsData.Count;
+
+                    //sum all the no2 readings from the list
+                    decimal SimsDataSO2sum = Convert.ToDecimal(simsData.Sum(SO2 => SO2.so2));
+                    //average the AQI readings by dividing by number of readings
+                    decimal SimsSO2Average = SimsDataSO2sum / simsData.Count;
+
+                    MorePollutantDataReading.Add(SimsO3Average);
+                    MorePollutantDataReading.Add(SimsNO2Average);
+                    MorePollutantDataReading.Add(SimsNO2_O3Average);
+                    MorePollutantDataReading.Add(SimsPM25Average);
+                    MorePollutantDataReading.Add(SimsSO2Average);
+
+
+                    return ConvertPPBtoPPM(SimsTOAverage);   //return the list???
+
+                    
                 }
             }
             //will return 0 which will then be caught by the HomeController loop as unreliable data, moving to the next sensor
             catch(Exception)
-            {
-                return 0;
-            }
-        }
-
-        public static decimal OtherPollutantDataReading(Sensor s, int mins)     //Callista 6-21-19
-        {
-            List<decimal> MorePollutantDataReading = new List<decimal>();
-
-            //example of what the string date looks like "2019 - 03 - 01T"            
-            //take the current hour            
-            string currentHour = DateTime.Now.ToString("HH");
-
-            //DateTime datevalue = (Convert.ToDateTime(strB.ToString()));
-            //string dy = datevalue.Day.ToString();
-
-
-            //take the DeLorean and go back to a date in the past
-            string currentTime = $"2019-03-20T{currentHour}";
-            //pulls sensor name
-            string sensorLocation = s.Name;
-
-            //take in the sensor that is closest to the user
-            //string sensorLocation = "graqm0107";
-
-            //if contains graq = ost sensor
-            bool answer = (sensorLocation.Contains("graq"));
-            try
-            {
-                List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
-                if (answer == true)
-                {
-                    //pulling the data based on user current time and location of sensor
-                    ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
-                        .Where(tu => tu.time.Contains(currentTime) && tu.dev_id == sensorLocation)
-                        .First();
-
-                    //pulls row of data
-                    int y = startingPoint.Id;
-                    //mins are either 480 or 60
-                    for (int i = 0; i < mins; i++)
-                    {
-                        ost_data_Jan_June2019 OSTAQIdata = db.ost_data_Jan_June2019.Find(y);
-                        if (OSTAQIdata != null)
-                        {
-                            OSTData.Add(OSTAQIdata);
-                            y++;
-                        }
-                        else
-                        {
-                            y++;
-                            continue;
-                        }
-                    }
-
-                    //sum all the O3(ozone) AQI readings from the list
-                    // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
-                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
-
-                    //average the AQI readings by dividing by number of readings
-                    decimal OSTAverage = OSTDataPM25sum / OSTData.Count;
-
-                    MorePollutantDataReading.Add(OSTAverage);
-
-
-                   return ConvertPPBtoPPM(OSTAverage);
-
-                }
-                //if sensor name contains simms
-                else
-                {
-                    List<simms_data_Jan_June2019> simsData = new List<simms_data_Jan_June2019>();
-                    simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
-                        .Where(tu => tu.time.Contains(currentTime) && tu.dev_id == sensorLocation)
-                        .First();
-
-                    int y = startingPoint.Id;
-                    //get 8 hr average AQI
-                    for (int i = 0; i < mins; i++)
-                    {
-                        simms_data_Jan_June2019 SimmsAQIdata = db.simms_data_Jan_June2019.Find(x);
-                        if (SimmsAQIdata != null)
-                        {
-                            simsData.Add(SimmsAQIdata);
-                            y++;
-                        }
-                        else
-                        {
-                            y++;
-                            continue;
-                        }
-                    }
-
-                    //sum all the O3(ozone) AQI readings from the list
-                    decimal SimsDataO3sum = Convert.ToDecimal(simsData.Sum(O3 => O3.o3));
-                    //average the AQI readings by dividing by number of readings
-                    decimal SimsTOAverage = SimsDataO3sum / simsData.Count;
-
-                    return ConvertPPBtoPPM(SimsTOAverage);
-                }
-            }
-            //will return 0 which will then be caught by the HomeController loop as unreliable data, moving to the next sensor
-            catch (Exception)
             {
                 return 0;
             }
