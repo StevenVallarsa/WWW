@@ -278,6 +278,7 @@
     <Content Include="Views\View.cshtml" />
     <Content Include="Views\Home\OzoneReductionTips.cshtml" />
     <Content Include="Views\Home\YardWork.cshtml" />
+    <Content Include="Views\Home\TestforPrintingOutIndividualAQI.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

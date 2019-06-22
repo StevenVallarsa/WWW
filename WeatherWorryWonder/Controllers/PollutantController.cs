@@ -80,11 +80,11 @@ namespace WeatherWorryWonder.Controllers
                     decimal ConvertedOSTO3 = ConvertPPBtoPPM(OSTO3Average);
                     decimal ConvertedOSTPM25 = ConvertPPBtoPPM(OSTPM25Average);
 
-                    MorePollutantDataReading.Add(ConvertedOSTO3);
-                    MorePollutantDataReading.Add(ConvertedOSTPM25);
+                    MorePollutantDataReading.Add(ConvertedOSTO3);    //index[0]
+                    MorePollutantDataReading.Add(ConvertedOSTPM25);   //index[1]
 
                     
-                   // return MorePollutantDataReading;
+                   
 
                 }
                 //if sensor name contains simms
@@ -142,14 +142,13 @@ namespace WeatherWorryWonder.Controllers
                     //average the AQI readings by dividing by number of readings
                     decimal SimsSO2Average = SimsDataSO2sum / simsData.Count;
 
-                    MorePollutantDataReading.Add(SimsO3Average);
-                    MorePollutantDataReading.Add(SimsCOToAverage);
-                    MorePollutantDataReading.Add(SimsNO2Average);
-                    MorePollutantDataReading.Add(SimsNO2_O3Average);
-                    MorePollutantDataReading.Add(SimsPM25Average);
-                    MorePollutantDataReading.Add(SimsSO2Average);
-
-                    //return MorePollutantDataReading;
+                    MorePollutantDataReading.Add(SimsO3Average);   //index[0]
+                    MorePollutantDataReading.Add(SimsCOToAverage);   //index[1]
+                    MorePollutantDataReading.Add(SimsNO2Average);     //index[2]
+                    MorePollutantDataReading.Add(SimsNO2_O3Average);    //index[3]
+                    MorePollutantDataReading.Add(SimsPM25Average);      //index[4]
+                    MorePollutantDataReading.Add(SimsSO2Average);      //index[5]
+                    
                 }
                 
             }
@@ -163,45 +162,48 @@ namespace WeatherWorryWonder.Controllers
             }
                 return MorePollutantDataReading;
         }
+        
+
+
 
         //the following methods pull out individual pollutants from the list of MorePollutantDataReading
 
-        public static decimal ReturnPollutantDecimalO3()
-        {
-            decimal O3 = MorePollutantDataReading[0];
-            return O3;
-        }
+        //public static decimal ReturnPollutantDecimalO3()
+        //{
+        //    decimal O3 = MorePollutantDataReading[0];
+        //    return O3;
+        //}
 
-        public static decimal ReturnPollutantDecimalCO()
-        {
-            decimal CO = MorePollutantDataReading[1];
-            return CO;
-        }
+        //public static decimal ReturnPollutantDecimalCO()
+        //{
+        //    decimal CO = MorePollutantDataReading[1];
+        //    return CO;
+        //}
 
-        public static decimal ReturnPollutantDecimalNO2()
-        {
-            decimal NO2 = MorePollutantDataReading[2];
-            return NO2;
-        }
+        //public static decimal ReturnPollutantDecimalNO2()
+        //{
+        //    decimal NO2 = MorePollutantDataReading[2];
+        //    return NO2;
+        //}
 
-        public static decimal ReturnPollutantDecimalNO2_O3()
-        {
-            decimal NO2_O3 = MorePollutantDataReading[3];
-            return NO2_O3;
+        //public static decimal ReturnPollutantDecimalNO2_O3()
+        //{
+        //    decimal NO2_O3 = MorePollutantDataReading[3];
+        //    return NO2_O3;
  
-        }
+        //}
 
-        public static decimal ReturnPollutantDecimalPM25()
-        {
-            decimal PM25 = MorePollutantDataReading[4];
-            return PM25;
-        }
+        //public static decimal ReturnPollutantDecimalPM25()
+        //{
+        //    decimal PM25 = MorePollutantDataReading[4];
+        //    return PM25;
+        //}
 
-        public static decimal ReturnPollutantDecimalSO2()
-        {
-            decimal SO2 = MorePollutantDataReading[5];
-            return SO2;
-        }
+        //public static decimal ReturnPollutantDecimalSO2()
+        //{
+        //    decimal SO2 = MorePollutantDataReading[5];
+        //    return SO2;
+        //}
 
         public static decimal ConvertPPBtoPPM(decimal PollutantPPB)
         {

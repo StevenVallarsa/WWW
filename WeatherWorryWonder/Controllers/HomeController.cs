@@ -60,8 +60,8 @@ namespace WeatherWorryWonder.Controllers
                 Session["ClosestSensor"] = closestSensor;
 
                 //get sensor readings from OST and SIMMS
-                decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480);
-                decimal oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60);
+                decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480)[0];
+                decimal oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60)[0];
                 //if((eightHrPollutantPPM != null || oneHrPollutantPPM != null) && (eightHrPollutantPPM < 5 && oneHrPollutantPPM)
                 //index zero = index of model pollutant and index one = whether we use one or eight hour
                 List<int> indexAndOneorEight = PollutantController.EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
