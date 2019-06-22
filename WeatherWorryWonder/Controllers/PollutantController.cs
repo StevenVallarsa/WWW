@@ -114,8 +114,10 @@ namespace WeatherWorryWonder.Controllers
             }
         }
 
-        public List <Pollutant> OtherPollutantDataReading(Sensor s, int mins)     //Callista 6-21-19
+        public static decimal OtherPollutantDataReading(Sensor s, int mins)     //Callista 6-21-19
         {
+            List<decimal> MorePollutantDataReading = new List<decimal>();
+
             //example of what the string date looks like "2019 - 03 - 01T"            
             //take the current hour            
             string currentHour = DateTime.Now.ToString("HH");
@@ -169,8 +171,10 @@ namespace WeatherWorryWonder.Controllers
                     //average the AQI readings by dividing by number of readings
                     decimal OSTAverage = OSTDataPM25sum / OSTData.Count;
 
+                    MorePollutantDataReading.Add(OSTAverage);
 
-                   // return ConvertPPBtoPPM(OSTAverage);
+
+                   return ConvertPPBtoPPM(OSTAverage);
 
                 }
                 //if sensor name contains simms
@@ -178,10 +182,10 @@ namespace WeatherWorryWonder.Controllers
                 {
                     List<simms_data_Jan_June2019> simsData = new List<simms_data_Jan_June2019>();
                     simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
-                        .Where(ut => ut.time.Contains(currentTime) && ut.dev_id == sensorLocation)
+                        .Where(tu => tu.time.Contains(currentTime) && tu.dev_id == sensorLocation)
                         .First();
 
-                    int x = startingPoint.Id;
+                    int y = startingPoint.Id;
                     //get 8 hr average AQI
                     for (int i = 0; i < mins; i++)
                     {
@@ -189,11 +193,11 @@ namespace WeatherWorryWonder.Controllers
                         if (SimmsAQIdata != null)
                         {
                             simsData.Add(SimmsAQIdata);
-                            x++;
+                            y++;
                         }
                         else
                         {
-                            x++;
+                            y++;
                             continue;
                         }
                     }
