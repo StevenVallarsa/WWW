@@ -5,6 +5,24 @@
     ViewBag.Title = "AQI";
 }
 
+<style>
+    #map {
+        height: 400px;
+        width: 800px;
+    }
+</style>
+
+@{
+    List<double> userLocation = (List<double>)Session["UserLocation"];
+    double lat = userLocation[0];
+    double lng = userLocation[1];
+
+    Sensor s = (Sensor)Session["ClosestSensor"];
+    double sensorLat = s.Lat;
+    double sensorLong = s.Long;
+}
+
+
 <h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Math.Round(Model.O3AQI)</b></span></h2>
 <h4>EPA AQI: @Math.Round(Model.EpaAQI)</h4>
 <br />
@@ -22,14 +40,29 @@
 <p>Humidity: @Model.Weather[0].Humidity %</p>
 <br />
 
-
 <h2>Health Recommendation based on your AQI:</h2>
 <p>
     @Model.Recommendations
-</p>
+</p> 
 
 <h2>Sensor Location:</h2>
 <p>@Model.SensorName</p>
 <br />
 
+<div id="map"></div>
+
+<script>
+function initMap() {
+    var userLatLong = { lat: @lat, lng: @lng };
+    var sensorLatLong = { lat: @sensorLat, lng: @sensorLong };
+  var map = new google.maps.Map(
+      document.getElementById('map'), {zoom: 12, center: userLatLong});
+    var markerUser = new google.maps.Marker({ position: userLatLong, map: map });
+    var markerSensor = new google.maps.Marker({ position: sensorLatLong, map: map });
+}
+</script>
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=@APIKeys.SteveGoogleMapAPI&callback=initMap">
+</script>
 

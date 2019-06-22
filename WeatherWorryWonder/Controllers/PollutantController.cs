@@ -10,7 +10,7 @@ namespace WeatherWorryWonder.Controllers
 {
     public class PollutantController : Controller 
     {
-        public static WeatherWorryWonderDBEntities2 db = new WeatherWorryWonderDBEntities2();
+        public static WeatherWorryWonderDBEntities db = new WeatherWorryWonderDBEntities();
         public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
 
         //Depending on the sensor and user time

@@ -5,10 +5,12 @@ using System.Linq;
 using System.Web;
 using WeatherWorryWonder.Controllers;
 using WeatherWorryWonder.Models;
+using System.Web.Mvc;
+
 
 namespace WeatherWorryWonder.Controllers
 {
-    public class GeocodeController
+    public class GeocodeController : Controller
     {
         //Haversine formula for distance between two lat/longs
         public static double LatLongDistance(double lat1, double long1, double lat2, double long2)
@@ -29,22 +31,35 @@ namespace WeatherWorryWonder.Controllers
             double c = 2 * Math.Atan2(Math.Sqrt(Haversine), Math.Sqrt(1 - Haversine));
             //trigonometry is fun for everyone
             double jeezFinally = earthRadius * c;
-
+            
             return jeezFinally;
 
         }
 
-        public static List<Sensor> ShortestToLongest(string address)
+        // separating the "ShortestToLongest" method so as to extract the user location in lattitute and longitude
+        // to put in a Session in the HomeController AND for the rest of the "ShortestToLongest" method
+        public static List<double> ParseUserLocation(string address)
         {
-            List<Sensor> sensors = Sensor.GetSensors();
-            List<Sensor> shortSensors = new List<Sensor>();
-
             JToken jsonAddress = GoogleMapDAL.GoogleJson(address);
 
             double addressLat = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lat"].ToString());
             double addressLng = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lng"].ToString());
 
-            for(int i = 0; i < Sensor.Sensors.Count; i++)
+            List<double> userLocation = new List<double>() { addressLat, addressLng };
+
+            return userLocation;
+        }
+
+
+        public static List<Sensor> ShortestToLongest(List<double> userLocation)
+        { 
+            List<Sensor> sensors = Sensor.GetSensors();
+            List<Sensor> shortSensors = new List<Sensor>();
+
+            double addressLat = userLocation[0];
+            double addressLng = userLocation[1];
+
+            for (int i = 0; i < Sensor.Sensors.Count; i++)
             {
                 double lat = Sensor.Sensors[i].Lat;
                 double Lng = Sensor.Sensors[i].Long;
@@ -52,7 +67,6 @@ namespace WeatherWorryWonder.Controllers
                 shortSensors.Add(s);
                 sensors.Remove(s);
             }
-
             return shortSensors;
 
         }
@@ -95,5 +109,6 @@ namespace WeatherWorryWonder.Controllers
         //    Sensor closestSensor = ShortestDistanceSensor(lat, lng);
         //    return closestSensor;
         //}
+
     }
 }
