@@ -182,5 +182,62 @@ namespace WeatherWorryWonder.Controllers
             List<Sensor> sensors = GeocodeController.ShortestToLongest(streetAddress);
             return View(sensors);
         }
+
+        //public ActionResult CallistasRecommendationsSoYouBetterListen()
+        //{
+        //    < form action = "myaction" >
+
+
+        //     < select name = "param" >
+
+
+        //     < option value = "volvo" > Volvo </ option >
+
+
+        //      < option value = "saab" > Saab </ option >
+
+
+        //      < option value = "opel" > Opel </ option >
+
+
+        //       < option value = "audi" > Audi </ option >
+
+
+        //       </ select >
+
+
+        //       < input type = "submit" />
+
+
+        //        </ form >
+
+        public ActionResult OzoneReductionTips(string option)   //Callista
+        {
+
+            if (option == "Homeprojects")
+            {
+                return View("Homeprojects");    //redirect to Homeprojects page
+            }
+            if (option == "Driving")
+            {
+                return View("Driving");   //redirect to Driving page
+            }
+            if (option == "Grilling")
+            {
+                return View("Grilling");   //redirect to Grilling page
+            }
+            if (option == "Office")
+            {
+                return View("Office");   //redirect to Office page
+            }
+            if (option == "Yardwork")
+            {
+                return View("Yardwork");   //redirect to Yardwork page
+            }
+
+
+            return View("Index");
+        }
     }
 }
+    
