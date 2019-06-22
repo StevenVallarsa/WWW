@@ -276,6 +276,7 @@
     <Content Include="Views\Yardwork.cshtml" />
     <Content Include="Views\Home\Office.cshtml" />
     <Content Include="Views\View.cshtml" />
+    <Content Include="Views\Home\OzoneReductionTips.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
