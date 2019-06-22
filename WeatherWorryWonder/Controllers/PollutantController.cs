@@ -15,9 +15,10 @@ namespace WeatherWorryWonder.Controllers
 
         //Depending on the sensor and user time
         //OST an SIMMS are in seperate database tables therefore we need to know which table to pull using an if/else statement
-        public static decimal PollutantDataReading(Sensor s, int mins)
+        public static List<decimal>PollutantDataReading(Sensor s, int mins)
         {
             List<decimal> MorePollutantDataReading = new List<decimal>();
+          
 
             //example of what the string date looks like "2019 - 03 - 01T"            
             //take the current hour            
@@ -71,19 +72,18 @@ namespace WeatherWorryWonder.Controllers
 
                 decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
 
+                decimal OSTO3Average = OSTDataO3sum / OSTData.Count;
                 //average the AQI readings by dividing by number of readings
-                decimal OSTAverage = OSTDataPM25sum / OSTData.Count;
+                decimal OSTPM25Average = OSTDataPM25sum / OSTData.Count;
 
-                    MorePollutantDataReading.Add(OSTAverage);
+                    decimal ConvertedOSTO3 = ConvertPPBtoPPM(OSTO3Average);
+                    decimal ConvertedOSTPM25 = ConvertPPBtoPPM(OSTPM25Average);
 
+                    MorePollutantDataReading.Add(ConvertedOSTO3);
+                    MorePollutantDataReading.Add(ConvertedOSTPM25);
 
-                    return ConvertPPBtoPPM(OSTAverage);
-
-                    //average the AQI readings by dividing by number of readings
-                    decimal OSTAverage = OSTDataO3sum / OSTData.Count;
-
-
-                    return ConvertPPBtoPPM(OSTAverage);
+                    
+                    return MorePollutantDataReading;
 
                 }
                 //if sensor name contains simms
@@ -148,15 +148,17 @@ namespace WeatherWorryWonder.Controllers
                     MorePollutantDataReading.Add(SimsSO2Average);
 
 
-                    return ConvertPPBtoPPM(SimsTOAverage);   //return the list???
-
-                    
+                    return MorePollutantDataReading;
                 }
+                
             }
+
             //will return 0 which will then be caught by the HomeController loop as unreliable data, moving to the next sensor
-            catch(Exception)
+            catch(Exception e)
+
             {
-                return 0;
+                e.message = "No data.";
+                return message;
             }
         }
 
