@@ -8,6 +8,8 @@ namespace WeatherWorryWonder.Models
     public class ResultView
     {
         public decimal O3AQI { get; set; }
+        public decimal Second03AQI { get; set; }
+        public decimal Third03AQI { get; set;}
         public decimal PM25AQI { get; set; }
         public decimal PM10AQI { get; set; }
         public decimal NO2AQI { get; set; }
