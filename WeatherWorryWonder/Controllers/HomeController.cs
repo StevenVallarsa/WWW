@@ -55,18 +55,23 @@ namespace WeatherWorryWonder.Controllers
             //grabs the closest sensor to your address
             List<Sensor> closestSensors = GeocodeController.ShortestToLongest(userLocation);
             //got all our weather info here
+            List<decimal> threeClosestAQIs = new List<decimal>(); 
 
             List<decimal> FutureAQIForO3ThreeAndFiveDays = new List<decimal>();
 
             //skips sensor if data is unreliable
             for (int i = 0; i < closestSensors.Count; i++)
             {
+                if(threeClosestAQIs.Count == 3)
+                {
+                    break;
+                }
                 Sensor closestSensor = closestSensors[i];
-                Session["ClosestSensor"] = closestSensor;
+                //Session["ClosestSensor"] = closestSensor;
 
                 //get sensor readings from OST and SIMMS
-                decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480);
-                decimal oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60);
+                decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480)[0];
+                decimal oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60)[0];
                 //if((eightHrPollutantPPM != null || oneHrPollutantPPM != null) && (eightHrPollutantPPM < 5 && oneHrPollutantPPM)
                 //index zero = index of model pollutant and index one = whether we use one or eight hour
                 List<int> indexAndOneorEight = PollutantController.EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
@@ -74,51 +79,55 @@ namespace WeatherWorryWonder.Controllers
                 if (oneHrPollutantPPM > (decimal)0.125)
                 {
                     // using 1h reading
-                    AQIForO3 = PollutantController.CalculateAQI(oneHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+                    AQIForO3 = PollutantController.CalculateO3AQI(oneHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
 
                 }
                 else
                 {
                     // using 8h reading
-                    AQIForO3 = PollutantController.CalculateAQI(eightHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+                    AQIForO3 = PollutantController.CalculateO3AQI(eightHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
 
                 }
-
+                decimal c2H4O = PollutantController.ShortestDistancePollutantSensor(closestSensor);
+                rv.Ethyleneoxide = PollutantController.PollutantWarning(c2H4O);
                 int recommendationIndex = PollutantController.EPABreakpointTable(eightHrPollutantPPM);
                 string recommendation = OzoneRecommendations.OzoneLevels[recommendationIndex];
                 rv.Recommendations = recommendation;
-
+                //if O3AQI is less than 5, it's bad data
                 if (AQIForO3 > 5)
                 {
-                    // Convert PPM to UG/M3
-                    UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
-
-                    // using weather data to forecast tomorrow's AQI (index 1 = 24h)
-
-                    // convert from UG/M3 to PPM 
-                    rv.SensorName = closestSensor.CrossStreet;
-                    // 
-
-                    for (int j = 0; j < 4; j++)
+                    if(threeClosestAQIs.Count < 1)
                     {
+                        // Convert PPM to UG/M3
+                        UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
+                        for (int j = 0; j < 4; j++)
+                        {
+                            // using weather data to forecast tomorrow's AQI (index 1 = 24h)
+                            decimal futureAQI = WeatherController.WeatherForecastEquation(weather, j, UGM3);
+                            // convert from UG/M3 to PPM 
+                            decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
+                            int EPABreakpointIndex = PollutantController.EPABreakpointTable(futureAQIPPM);
+                            FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, EPABreakpointIndex, indexAndOneorEight[0]);
+                            // add future AQIs to list
+                            FutureAQIForO3ThreeAndFiveDays.Add(FutureAQIForO3);
+                        }
+                        rv.SensorName = closestSensor.CrossStreet;
                         decimal futureAQI = WeatherController.WeatherForecastEquation(weather, j, UGM3);
                         decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
                         int EPABreakpointIndex = PollutantController.EPABreakpointTable(futureAQIPPM);
-                        FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, EPABreakpointIndex, indexAndOneorEight[0]);
+                        FutureAQIForO3 = PollutantController.CalculateO3AQI(futureAQIPPM, EPABreakpointIndex, indexAndOneorEight[0]);
                         FutureAQIForO3ThreeAndFiveDays.Add(FutureAQIForO3);
                     }
+                    threeClosestAQIs.Add(AQIForO3);
+                }
 
-                    break;
-                }
-                else
-                {
-                    continue;
-                }
             }
 
             //pull list out and attach it to rv
 
-            rv.O3AQI = AQIForO3;
+            rv.O3AQI = threeClosestAQIs[0];
+            rv.Second03AQI = threeClosestAQIs[1];
+            rv.Third03AQI = threeClosestAQIs[2];
             rv.PredictedAQITomorrow = FutureAQIForO3ThreeAndFiveDays[1];
             rv.PredictedAQI3Day = FutureAQIForO3ThreeAndFiveDays[2];
             rv.PredictedAQI5Day = FutureAQIForO3ThreeAndFiveDays[3];
@@ -131,7 +140,6 @@ namespace WeatherWorryWonder.Controllers
             Recommendations(AQIForO3);
             Recommendations(FutureAQIForO3);
 
-            rv.O3AQI = AQIForO3;
             rv.EpaAQI = AQIForEPA;
             ViewBag.AQI = AQIForO3;
 
@@ -183,5 +191,41 @@ namespace WeatherWorryWonder.Controllers
 
         }
 
+        // used for 
+        public ActionResult ProcessAddress(string streetAddress)
+        {
+            List<Sensor> sensors = GeocodeController.ShortestToLongest(streetAddress);
+            return View(sensors);
+        }
+
+
+        public ActionResult OzoneReductionTips(string option)   //Callista
+        {
+
+            if (option == "Homeprojects")
+            {
+                return View("Homeprojects");    //redirect to Homeprojects page
+            }
+            if (option == "Driving")
+            {
+                return View("Driving");   //redirect to Driving page
+            }
+            if (option == "Grilling")
+            {
+                return View("Grilling");   //redirect to Grilling page
+            }
+            if (option == "Office")
+            {
+                return View("Office");   //redirect to Office page
+            }
+            if (option == "Yardwork")
+            {
+                return View("Yardwork");   //redirect to Yardwork page
+            }
+
+
+            return View("Index");
+        }   
     }
 }
+    

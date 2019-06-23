@@ -305,6 +305,14 @@
     <Content Include="Views\Weather\Index.cshtml" />
     <Content Include="Views\Home\Equation.cshtml" />
     <Content Include="Views\Home\AQI.cshtml" />
+    <Content Include="Views\Home\Driving.cshtml" />
+    <Content Include="Views\Home\Grilling.cshtml" />
+    <Content Include="Views\Yardwork.cshtml" />
+    <Content Include="Views\Home\Office.cshtml" />
+    <Content Include="Views\View.cshtml" />
+    <Content Include="Views\Home\OzoneReductionTips.cshtml" />
+    <Content Include="Views\Home\YardWork.cshtml" />
+    <Content Include="Views\Home\TestforPrintingOutIndividualAQI.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
