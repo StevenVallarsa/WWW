@@ -78,7 +78,8 @@ namespace WeatherWorryWonder.Controllers
                     AQIForO3 = PollutantController.CalculateAQI(eightHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
 
                 }
-
+                decimal c2H4O = PollutantController.ShortestDistancePollutantSensor(closestSensor);
+                rv.Ethyleneoxide = PollutantController.PollutantWarning(c2H4O);
                 int recommendationIndex = PollutantController.EPABreakpointTable(eightHrPollutantPPM);
                 string recommendation = OzoneRecommendations.OzoneLevels[recommendationIndex];
                 rv.Recommendations = recommendation;
@@ -112,7 +113,6 @@ namespace WeatherWorryWonder.Controllers
             }
 
             //pull list out and attach it to rv
-
             rv.O3AQI = AQIForO3;
             rv.PredictedAQITomorrow = FutureAQIForO3ThreeAndFiveDays[1];
             rv.PredictedAQI3Day = FutureAQIForO3ThreeAndFiveDays[2];
