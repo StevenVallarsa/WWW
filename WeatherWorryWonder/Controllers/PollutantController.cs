@@ -8,7 +8,9 @@ using WeatherWorryWonder.Models;
 
 namespace WeatherWorryWonder.Controllers
 {
-    public class PollutantController : Controller 
+    
+
+    public class PollutantController : Controller
     {
         public static WeatherWorryWonderDBEntities db = new WeatherWorryWonderDBEntities();
         public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
@@ -16,10 +18,10 @@ namespace WeatherWorryWonder.Controllers
 
         //Depending on the sensor and user time
         //OST an SIMMS are in seperate database tables therefore we need to know which table to pull using an if/else statement
-        public static List<decimal>PollutantDataReading(Sensor s, int mins)
+        public static List<decimal> PollutantDataReading(Sensor s, int mins)
         {
             List<decimal> MorePollutantDataReading = new List<decimal>();
-          
+
 
             //example of what the string date looks like "2019 - 03 - 01T"            
             //take the current hour            
@@ -39,7 +41,7 @@ namespace WeatherWorryWonder.Controllers
 
             //if contains graq = ost sensor
             bool answer = (sensorLocation.Contains("graq"));
-            try 
+            try
             {
                 List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
                 if (answer == true)
@@ -55,7 +57,7 @@ namespace WeatherWorryWonder.Controllers
                     for (int i = 0; i < mins; i++)
                     {
                         ost_data_Jan_June2019 OSTAQIdata = db.ost_data_Jan_June2019.Find(x);
-                        if(OSTAQIdata != null)
+                        if (OSTAQIdata != null)
                         {
                             OSTData.Add(OSTAQIdata);
                             x++;
@@ -67,15 +69,15 @@ namespace WeatherWorryWonder.Controllers
                         }
                     }
 
-                //sum all the O3(ozone) AQI readings from the list
-                // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
-                decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)));
+                    //sum all the O3(ozone) AQI readings from the list
+                    // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
+                    decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)));
 
-                decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
+                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
 
-                decimal OSTO3Average = OSTDataO3sum / OSTData.Count;
-                //average the AQI readings by dividing by number of readings
-                decimal OSTPM25Average = OSTDataPM25sum / OSTData.Count;
+                    decimal OSTO3Average = OSTDataO3sum / OSTData.Count;
+                    //average the AQI readings by dividing by number of readings
+                    decimal OSTPM25Average = OSTDataPM25sum / OSTData.Count;
 
                     decimal ConvertedOSTO3 = ConvertPPBtoPPM(OSTO3Average);
                     decimal ConvertedOSTPM25 = ConvertPPBtoPPM(OSTPM25Average);
@@ -83,8 +85,8 @@ namespace WeatherWorryWonder.Controllers
                     MorePollutantDataReading.Add(ConvertedOSTO3);    //index[0]
                     MorePollutantDataReading.Add(ConvertedOSTPM25);   //index[1]
 
-                    
-                   
+
+
 
                 }
                 //if sensor name contains simms
@@ -148,69 +150,143 @@ namespace WeatherWorryWonder.Controllers
                     MorePollutantDataReading.Add(SimsNO2_O3Average);    //index[3]
                     MorePollutantDataReading.Add(SimsPM25Average);      //index[4]
                     MorePollutantDataReading.Add(SimsSO2Average);      //index[5]
-                    
+
                 }
-                
+
             }
 
             //will return 0 which will then be caught by the HomeController loop as unreliable data, moving to the next sensor
-            catch(Exception e)
+            catch (Exception e)
 
             {
                 string Message = "No data.";
                 Message = e.Message;
             }
-                return MorePollutantDataReading;
+            return MorePollutantDataReading;
         }
-        
+        //-------------------------------------------------------------------------------------------------- Callista added 6/22/19
 
 
+        //create new method to cycle through list, calculate the AQI for each pollutant, make a new list for AQI calculations
 
-        //the following methods pull out individual pollutants from the list of MorePollutantDataReading
+        public static List<decimal> CalculatePM25AQIs(Sensor s, int mins)  //PM25 needs a 24 hour reading so I think it needs its own method
+        {
+            List<decimal> PMDataToConvertToAQI = new List<decimal>();
 
-        //public static decimal ReturnPollutantDecimalO3()
-        //{
-        //    decimal O3 = MorePollutantDataReading[0];
-        //    return O3;
-        //}
+            //pull sensor reading for 24 hours for PM25 and average it
+            //if sensor time contains certain date, then pull it
+            //then do EPA calculations
 
-        //public static decimal ReturnPollutantDecimalCO()
-        //{
-        //    decimal CO = MorePollutantDataReading[1];
-        //    return CO;
-        //}
+            string oneDay = DateTime.Now.ToString("DD");
+            //DateTime datevalue = (Convert.ToDateTime(oneDay.ToString()));
+            //string day = datevalue.Day.ToString();
 
-        //public static decimal ReturnPollutantDecimalNO2()
-        //{
-        //    decimal NO2 = MorePollutantDataReading[2];
-        //    return NO2;
-        //}
+            ////example of what the string date looks like "2019 - 03 - 01T"            
 
-        //public static decimal ReturnPollutantDecimalNO2_O3()
-        //{
-        //    decimal NO2_O3 = MorePollutantDataReading[3];
-        //    return NO2_O3;
- 
-        //}
+            //take the DeLorean and go back to a date in the past
+            string currentDay = $"2019-03-20T{oneDay}";
+            //pulls sensor name
+            string sensorLocation = s.Name;
 
-        //public static decimal ReturnPollutantDecimalPM25()
-        //{
-        //    decimal PM25 = MorePollutantDataReading[4];
-        //    return PM25;
-        //}
+            //take in the sensor that is closest to the user
+            s.Name = "graqm0107";
 
-        //public static decimal ReturnPollutantDecimalSO2()
-        //{
-        //    decimal SO2 = MorePollutantDataReading[5];
-        //    return SO2;
-        //}
+            //if contains graq = ost sensor
+            bool answer = (sensorLocation.Contains("graq"));
+            try
+            {
+                List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
+                if (answer == true)
+                {
+                    //pulling the data based on user current time and location of sensor
+                    ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
+                        .Where(ut => ut.time.Contains(currentDay) && ut.pm25 != null && ut.dev_id == sensorLocation)  //this does not like the currentDay variable
+                        .Average(ut => ut.pm25);
+                //}
+                //pulls row of data
+                int x = startingPoint.Id;
+                    //mins are either 480 or 60
+                    for (int i = 0; i < mins; i++)
+                    {
+                        ost_data_Jan_June2019 OSTPM25data = db.ost_data_Jan_June2019.Find(currentDay);
+                        if (OSTPM25data != null)
+                        {
+                            OSTData.Add(OSTPM25data);
+                            x++;
+                        }
+                        else
+                        {
+                            x++;
+                            continue;
+                        }
+                    }
 
+                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
+
+
+                    //average the AQI readings by dividing by number of readings
+                    decimal OSTPM25Average = OSTDataPM25sum / OSTData.Count;
+
+                    decimal ConvertedOSTPM25 = ConvertPPBtoPPM(OSTPM25Average);
+
+                    PMDataToConvertToAQI.Add(ConvertedOSTPM25);   //index[0]
+
+                }
+            }
+            //will return 0 which will then be caught by the HomeController loop as unreliable data, moving to the next sensor
+            catch (Exception e)
+
+            {
+                string Message = "No data.";
+                Message = e.Message;
+            }
+            return PMDataToConvertToAQI;
+        }
+
+        public static List<double> CalculatePM25BreakPoint(double low, double high)
+        {
+            List<double> PM25BreakPoint = new List<double>();
+
+            for (int i = 0; i < 7; i++)
+            {
+                low = pollutants[4].Low[i];
+                high = pollutants[4].High[i];
+
+                PM25BreakPoint.Add(low);
+                PM25BreakPoint.Add(high);
+            }
+            return PM25BreakPoint;
+        }
+
+        // for AQI equation from EPA for PM25
+
+        public static decimal CalculatePM25AQI(decimal PollutantPPM, int index, List<double> PM25BreakPoint)
+        {
+            //this method needs to be refactored because it's not the correct equation to find PM25's AQI
+
+            // must round to 3 digits for O3 EPA standards
+            decimal Cp = Math.Round(PollutantPPM, 4);
+
+            // 7 = AQI standards in Pollutant Model
+            decimal Ihi = (decimal)pollutants[7].High[index];
+            decimal Ilo = (decimal)pollutants[7].Low[index];
+
+            // index = breakpoint found from OneOrEight method
+            decimal BPhi = (decimal)pollutants[4].High[index];
+            decimal BPlow = (decimal)pollutants[4].Low[index];
+
+            //calculate using 8 hr Ozone
+            decimal AQIForPM25Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+            return AQIForPM25Pollutant;
+        }
+
+//-------------------------------------------------------------------------------------------------------------------------------------------------
         public static decimal ConvertPPBtoPPM(decimal PollutantPPB)
         {
-            //1 ppm = 1000 ppb
-            decimal PollutantPPM = PollutantPPB / 1000;
+                //1 ppm = 1000 ppb
+                decimal PollutantPPM = PollutantPPB / 1000;
 
-            return PollutantPPM;
+                return PollutantPPM;
         }
 
 
@@ -267,7 +343,7 @@ namespace WeatherWorryWonder.Controllers
 
         // for AQI equation from EPA
         // isEight: 0 index = 8h reading; 1 index = 1h reading
-        public static decimal CalculateAQI(decimal PollutantPPM, int index, int isEight)
+        public static decimal CalculateO3AQI(decimal PollutantPPM, int index, int isEight)
         {
             // must round to 3 digits for O3 EPA standards
             decimal Cp = Math.Round(PollutantPPM, 4);
@@ -281,8 +357,8 @@ namespace WeatherWorryWonder.Controllers
             decimal BPlow = (decimal)pollutants[isEight].Low[index];
 
             //calculate using 8 hr Ozone
-            decimal AQIForPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
-            return AQIForPollutant;
+            decimal AQIForO3Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+            return AQIForO3Pollutant;
         }
 
         // converts to UG/M3

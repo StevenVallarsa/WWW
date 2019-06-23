@@ -69,13 +69,13 @@ namespace WeatherWorryWonder.Controllers
                 if (oneHrPollutantPPM > (decimal)0.125)
                 {
                     // using 1h reading
-                    AQIForO3 = PollutantController.CalculateAQI(oneHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+                    AQIForO3 = PollutantController.CalculateO3AQI(oneHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
 
                 }
                 else
                 {
                     // using 8h reading
-                    AQIForO3 = PollutantController.CalculateAQI(eightHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
+                    AQIForO3 = PollutantController.CalculateO3AQI(eightHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
 
                 }
 
