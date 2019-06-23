@@ -99,7 +99,7 @@ namespace WeatherWorryWonder.Controllers
                         decimal futureAQI = WeatherController.WeatherForecastEquation(weather, j, UGM3);
                         decimal futureAQIPPM = PollutantController.UGM3ConvertToPPM(futureAQI);
                         int EPABreakpointIndex = PollutantController.EPABreakpointTable(futureAQIPPM);
-                        FutureAQIForO3 = PollutantController.CalculateAQI(futureAQIPPM, EPABreakpointIndex, indexAndOneorEight[0]);
+                        FutureAQIForO3 = PollutantController.CalculateO3AQI(futureAQIPPM, EPABreakpointIndex, indexAndOneorEight[0]);
                         FutureAQIForO3ThreeAndFiveDays.Add(FutureAQIForO3);
                     }
 
