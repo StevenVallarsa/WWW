@@ -35,6 +35,12 @@
 <p>5-Day AQI: @Math.Round(Model.PredictedAQI5Day)</p>
 <br />
 
+<h2>Other AQIs</h2> 
+<p>No2: @Model.NO2AQI</p>
+<p>PM25: @Model.PM25AQI</p>
+<p>SO2: @Model.SO2AQI</p>
+<p>CO: @Model.CO</p>
+
 <h2>Current Weather:</h2>
 <p>Temperature: @Math.Round(Model.Weather[0].TemperatureF) F</p>
 <p>Cloud Coverage: @Model.Weather[0].Clouds</p>
@@ -68,4 +74,5 @@ function initMap() {
         src="https://maps.googleapis.com/maps/api/js?key=@APIKeys.SteveGoogleMapAPI&callback=initMap">
 </script>
 
-<p>Ethylene Oxide PPM: @Model.Ethyleneoxide</p>
+<p>Ethylene Oxide PPM: @Model.C2H4OPPM</p>
+<p>Pollutant Message: @Model.PollutantWarning</p>
