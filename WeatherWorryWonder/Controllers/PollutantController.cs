@@ -88,6 +88,10 @@ namespace WeatherWorryWonder.Controllers
                     MorePollutantDataReading.Add(ConvertedOSTO3);    //index[0]
                     MorePollutantDataReading.Add(ConvertedOSTPM25);   //index[1]
 
+                //sum all the O3(ozone) AQI readings from the list
+                // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
+
+                    //average the AQI readings by dividing by number of readings
 
 
 
@@ -119,6 +123,7 @@ namespace WeatherWorryWonder.Controllers
 
                     //sum all the O3(ozone) AQI readings from the list
                     decimal SimsDataO3sum = Convert.ToDecimal(simsData.Sum(O3 => O3.o3));
+
                     //average the AQI readings by dividing by number of readings
                     decimal SimsO3Average = SimsDataO3sum / simsData.Count;
 
@@ -154,6 +159,8 @@ namespace WeatherWorryWonder.Controllers
                     MorePollutantDataReading.Add(SimsPM25Average);      //index[4]
                     MorePollutantDataReading.Add(SimsSO2Average);      //index[5]
 
+                    
+                    return ConvertPPBtoPPM(SimsTOAverage);
                 }
 
             }
@@ -490,6 +497,55 @@ namespace WeatherWorryWonder.Controllers
 
             return breakpointIndex;
         }
+        //C2H4O = ethylene oxide
+        public static decimal ShortestDistancePollutantSensor(Sensor s)
+        {
+            List<Factory_Pollution> pollutantSensors = db.Factory_Pollution.ToList();
 
+            double largeNum = double.MaxValue;
+            Factory_Pollution pollutantSensor = new Factory_Pollution();
+            foreach (Factory_Pollution f in pollutantSensors)
+            {
+                double sensorDistance = GeocodeController.LatLongDistance(s.Lat,s.Long,f.Latitude,f.Longitude);
+                if (sensorDistance < largeNum)
+                {
+                    largeNum = sensorDistance;
+                    pollutantSensor = f;
+                }
+            }
+
+            decimal ethyleneOxide = pollutantSensor.ETO_ppm.GetValueOrDefault();
+            return ethyleneOxide;
+        }
+        public static string PollutantWarning(decimal ethyleneOxidePPM)
+        {
+            //0.18 µg / m3  normal background concentration of ethylene oxide
+            if (ethyleneOxidePPM > (decimal)0.18)
+            {
+                //grab current 24 hr average decimal of NO2
+                //grab current 24 hr average decimal of CO
+                //grab wind speed and direction
+
+                //air should contain less than 0.1 ppm ethylene oxide averaged over a 10-hour workday
+
+                decimal c2H4Oppm = (ethyleneOxidePPM / (decimal)(0.0409 * 44.05)) / 1000; //g/mol
+                if (c2H4Oppm > (decimal)0.1)
+                {
+                    return "Warning! High Pollutant Level Alert!";
+                }
+                else
+                {
+                    return "Warning! Mild Pollutant Level Alert!";
+                }
+
+                
+            }
+            else
+            {
+                return "Don't worry! You're safe.";   
+            }
+
+
+        }
     }
 }
