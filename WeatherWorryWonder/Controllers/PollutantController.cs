@@ -10,8 +10,9 @@ namespace WeatherWorryWonder.Controllers
 {
     public class PollutantController : Controller 
     {
-        public static WeatherWorryWonderDBEntities2 db = new WeatherWorryWonderDBEntities2();
+        public static WeatherWorryWonderDBEntities db = new WeatherWorryWonderDBEntities();
         public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
+        
 
         //Depending on the sensor and user time
         //OST an SIMMS are in seperate database tables therefore we need to know which table to pull using an if/else statement
@@ -279,6 +280,55 @@ namespace WeatherWorryWonder.Controllers
 
             return breakpointIndex;
         }
+        //C2H4O = ethylene oxide
+        public static decimal ShortestDistancePollutantSensor(Sensor s)
+        {
+            List<Factory_Pollution> pollutantSensors = db.Factory_Pollution.ToList();
 
+            double largeNum = double.MaxValue;
+            Factory_Pollution pollutantSensor = new Factory_Pollution();
+            foreach (Factory_Pollution f in pollutantSensors)
+            {
+                double sensorDistance = GeocodeController.LatLongDistance(s.Lat,s.Long,f.Latitude,f.Longitude);
+                if (sensorDistance < largeNum)
+                {
+                    largeNum = sensorDistance;
+                    pollutantSensor = f;
+                }
+            }
+
+            decimal ethyleneOxide = pollutantSensor.ETO_ppm.GetValueOrDefault();
+            return ethyleneOxide;
+        }
+        public static string PollutantWarning(decimal ethyleneOxidePPM)
+        {
+            //0.18 µg / m3  normal background concentration of ethylene oxide
+            if (ethyleneOxidePPM > (decimal)0.18)
+            {
+                //grab current 24 hr average decimal of NO2
+                //grab current 24 hr average decimal of CO
+                //grab wind speed and direction
+
+                //air should contain less than 0.1 ppm ethylene oxide averaged over a 10-hour workday
+
+                decimal c2H4Oppm = (ethyleneOxidePPM / (decimal)(0.0409 * 44.05)) / 1000; //g/mol
+                if (c2H4Oppm > (decimal)0.1)
+                {
+                    return "Warning! High Pollutant Level Alert!";
+                }
+                else
+                {
+                    return "Warning! Mild Pollutant Level Alert!";
+                }
+
+                
+            }
+            else
+            {
+                return "Don't worry! You're safe.";   
+            }
+
+
+        }
     }
 }
