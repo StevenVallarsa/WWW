@@ -336,8 +336,8 @@ namespace WeatherWorryWonder.Controllers
             decimal Ilo = (decimal)pollutants[7].Low[index];
 
             // index = breakpoint found from OneOrEight method
-            decimal BPhi = (decimal)pollutants[4].High[index];
-            decimal BPlow = (decimal)pollutants[4].Low[index];
+            decimal BPhi = (decimal)pollutants[3].High[index];
+            decimal BPlow = (decimal)pollutants[3].Low[index];
 
 
             decimal AQIForPM25Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
@@ -356,8 +356,8 @@ namespace WeatherWorryWonder.Controllers
             decimal Ilo = (decimal)pollutants[7].Low[index];
 
             // index = breakpoint found from OneOrEight method
-            decimal BPhi = (decimal)pollutants[6].High[index];
-            decimal BPlow = (decimal)pollutants[6].Low[index];
+            decimal BPhi = (decimal)pollutants[4].High[index];
+            decimal BPlow = (decimal)pollutants[4].Low[index];
 
             decimal AQIForCOPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
             PollutantAQIs.Add(AQIForCOPollutant);       //adding PM25 to AQI List
@@ -375,8 +375,8 @@ namespace WeatherWorryWonder.Controllers
             decimal Ilo = (decimal)pollutants[7].Low[index];
 
             // index = breakpoint found from OneOrEight method
-            decimal BPhi = (decimal)pollutants[6].High[index];
-            decimal BPlow = (decimal)pollutants[6].Low[index];
+            decimal BPhi = (decimal)pollutants[5].High[index];
+            decimal BPlow = (decimal)pollutants[5].Low[index];
 
             decimal AQIForSO2Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
             PollutantAQIs.Add(AQIForSO2Pollutant);       //adding PM25 to AQI List
