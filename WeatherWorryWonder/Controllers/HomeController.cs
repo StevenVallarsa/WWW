@@ -177,6 +177,8 @@ namespace WeatherWorryWonder.Controllers
             }
 
         }
+
+        // used for 
         public ActionResult ProcessAddress(string streetAddress)
         {
             List<Sensor> sensors = GeocodeController.ShortestToLongest(streetAddress);
