@@ -20,7 +20,7 @@ namespace WeatherWorryWonder.Models
 
         public WeatherDataFromAPI(JToken weather, int index)
         {
-            TemperatureK = double.Parse(weather["list"][index]["main"]["temp"].ToString());
+            TemperatureK = (double)weather["list"][index]["main"]["temp"];
             Pressure = (double)weather["list"][index]["main"]["pressure"];
             Humidity = (int)weather["list"][index]["main"]["humidity"];
             Clouds = weather["list"][index]["weather"][0]["description"].ToString();

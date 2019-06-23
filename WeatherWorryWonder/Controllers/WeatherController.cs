@@ -27,7 +27,7 @@ namespace WeatherWorryWonder.Controllers
             {
                 WeatherDataFromAPI wd = new WeatherDataFromAPI(weather, index);
                 wd.TemperatureC = wd.TemperatureK - 273.15;
-                wd.TemperatureF = (wd.TemperatureC) * (9 / 5) + 32;
+                wd.TemperatureF = (wd.TemperatureC) * 9 / 5 + 32;
 
                 weatherTime.Add(wd);
             }

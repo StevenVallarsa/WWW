@@ -16,7 +16,7 @@ namespace WeatherWorryWonder.Controllers
         public ActionResult Index()
         {
             JToken weather = WeatherAPIDAL.Json();
-
+            
             //decimal whatever = PollutantController.CalculateAQI((decimal)0.0, (decimal)0.088);
 
             //WeatherDataFromAPI wd = new WeatherDataFromAPI(weather);
@@ -47,8 +47,13 @@ namespace WeatherWorryWonder.Controllers
             decimal FutureAQIForO3 = 0;
 
             ResultView rv = new ResultView();
+
+            // get user location in lat/long
+            List<double> userLocation = GeocodeController.ParseUserLocation(streetAddress);
+            Session["UserLocation"] = userLocation;
+
             //grabs the closest sensor to your address
-            List<Sensor> closestSensors = GeocodeController.ShortestToLongest(streetAddress);
+            List<Sensor> closestSensors = GeocodeController.ShortestToLongest(userLocation);
             //got all our weather info here
             List<decimal> threeClosestAQIs = new List<decimal>(); 
 
