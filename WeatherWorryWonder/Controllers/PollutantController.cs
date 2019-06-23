@@ -27,14 +27,14 @@ namespace WeatherWorryWonder.Controllers
 
             //example of what the string date looks like "2019 - 03 - 01T"            
             //take the current hour            
-            string strB = DateTime.Now.ToString("HH");
+            string currentHour = DateTime.Now.ToString("HH");
 
-            //DateTime datevalue = (Convert.ToDateTime(strB.ToString()));
+            //DateTime datevalue = (Convert.ToDateTime(currentHour.ToString()));
             //string dy = datevalue.Day.ToString();
 
 
             //take the DeLorean and go back to a date in the past
-            string currentTime = $"2019-03-20T{strB}";
+            string currentTime = $"2019-03-20T{currentHour}";
             //pulls sensor name
             string sensorLocation = s.Name;
 
@@ -42,11 +42,11 @@ namespace WeatherWorryWonder.Controllers
             //string sensorLocation = "graqm0107";
 
             //if contains graq = ost sensor
-            bool answer = (sensorLocation.Contains("graq"));
-            try
+            bool isOSTSensor = (sensorLocation.Contains("graq"));
+            try 
             {
                 List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
-                if (answer == true)
+                if (isOSTSensor == true)
                 {
                     //pulling the data based on user current time and location of sensor
                     ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
@@ -59,7 +59,7 @@ namespace WeatherWorryWonder.Controllers
                     for (int i = 0; i < mins; i++)
                     {
                         ost_data_Jan_June2019 OSTAQIdata = db.ost_data_Jan_June2019.Find(x);
-                        if (OSTAQIdata != null)
+                        if((decimal)OSTAQIdata.o3 != 0 )
                         {
                             OSTData.Add(OSTAQIdata);
                             x++;
@@ -109,7 +109,7 @@ namespace WeatherWorryWonder.Controllers
                     for (int i = 0; i < mins; i++)
                     {
                         simms_data_Jan_June2019 SimmsAQIdata = db.simms_data_Jan_June2019.Find(x);
-                        if (SimmsAQIdata != null)
+                        if ((decimal)SimmsAQIdata.o3 != 0)
                         {
                             simsData.Add(SimmsAQIdata);
                             x++;
@@ -257,13 +257,126 @@ namespace WeatherWorryWonder.Controllers
                 return PollutantPPM;
         }
 
+        List<List<decimal>> HistoricData(Sensor s, int month)
+        {
+            //0 index is numbers for one week, 1 is number for one month
+            List<decimal> oneWeekValues = new List<decimal>();
+            List<decimal> oneMonthValues = new List<decimal>();
+
+            decimal sensorData;
+
+            int Day = DateTime.Now.Day;
+            string currentHour = DateTime.Now.ToString("HH");
+            string oneMonthAgo = (month - 1).ToString();
+            string monthAgoTime = $"2019-{oneMonthAgo}-{Day}T{currentHour}";
+
+            if(s.Name.Contains("graq"))
+            {
+                for(int i = 0; i < 30; i++)
+                {
+                    if(Day > 28)
+                    {
+                        Day = 0;
+                    }
+                    //grabs the day one month ago and then increments it
+                    monthAgoTime = $"2019-{oneMonthAgo}-{Day}T{currentHour}";
+                    sensorData = PullOSTSensorData(s, 480, monthAgoTime);
+                    oneMonthValues.Add(sensorData);
+                    //when we get up to a week in the past, start adding to the week list as well
+                    if(i > 23)
+                    {
+                        oneWeekValues.Add(sensorData);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 30; i++)
+                {
+                    if (Day > 28)
+                    {
+                        Day = 0;
+                    }
+                    //grabs the day one month ago and then increments it
+                    monthAgoTime = $"2019-{oneMonthAgo}-{Day}T{currentHour}";
+                    sensorData = PullSimmsSensorData(s, 480, monthAgoTime);
+                    oneMonthValues.Add(sensorData);
+                    //when we get up to a week in the past, start adding to the week list as well
+                    if (i > 23)
+                    {
+                        oneWeekValues.Add(sensorData);
+                    }
+                }
+            }
+            List<List<decimal>> oneWeekAndMonthHistoricData = new List<List<decimal>> {oneWeekValues, oneMonthValues };
+            return oneWeekAndMonthHistoricData;
+        }
+
+        public static decimal PullOSTSensorData(Sensor s, int mins, string dateTime)
+        {
+            List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
+
+            //pulling the data based on user current time and location of sensor
+            ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
+                .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
+                .First();
+
+            //pulls row of data
+            int x = startingPoint.Id;
+            //mins are either 480 or 60
+            for (int i = 0; i < mins; i++)
+            {
+                ost_data_Jan_June2019 OSTAQIdata = db.ost_data_Jan_June2019.Find(x);
+                if ((decimal)OSTAQIdata.o3 != 0)
+                {
+                    OSTData.Add(OSTAQIdata);
+                    x++;
+                }
+                else
+                {
+                    x++;
+                }
+            }
+            decimal average = (decimal)OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)) / OSTData.Count;
+            return ConvertPPBtoPPM(average);
+        }
+
+        public static decimal PullSimmsSensorData(Sensor s, int mins, string dateTime)
+        {
+            List<simms_data_Jan_June2019> simsData = new List<simms_data_Jan_June2019>();
+            simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
+                .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
+                .First();
+
+            int x = startingPoint.Id;
+            //get 8 hr average AQI
+            for (int i = 0; i < mins; i++)
+            {
+                simms_data_Jan_June2019 SimmsAQIdata = db.simms_data_Jan_June2019.Find(x);
+                if ((decimal)SimmsAQIdata.o3 != 0)
+                {
+                    simsData.Add(SimmsAQIdata);
+                    x++;
+                }
+                else
+                {
+                    x++;
+                    continue;
+                }
+            }
+            decimal SimsDataO3sum = Convert.ToDecimal(simsData.Sum(O3 => O3.o3));
+            //average the AQI readings by dividing by number of readings
+            decimal average = SimsDataO3sum / simsData.Count;
+
+            return ConvertPPBtoPPM(average);
+        }
 
         public static List<int> EightorOneHour(decimal oneHrPollutantPPM, decimal eightHrPollutantPPM)
         {
             List<int> indexAndOneOrEight = new List<int>();
             //using 7 for testing purposes to throw an error if if/else does not work
             int oneOrEightHour = 7;
-            int num = 0;
+            int breakPoingIndex = 0;
             //EPA if ppm > .125 use 1 hr readings
             //using 8 hr reading
             if (oneHrPollutantPPM <= (decimal)0.125)
@@ -280,7 +393,7 @@ namespace WeatherWorryWonder.Controllers
                         //should we use 8 hr reading
                         oneOrEightHour = 0;
                         //take an index for the range of low and high
-                        num = i;
+                        breakPoingIndex = i;
                         break;
                     }
                 }
@@ -297,14 +410,14 @@ namespace WeatherWorryWonder.Controllers
                     if (oneHrPollutantPPM >= (decimal)low && oneHrPollutantPPM <= (decimal)high)
                     {
                         oneOrEightHour = 1;
-                        num = i;
+                        breakPoingIndex = i;
                         break;
                     }
                 }
             }
 
             //a list of 2 values; first one is breakpoint index and second one is which hr reading (8 or 1) to use 
-            indexAndOneOrEight.Add(num);
+            indexAndOneOrEight.Add(breakPoingIndex);
             indexAndOneOrEight.Add(oneOrEightHour);
             return indexAndOneOrEight;
         }
@@ -314,7 +427,7 @@ namespace WeatherWorryWonder.Controllers
         public static decimal CalculateO3AQI(decimal PollutantPPM, int index, int isEight)
         {
             // must round to 3 digits for O3 EPA standards
-            decimal Cp = Math.Round(PollutantPPM, 4);
+            decimal Cp = Math.Round(PollutantPPM, 3);
 
             // 7 = AQI standards in Pollutant Model
             decimal Ihi = (decimal)pollutants[7].High[index];

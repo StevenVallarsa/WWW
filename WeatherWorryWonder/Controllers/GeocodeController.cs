@@ -29,7 +29,7 @@ namespace WeatherWorryWonder.Controllers
             double c = 2 * Math.Atan2(Math.Sqrt(Haversine), Math.Sqrt(1 - Haversine));
             //trigonometry is fun for everyone
             double jeezFinally = earthRadius * c;
-
+            //Now we have the great circle distance between the two coordinates
             return jeezFinally;
 
         }
@@ -38,12 +38,12 @@ namespace WeatherWorryWonder.Controllers
         {
             List<Sensor> sensors = Sensor.GetSensors();
             List<Sensor> shortSensors = new List<Sensor>();
-
+            //Changes the Address to a longitude and latitude coordinate from the google geocode API
             JToken jsonAddress = GoogleMapDAL.GoogleJson(address);
 
             double addressLat = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lat"].ToString());
             double addressLng = double.Parse(jsonAddress["results"][0]["geometry"]["location"]["lng"].ToString());
-
+            //rearranges sensors from closest to furthest from the user input address
             for(int i = 0; i < Sensor.Sensors.Count; i++)
             {
                 double lat = Sensor.Sensors[i].Lat;
@@ -65,6 +65,7 @@ namespace WeatherWorryWonder.Controllers
         //finds the sensor that is closest to given lat and long and returns the object
         public static Sensor ShortestDistanceSensor(double latitude, double longitude, List<Sensor> sensors)
         {
+            //the max value that a double type can hold, used to find the next closest sensor
             double closestSensorD = double.MaxValue;
             Sensor closestSensor = new Sensor();
             List<Sensor> listSensors = Sensor.Sensors;
