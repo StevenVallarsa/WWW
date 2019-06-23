@@ -1,0 +1,314 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="WeatherWorryWonderDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012.Azure" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="EPA_GR_Data">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="Source" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Site_ID" Type="int" Nullable="false" />
+          <Property Name="POC" Type="int" Nullable="false" />
+          <Property Name="Daily_Max_8_hour_Ozone_Concentration" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="UNITS" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DAILY_AQI_VALUE" Type="int" Nullable="false" />
+          <Property Name="Site_Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DAILY_OBS_COUNT" Type="int" Nullable="false" />
+          <Property Name="PERCENT_COMPLETE" Type="int" Nullable="false" />
+          <Property Name="AQS_PARAMETER_CODE" Type="int" Nullable="false" />
+          <Property Name="AQS_PARAMETER_DESC" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="CBSA_CODE" Type="int" Nullable="false" />
+          <Property Name="CBSA_NAME" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="STATE_CODE" Type="int" Nullable="false" />
+          <Property Name="STATE" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="COUNTY_CODE" Type="int" Nullable="false" />
+          <Property Name="COUNTY" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SITE_LATITUDE" Type="float" Nullable="false" />
+          <Property Name="SITE_LONGITUDE" Type="float" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'WeatherWorryWonderDB.dbo.Factory_Pollution' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Factory_Pollution">
+          <Key>
+            <PropertyRef Name="Location" />
+            <PropertyRef Name="Latitude" />
+            <PropertyRef Name="Longitude" />
+            <PropertyRef Name="MDL_ppm" />
+          </Key>
+          <Property Name="Location" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Latitude" Type="float" Nullable="false" />
+          <Property Name="Longitude" Type="float" Nullable="false" />
+          <Property Name="ETO_ppm" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="ETO_ppbv" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="MDL_ppm" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ost_data_Jan_June2019">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="dev_id" Type="nvarchar" MaxLength="50" />
+          <Property Name="time" Type="nvarchar" MaxLength="50" />
+          <Property Name="o3" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="pm10Average" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="pm1Average" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="pm25" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="pm25Average" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="pm25Count" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="pm25Max" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="pm25Min" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="pmStatus" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="port" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="specHumid" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="specO3Average" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="specO3Count" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="specO3max" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="specO3min" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="specStatus" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="specTemp" Type="decimal" Precision="18" Scale="10" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="simms_data_Jan_June2019">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="dev_id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="time" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="co" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="humdity" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="no2" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="no2_o3" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="o3" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="pm25" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="so2" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="status" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="temperature" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="vin" Type="decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="WeatherWorryWonderDBModelStoreContainer">
+          <EntitySet Name="EPA_GR_Data" EntityType="Self.EPA_GR_Data" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ost_data_Jan_June2019" EntityType="Self.ost_data_Jan_June2019" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="simms_data_Jan_June2019" EntityType="Self.simms_data_Jan_June2019" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Factory_Pollution" EntityType="Self.Factory_Pollution" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Factory_Pollution].[Location] AS [Location], 
+    [Factory_Pollution].[Latitude] AS [Latitude], 
+    [Factory_Pollution].[Longitude] AS [Longitude], 
+    [Factory_Pollution].[ETO_ppm] AS [ETO_ppm], 
+    [Factory_Pollution].[ETO_ppbv] AS [ETO_ppbv], 
+    [Factory_Pollution].[MDL_ppm] AS [MDL_ppm]
+    FROM [dbo].[Factory_Pollution] AS [Factory_Pollution]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="WeatherWorryWonderDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="EPA_GR_Data">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Source" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Site_ID" Type="Int32" Nullable="false" />
+          <Property Name="POC" Type="Int32" Nullable="false" />
+          <Property Name="Daily_Max_8_hour_Ozone_Concentration" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="UNITS" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DAILY_AQI_VALUE" Type="Int32" Nullable="false" />
+          <Property Name="Site_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DAILY_OBS_COUNT" Type="Int32" Nullable="false" />
+          <Property Name="PERCENT_COMPLETE" Type="Int32" Nullable="false" />
+          <Property Name="AQS_PARAMETER_CODE" Type="Int32" Nullable="false" />
+          <Property Name="AQS_PARAMETER_DESC" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="CBSA_CODE" Type="Int32" Nullable="false" />
+          <Property Name="CBSA_NAME" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="STATE_CODE" Type="Int32" Nullable="false" />
+          <Property Name="STATE" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="COUNTY_CODE" Type="Int32" Nullable="false" />
+          <Property Name="COUNTY" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SITE_LATITUDE" Type="Double" Nullable="false" />
+          <Property Name="SITE_LONGITUDE" Type="Double" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="ost_data_Jan_June2019">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="dev_id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="time" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="o3" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="pm10Average" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="pm1Average" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="pm25" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="pm25Average" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="pm25Count" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="pm25Max" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="pm25Min" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="pmStatus" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="port" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="specHumid" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="specO3Average" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="specO3Count" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="specO3max" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="specO3min" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="specStatus" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="specTemp" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="simms_data_Jan_June2019">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="dev_id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="time" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="co" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="humdity" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="no2" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="no2_o3" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="o3" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="pm25" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="so2" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="status" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="temperature" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="vin" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Factory_Pollution">
+          <Key>
+            <PropertyRef Name="Location" />
+            <PropertyRef Name="Latitude" />
+            <PropertyRef Name="Longitude" />
+            <PropertyRef Name="MDL_ppm" />
+          </Key>
+          <Property Name="Location" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Latitude" Type="Double" Nullable="false" />
+          <Property Name="Longitude" Type="Double" Nullable="false" />
+          <Property Name="ETO_ppm" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="ETO_ppbv" Type="Decimal" Precision="18" Scale="10" />
+          <Property Name="MDL_ppm" Type="Decimal" Precision="18" Scale="10" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="WeatherWorryWonderDBEntities2" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="EPA_GR_Data" EntityType="Self.EPA_GR_Data" />
+          <EntitySet Name="ost_data_Jan_June2019" EntityType="Self.ost_data_Jan_June2019" />
+          <EntitySet Name="simms_data_Jan_June2019" EntityType="Self.simms_data_Jan_June2019" />
+          <EntitySet Name="Factory_Pollution" EntityType="Self.Factory_Pollution" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="WeatherWorryWonderDBModelStoreContainer" CdmEntityContainer="WeatherWorryWonderDBEntities2">
+          <EntitySetMapping Name="EPA_GR_Data">
+            <EntityTypeMapping TypeName="WeatherWorryWonderDBModel.EPA_GR_Data">
+              <MappingFragment StoreEntitySet="EPA_GR_Data">
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Source" ColumnName="Source" />
+                <ScalarProperty Name="Site_ID" ColumnName="Site_ID" />
+                <ScalarProperty Name="POC" ColumnName="POC" />
+                <ScalarProperty Name="Daily_Max_8_hour_Ozone_Concentration" ColumnName="Daily_Max_8_hour_Ozone_Concentration" />
+                <ScalarProperty Name="UNITS" ColumnName="UNITS" />
+                <ScalarProperty Name="DAILY_AQI_VALUE" ColumnName="DAILY_AQI_VALUE" />
+                <ScalarProperty Name="Site_Name" ColumnName="Site_Name" />
+                <ScalarProperty Name="DAILY_OBS_COUNT" ColumnName="DAILY_OBS_COUNT" />
+                <ScalarProperty Name="PERCENT_COMPLETE" ColumnName="PERCENT_COMPLETE" />
+                <ScalarProperty Name="AQS_PARAMETER_CODE" ColumnName="AQS_PARAMETER_CODE" />
+                <ScalarProperty Name="AQS_PARAMETER_DESC" ColumnName="AQS_PARAMETER_DESC" />
+                <ScalarProperty Name="CBSA_CODE" ColumnName="CBSA_CODE" />
+                <ScalarProperty Name="CBSA_NAME" ColumnName="CBSA_NAME" />
+                <ScalarProperty Name="STATE_CODE" ColumnName="STATE_CODE" />
+                <ScalarProperty Name="STATE" ColumnName="STATE" />
+                <ScalarProperty Name="COUNTY_CODE" ColumnName="COUNTY_CODE" />
+                <ScalarProperty Name="COUNTY" ColumnName="COUNTY" />
+                <ScalarProperty Name="SITE_LATITUDE" ColumnName="SITE_LATITUDE" />
+                <ScalarProperty Name="SITE_LONGITUDE" ColumnName="SITE_LONGITUDE" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ost_data_Jan_June2019">
+            <EntityTypeMapping TypeName="WeatherWorryWonderDBModel.ost_data_Jan_June2019">
+              <MappingFragment StoreEntitySet="ost_data_Jan_June2019">
+                <ScalarProperty Name="dev_id" ColumnName="dev_id" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="o3" ColumnName="o3" />
+                <ScalarProperty Name="pm10Average" ColumnName="pm10Average" />
+                <ScalarProperty Name="pm1Average" ColumnName="pm1Average" />
+                <ScalarProperty Name="pm25" ColumnName="pm25" />
+                <ScalarProperty Name="pm25Average" ColumnName="pm25Average" />
+                <ScalarProperty Name="pm25Count" ColumnName="pm25Count" />
+                <ScalarProperty Name="pm25Max" ColumnName="pm25Max" />
+                <ScalarProperty Name="pm25Min" ColumnName="pm25Min" />
+                <ScalarProperty Name="pmStatus" ColumnName="pmStatus" />
+                <ScalarProperty Name="port" ColumnName="port" />
+                <ScalarProperty Name="specHumid" ColumnName="specHumid" />
+                <ScalarProperty Name="specO3Average" ColumnName="specO3Average" />
+                <ScalarProperty Name="specO3Count" ColumnName="specO3Count" />
+                <ScalarProperty Name="specO3max" ColumnName="specO3max" />
+                <ScalarProperty Name="specO3min" ColumnName="specO3min" />
+                <ScalarProperty Name="specStatus" ColumnName="specStatus" />
+                <ScalarProperty Name="specTemp" ColumnName="specTemp" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="simms_data_Jan_June2019">
+            <EntityTypeMapping TypeName="WeatherWorryWonderDBModel.simms_data_Jan_June2019">
+              <MappingFragment StoreEntitySet="simms_data_Jan_June2019">
+                <ScalarProperty Name="dev_id" ColumnName="dev_id" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="co" ColumnName="co" />
+                <ScalarProperty Name="humdity" ColumnName="humdity" />
+                <ScalarProperty Name="no2" ColumnName="no2" />
+                <ScalarProperty Name="no2_o3" ColumnName="no2_o3" />
+                <ScalarProperty Name="o3" ColumnName="o3" />
+                <ScalarProperty Name="pm25" ColumnName="pm25" />
+                <ScalarProperty Name="so2" ColumnName="so2" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="temperature" ColumnName="temperature" />
+                <ScalarProperty Name="vin" ColumnName="vin" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Factory_Pollution">
+            <EntityTypeMapping TypeName="WeatherWorryWonderDBModel.Factory_Pollution">
+              <MappingFragment StoreEntitySet="Factory_Pollution">
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="ETO_ppm" ColumnName="ETO_ppm" />
+                <ScalarProperty Name="ETO_ppbv" ColumnName="ETO_ppbv" />
+                <ScalarProperty Name="MDL_ppm" ColumnName="MDL_ppm" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
