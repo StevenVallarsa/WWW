@@ -14,13 +14,15 @@ namespace WeatherWorryWonder.Controllers
     {
         public static WeatherWorryWonderDBEntities db = new WeatherWorryWonderDBEntities();
         public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
-        public static List<decimal> MorePollutantDataReading = new List<decimal>();
+        public static List<decimal> MorePollutantDataReading = new List<decimal>();       //storing sensor readings in this list
+        public static List<decimal> PollutantAQIs = new List<int>();                          //storing all pollutant aqis in this list
 
         //Depending on the sensor and user time
         //OST an SIMMS are in seperate database tables therefore we need to know which table to pull using an if/else statement
         public static List<decimal> PollutantDataReading(Sensor s, int mins)
         {
             List<decimal> MorePollutantDataReading = new List<decimal>();
+
 
 
             //example of what the string date looks like "2019 - 03 - 01T"            
@@ -73,6 +75,7 @@ namespace WeatherWorryWonder.Controllers
                     // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
                     decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)));
 
+                    //This next line should be removed b/c PM25 needs to have a 24 hour reading
                     decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
 
                     decimal OSTO3Average = OSTDataO3sum / OSTData.Count;
@@ -166,16 +169,9 @@ namespace WeatherWorryWonder.Controllers
         }
         //-------------------------------------------------------------------------------------------------- Callista added 6/22/19
 
-
-        //create new method to cycle through list, calculate the AQI for each pollutant, make a new list for AQI calculations
-
-        public static List<decimal> CalculatePM25AQIs(Sensor s, int mins)  //PM25 needs a 24 hour reading so I think it needs its own method
+        public static List<decimal> CalculatePM25SensorReading(Sensor s, int mins)  //PM25 needs a 24 hour reading 
         {
             List<decimal> PMDataToConvertToAQI = new List<decimal>();
-
-            //pull sensor reading for 24 hours for PM25 and average it
-            //if sensor time contains certain date, then pull it
-            //then do EPA calculations
 
             string oneDay = DateTime.Now.ToString("DD");
             //DateTime datevalue = (Convert.ToDateTime(oneDay.ToString()));
@@ -243,44 +239,9 @@ namespace WeatherWorryWonder.Controllers
             return PMDataToConvertToAQI;
         }
 
-        public static List<double> CalculatePM25BreakPoint(double low, double high)
-        {
-            List<double> PM25BreakPoint = new List<double>();
+       
 
-            for (int i = 0; i < 7; i++)
-            {
-                low = pollutants[4].Low[i];
-                high = pollutants[4].High[i];
-
-                PM25BreakPoint.Add(low);
-                PM25BreakPoint.Add(high);
-            }
-            return PM25BreakPoint;
-        }
-
-        // for AQI equation from EPA for PM25
-
-        public static decimal CalculatePM25AQI(decimal PollutantPPM, int index, List<double> PM25BreakPoint)
-        {
-            //this method needs to be refactored because it's not the correct equation to find PM25's AQI
-
-            // must round to 3 digits for O3 EPA standards
-            decimal Cp = Math.Round(PollutantPPM, 4);
-
-            // 7 = AQI standards in Pollutant Model
-            decimal Ihi = (decimal)pollutants[7].High[index];
-            decimal Ilo = (decimal)pollutants[7].Low[index];
-
-            // index = breakpoint found from OneOrEight method
-            decimal BPhi = (decimal)pollutants[4].High[index];
-            decimal BPlow = (decimal)pollutants[4].Low[index];
-
-            //calculate using 8 hr Ozone
-            decimal AQIForPM25Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
-            return AQIForPM25Pollutant;
-        }
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------------------------------------------------------------------------
         public static decimal ConvertPPBtoPPM(decimal PollutantPPB)
         {
                 //1 ppm = 1000 ppb
@@ -358,9 +319,94 @@ namespace WeatherWorryWonder.Controllers
 
             //calculate using 8 hr Ozone
             decimal AQIForO3Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+
+            PollutantAQIs.Add(AQIForO3Pollutant);              //added O3 to PollutantAQI list
             return AQIForO3Pollutant;
         }
+        //---------------------------------------------------------------------------------------------- Callista added 6/23/19
 
+        public static decimal CalculatePM25AQI(decimal PollutantPPM, int index)
+        {
+
+            // must round to 3 digits for O3 EPA standards
+            decimal Cp = Math.Round(PollutantPPM, 4);
+
+            // 7 = AQI standards in Pollutant Model
+            decimal Ihi = (decimal)pollutants[7].High[index];
+            decimal Ilo = (decimal)pollutants[7].Low[index];
+
+            // index = breakpoint found from OneOrEight method
+            decimal BPhi = (decimal)pollutants[4].High[index];
+            decimal BPlow = (decimal)pollutants[4].Low[index];
+
+
+            decimal AQIForPM25Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+            PollutantAQIs.Add(AQIForPM25Pollutant);       //adding PM25 to AQI List
+
+            return AQIForPM25Pollutant;
+        }
+
+        public static decimal CalculateCOAQI(decimal PollutantPPM, int index)
+        {
+            // must round to 3 digits for O3 EPA standards
+            decimal Cp = Math.Round(PollutantPPM, 4);
+
+            // 7 = AQI standards in Pollutant Model
+            decimal Ihi = (decimal)pollutants[7].High[index];
+            decimal Ilo = (decimal)pollutants[7].Low[index];
+
+            // index = breakpoint found from OneOrEight method
+            decimal BPhi = (decimal)pollutants[6].High[index];
+            decimal BPlow = (decimal)pollutants[6].Low[index];
+
+            decimal AQIForCOPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+            PollutantAQIs.Add(AQIForCOPollutant);       //adding PM25 to AQI List
+
+            return AQIForCOPollutant;
+        }
+
+        public static decimal CalculateSO2AQI(decimal PollutantPPM, int index)
+        {
+            // must round to 3 digits for O3 EPA standards
+            decimal Cp = Math.Round(PollutantPPM, 4);
+
+            // 7 = AQI standards in Pollutant Model
+            decimal Ihi = (decimal)pollutants[7].High[index];
+            decimal Ilo = (decimal)pollutants[7].Low[index];
+
+            // index = breakpoint found from OneOrEight method
+            decimal BPhi = (decimal)pollutants[6].High[index];
+            decimal BPlow = (decimal)pollutants[6].Low[index];
+
+            decimal AQIForSO2Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+            PollutantAQIs.Add(AQIForSO2Pollutant);       //adding PM25 to AQI List
+
+            return AQIForSO2Pollutant;
+        
+        }
+
+        public static decimal CalculateNO2AQI(decimal PollutantPPM, int index)
+        {
+            // must round to 3 digits for O3 EPA standards
+            decimal Cp = Math.Round(PollutantPPM, 4);
+
+            // 7 = AQI standards in Pollutant Model
+            decimal Ihi = (decimal)pollutants[7].High[index];
+            decimal Ilo = (decimal)pollutants[7].Low[index];
+
+            // index = breakpoint found from OneOrEight method
+            decimal BPhi = (decimal)pollutants[6].High[index];
+            decimal BPlow = (decimal)pollutants[6].Low[index];
+
+            decimal AQIForNO2Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+            PollutantAQIs.Add(AQIForNO2Pollutant);       //adding PM25 to AQI List
+
+            return AQIForNO2Pollutant;
+        }
+
+        //create new method to cycle through PollutantAQIlist, then find highest AQI out of all the pollutants 
+
+        //----------------------------------------------------------------------------------------------------------------------------------------------------
         // converts to UG/M3
         public static decimal ConvertToUGM3(decimal PPM)
         {
