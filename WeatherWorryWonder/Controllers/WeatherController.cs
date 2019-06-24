@@ -38,15 +38,15 @@ namespace WeatherWorryWonder.Controllers
         //index 1 = next day forecast 24 hrs
         //index 2 = 3 day
         //index 3 = 5 day
-        public static decimal WeatherForecastEquation(List<WeatherDataFromAPI> weatherTime, int index, decimal eightHourO3)
+        public static float WeatherForecastEquation(List<WeatherDataFromAPI> weatherTime, int index, float eightHourO3)
         {
             //double O3 = (double)Session["O3"];
 
             // double O3 = (double)Session["O3"]
             // eightHourO3 is used because 8h readings are required for the equation
             // input & output of this equation is UG/M3
-            decimal FutureAQI1Day = (decimal)(5.3 * weatherTime[index].WindSpeed) + (decimal)(0.4 * weatherTime[index].TemperatureC) + 
-                (decimal)(0.1 * weatherTime[index].Humidity) + ((decimal)0.7 * eightHourO3);
+            float FutureAQI1Day = (float)(5.3 * weatherTime[index].WindSpeed) + (float)(0.4 * weatherTime[index].TemperatureC) + 
+                (float)(0.1 * weatherTime[index].Humidity) + ((float)0.7 * eightHourO3);
 
             return FutureAQI1Day;
         }

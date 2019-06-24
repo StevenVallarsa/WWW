@@ -12,13 +12,12 @@ namespace WeatherWorryWonder.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Factory_Pollution
+    public partial class Factory_Pollutant_Final
     {
+        public string Div_Id { get; set; }
         public string Location { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public Nullable<decimal> ETO_ppm { get; set; }
-        public Nullable<decimal> ETO_ppbv { get; set; }
-        public decimal MDL_ppm { get; set; }
+        public double EtO_ugm3 { get; set; }
     }
 }

@@ -11,13 +11,13 @@ namespace WeatherWorryWonder.Controllers
 {
     public class HomeController : Controller
     {
-        WeatherWorryWonderDBEntities db = new WeatherWorryWonderDBEntities();
+        WWWEntities db = new WWWEntities();
 
         public ActionResult Index()
         {
             //JToken weather = WeatherAPIDAL.Json();
             
-            //decimal whatever = PollutantController.CalculateAQI((decimal)0.0, (decimal)0.088);
+            //float whatever = PollutantController.CalculateAQI((float)0.0, (float)0.088);
 
             //WeatherDataFromAPI wd = new WeatherDataFromAPI(weather);
 
@@ -42,9 +42,9 @@ namespace WeatherWorryWonder.Controllers
 
             //index zero = index of model pollutant and index one = whether we use one or eight hour
             List<WeatherDataFromAPI> weather = WeatherController.WeatherData();
-            decimal AQIForO3 = 0;
-            decimal UGM3 = 0;
-            decimal futureAQIForO3 = 0;
+            float AQIForO3 = 0;
+            float UGM3 = 0;
+            float futureAQIForO3 = 0;
 
             ResultView rv = new ResultView();
 
@@ -55,11 +55,11 @@ namespace WeatherWorryWonder.Controllers
             //grabs the closest sensor to your address
             List<Sensor> closestSensors = GeocodeController.ShortestToLongest(userLocation);
             //got all our weather info here
-            List<decimal> threeClosestAQIs = new List<decimal>(); 
+            List<float> threeClosestAQIs = new List<float>(); 
 
-            List<decimal> ForecastedAQI = new List<decimal>();
+            List<float> ForecastedAQI = new List<float>();
 
-            List<decimal> PollutantAQIs = new List<decimal>();
+            List<float> PollutantAQIs = new List<float>();
 
             //skips sensor if data is unreliable
             for (int i = 0; i < closestSensors.Count; i++)
@@ -75,13 +75,13 @@ namespace WeatherWorryWonder.Controllers
                 }
 
                 //get sensor readings from OST and SIMMS
-                decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480)[0];
-                decimal oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60)[0];
+                float eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480)[0];
+                float oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60)[0];
                 //if((eightHrPollutantPPM != null || oneHrPollutantPPM != null) && (eightHrPollutantPPM < 5 && oneHrPollutantPPM)
                 //index zero = index of model pollutant and index one = whether we use one or eight hour
                 List<int> indexAndOneorEight = PollutantController.EightorOneHour(oneHrPollutantPPM, eightHrPollutantPPM);
 
-                if (oneHrPollutantPPM > (decimal)0.125)
+                if (oneHrPollutantPPM > (float)0.125)
                 {
                     // using 1h reading
                     AQIForO3 = PollutantController.CalculateO3AQI(oneHrPollutantPPM, indexAndOneorEight[0], indexAndOneorEight[1]);
@@ -108,16 +108,16 @@ namespace WeatherWorryWonder.Controllers
                         for (int j = 0; j < 4; j++)
                         {
                             // using weather data to forecast tomorrow's AQI (index 1 = 24h)
-                            decimal futureWeatherForO3 = WeatherController.WeatherForecastEquation(weather, j, UGM3);
+                            float futureWeatherForO3 = WeatherController.WeatherForecastEquation(weather, j, UGM3);
                             // convert from UG/M3 to PPM 
-                            decimal futureAQIO3PPM = PollutantController.UGM3ConvertToPPM(futureWeatherForO3);
+                            float futureAQIO3PPM = PollutantController.UGM3ConvertToPPM(futureWeatherForO3);
                             int EPABreakpointIndex = PollutantController.EPABreakpointTable(futureAQIO3PPM);
-                            decimal FutureAQIForO3 = PollutantController.CalculateO3AQI(futureAQIO3PPM, EPABreakpointIndex, indexAndOneorEight[0]);
+                            float FutureAQIForO3 = PollutantController.CalculateO3AQI(futureAQIO3PPM, EPABreakpointIndex, indexAndOneorEight[0]);
                             // add future AQIs to list
                             ForecastedAQI.Add(FutureAQIForO3);
 
                         }
-                        decimal c2H4O = PollutantController.ShortestDistancePollutantSensor(userLocation);
+                        float c2H4O = PollutantController.ShortestDistancePollutantSensor(userLocation);
                         rv.PollutantWarning = PollutantController.PollutantWarning(c2H4O);
                         rv.C2H4OPPM = c2H4O;
 
@@ -128,9 +128,15 @@ namespace WeatherWorryWonder.Controllers
                         }
                         else
                         {
-                            rv.PM25AQI = PollutantAQIs[4]; 
+
+                            //MorePollutantDataReading.Add(SimsO3Average);   //index[0]
+                            //MorePollutantDataReading.Add(SimsCOToAverage);   //index[1]
+                            //MorePollutantDataReading.Add(SimsNO2Average);     //index[2]
+                            //MorePollutantDataReading.Add(SimsPM25Average);      //index[3]
+                            //MorePollutantDataReading.Add(SimsSO2Average);      //index[4]
+                            rv.PM25AQI = PollutantAQIs[3]; 
                             rv.NO2AQI = PollutantAQIs[2];
-                            rv.SO2AQI = PollutantAQIs[5];
+                            rv.SO2AQI = PollutantAQIs[4];
                             rv.CO = PollutantAQIs[1];
                         }
                     }
@@ -149,9 +155,9 @@ namespace WeatherWorryWonder.Controllers
             rv.PredictedAQI5Day = ForecastedAQI[3];
             rv.Weather = weather;
 
-            decimal EPAAQI = PollutantController.EPAAQIData();
+            float EPAAQI = PollutantController.EPAAQIData();
             int breakpointIndex = PollutantController.EPABreakpointTable(EPAAQI);
-            decimal AQIForEPA = PollutantController.CalculateEPA(EPAAQI, breakpointIndex);
+            float AQIForEPA = PollutantController.CalculateEPA(EPAAQI, breakpointIndex);
 
             Recommendations(AQIForO3);
             Recommendations(futureAQIForO3);
@@ -165,7 +171,7 @@ namespace WeatherWorryWonder.Controllers
 
 
         // being called from AQI ActionResult and stored in ViewBags to call along to view
-        public void Recommendations(decimal reading)
+        public void Recommendations(float reading)
         {
             if (reading >= 0 && reading < 51)
             {

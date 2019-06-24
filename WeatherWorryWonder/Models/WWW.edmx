@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="WWWModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="EPAGRDataFinal">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="Daily_Max_8_hour_Ozone_Concentration" Type="float" Nullable="false" />
+          <Property Name="UNITS" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="DAILY_AQI_VALUE" Type="tinyint" Nullable="false" />
+          <Property Name="Site_Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SITE_LATITUDE" Type="float" Nullable="false" />
+          <Property Name="SITE_LONGITUDE" Type="float" Nullable="false" />
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'WWW.dbo.Factory Pollutant Final' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Factory Pollutant Final">
+          <Key>
+            <PropertyRef Name="Div_Id" />
+            <PropertyRef Name="Location" />
+            <PropertyRef Name="Latitude" />
+            <PropertyRef Name="Longitude" />
+            <PropertyRef Name="EtO_ugm3" />
+          </Key>
+          <Property Name="Div_Id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Location" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Latitude" Type="float" Nullable="false" />
+          <Property Name="Longitude" Type="float" Nullable="false" />
+          <Property Name="EtO_ugm3" Type="float" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Ost_Data_Feb_Apr_Final">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="dev_id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Date" Type="date" Nullable="false" />
+          <Property Name="DateTime" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="o3" Type="float" Nullable="false" />
+          <Property Name="pm25" Type="float" Nullable="false" />
+          <Property Name="pm25Count" Type="float" Nullable="false" />
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="simms_Data_Feb_Apr_Final">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="dev_id" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="date" Type="date" Nullable="false" />
+          <Property Name="time" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="co" Type="float" Nullable="false" />
+          <Property Name="no2" Type="float" Nullable="false" />
+          <Property Name="o3" Type="float" Nullable="false" />
+          <Property Name="pm25" Type="float" Nullable="false" />
+          <Property Name="so2" Type="float" Nullable="false" />
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="WWWModelStoreContainer">
+          <EntitySet Name="EPAGRDataFinal" EntityType="Self.EPAGRDataFinal" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Ost_Data_Feb_Apr_Final" EntityType="Self.Ost_Data_Feb_Apr_Final" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="simms_Data_Feb_Apr_Final" EntityType="Self.simms_Data_Feb_Apr_Final" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Factory Pollutant Final" EntityType="Self.Factory Pollutant Final" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Factory Pollutant Final].[Div_Id] AS [Div_Id], 
+    [Factory Pollutant Final].[Location] AS [Location], 
+    [Factory Pollutant Final].[Latitude] AS [Latitude], 
+    [Factory Pollutant Final].[Longitude] AS [Longitude], 
+    [Factory Pollutant Final].[EtO_ugm3] AS [EtO_ugm3]
+    FROM [dbo].[Factory Pollutant Final] AS [Factory Pollutant Final]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="WWWModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="EPAGRDataFinal">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Daily_Max_8_hour_Ozone_Concentration" Type="Double" Nullable="false" />
+          <Property Name="UNITS" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DAILY_AQI_VALUE" Type="Byte" Nullable="false" />
+          <Property Name="Site_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SITE_LATITUDE" Type="Double" Nullable="false" />
+          <Property Name="SITE_LONGITUDE" Type="Double" Nullable="false" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Ost_Data_Feb_Apr_Final">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="dev_id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="DateTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="o3" Type="Double" Nullable="false" />
+          <Property Name="pm25" Type="Double" Nullable="false" />
+          <Property Name="pm25Count" Type="Double" Nullable="false" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="simms_Data_Feb_Apr_Final">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="dev_id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="time" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="co" Type="Double" Nullable="false" />
+          <Property Name="no2" Type="Double" Nullable="false" />
+          <Property Name="o3" Type="Double" Nullable="false" />
+          <Property Name="pm25" Type="Double" Nullable="false" />
+          <Property Name="so2" Type="Double" Nullable="false" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Factory_Pollutant_Final">
+          <Key>
+            <PropertyRef Name="Div_Id" />
+            <PropertyRef Name="Location" />
+            <PropertyRef Name="Latitude" />
+            <PropertyRef Name="Longitude" />
+            <PropertyRef Name="EtO_ugm3" />
+          </Key>
+          <Property Name="Div_Id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Location" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Latitude" Type="Double" Nullable="false" />
+          <Property Name="Longitude" Type="Double" Nullable="false" />
+          <Property Name="EtO_ugm3" Type="Double" Nullable="false" />
+        </EntityType>
+        <EntityContainer Name="WWWEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="EPAGRDataFinals" EntityType="Self.EPAGRDataFinal" />
+          <EntitySet Name="Ost_Data_Feb_Apr_Final" EntityType="Self.Ost_Data_Feb_Apr_Final" />
+          <EntitySet Name="simms_Data_Feb_Apr_Final" EntityType="Self.simms_Data_Feb_Apr_Final" />
+          <EntitySet Name="Factory_Pollutant_Finals" EntityType="Self.Factory_Pollutant_Final" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="WWWModelStoreContainer" CdmEntityContainer="WWWEntities">
+          <EntitySetMapping Name="EPAGRDataFinals">
+            <EntityTypeMapping TypeName="WWWModel.EPAGRDataFinal">
+              <MappingFragment StoreEntitySet="EPAGRDataFinal">
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Daily_Max_8_hour_Ozone_Concentration" ColumnName="Daily_Max_8_hour_Ozone_Concentration" />
+                <ScalarProperty Name="UNITS" ColumnName="UNITS" />
+                <ScalarProperty Name="DAILY_AQI_VALUE" ColumnName="DAILY_AQI_VALUE" />
+                <ScalarProperty Name="Site_Name" ColumnName="Site_Name" />
+                <ScalarProperty Name="SITE_LATITUDE" ColumnName="SITE_LATITUDE" />
+                <ScalarProperty Name="SITE_LONGITUDE" ColumnName="SITE_LONGITUDE" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Ost_Data_Feb_Apr_Final">
+            <EntityTypeMapping TypeName="WWWModel.Ost_Data_Feb_Apr_Final">
+              <MappingFragment StoreEntitySet="Ost_Data_Feb_Apr_Final">
+                <ScalarProperty Name="dev_id" ColumnName="dev_id" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="o3" ColumnName="o3" />
+                <ScalarProperty Name="pm25" ColumnName="pm25" />
+                <ScalarProperty Name="pm25Count" ColumnName="pm25Count" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="simms_Data_Feb_Apr_Final">
+            <EntityTypeMapping TypeName="WWWModel.simms_Data_Feb_Apr_Final">
+              <MappingFragment StoreEntitySet="simms_Data_Feb_Apr_Final">
+                <ScalarProperty Name="dev_id" ColumnName="dev_id" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="co" ColumnName="co" />
+                <ScalarProperty Name="no2" ColumnName="no2" />
+                <ScalarProperty Name="o3" ColumnName="o3" />
+                <ScalarProperty Name="pm25" ColumnName="pm25" />
+                <ScalarProperty Name="so2" ColumnName="so2" />
+                <ScalarProperty Name="id" ColumnName="id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Factory_Pollutant_Finals">
+            <EntityTypeMapping TypeName="WWWModel.Factory_Pollutant_Final">
+              <MappingFragment StoreEntitySet="Factory Pollutant Final">
+                <ScalarProperty Name="Div_Id" ColumnName="Div_Id" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="EtO_ugm3" ColumnName="EtO_ugm3" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
