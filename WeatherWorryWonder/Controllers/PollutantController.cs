@@ -48,26 +48,27 @@ namespace WeatherWorryWonder.Controllers
                 {
                     //pulling the data based on user current time and location of sensor
                     Ost_Data_Feb_Apr_Final startingPoint = db.Ost_Data_Feb_Apr_Final
-                        .Where(ut => ut.DateTime.Contains(currentTime) && ut.dev_id == sensorLocation)
-                        .First();
+                    .Where(ut => ut.DateTime.Contains(currentTime) && ut.dev_id == s.Name)
+                    .First();
 
                     //pulls row of data
                     int x = startingPoint.id;
+                    OSTData = db.Ost_Data_Feb_Apr_Final.Where(o3 => o3.id == x).Take(mins).ToList();
                     //mins are either 480 or 60
-                    for (int i = 0; i < mins; i++)
-                    {
-                        Ost_Data_Feb_Apr_Final OSTAQIdata = db.Ost_Data_Feb_Apr_Final.Find(x);
-                        if((float)OSTAQIdata.o3 != 0 )
-                        {
-                            OSTData.Add(OSTAQIdata);
-                            x++;
-                        }
-                        else
-                        {
-                            x++;
-                            continue;
-                        }
-                    }
+                    //for (int i = 0; i < mins; i++)
+                    //{
+                    //    Ost_Data_Feb_Apr_Final OSTAQIdata = db.Ost_Data_Feb_Apr_Final.Find(x);
+                    //    if((float)OSTAQIdata.o3 != 0 )
+                    //    {
+                    //        OSTData.Add(OSTAQIdata);
+                    //        x++;
+                    //    }
+                    //    else
+                    //    {
+                    //        x++;
+                    //        continue;
+                    //    }
+                    //}
 
                     //sum all the O3(ozone) AQI readings from the list
                     // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
@@ -265,30 +266,30 @@ namespace WeatherWorryWonder.Controllers
             //pulling the data based on user current time and location of sensor
             try
             {
-                Ost_Data_Feb_Apr_Final startingPoint = db.Ost_Data_Feb_Apr_Final
+                OSTData = db.Ost_Data_Feb_Apr_Final
                     .Where(ut => ut.DateTime.Contains(dateTime) && ut.dev_id == s.Name)
-                    .First();
+                    .Take(mins).ToList();
                 //pulls row of data
-                x = startingPoint.id;
+                //x = startingPoint.id;
                 //mins are either 480 or 60
             }
             catch
             {
                 return 0;
             }
-            for (int i = 0; i < mins; i++)
-            {
-                Ost_Data_Feb_Apr_Final OSTAQIdata = db.Ost_Data_Feb_Apr_Final.Find(x);
-                if ((float)OSTAQIdata.o3 != 0)
-                {
-                    OSTData.Add(OSTAQIdata);
-                    x++;
-                }
-                else
-                {
-                    x++;
-                }
-            }
+            //for (int i = 0; i < mins; i++)
+            //{
+            //    Ost_Data_Feb_Apr_Final OSTAQIdata = db.Ost_Data_Feb_Apr_Final.Find(x);
+            //    if ((float)OSTAQIdata.o3 != 0)
+            //    {
+            //        OSTData.Add(OSTAQIdata);
+            //        x++;
+            //    }
+            //    else
+            //    {
+            //        x++;
+            //    }
+            //}
             float average = (float)OSTData.Sum(O3 => (O3.o3) / OSTData.Count) * (float)0.509;
             return ConvertPPBtoPPM(average);
         }

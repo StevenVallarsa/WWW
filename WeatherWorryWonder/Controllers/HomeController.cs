@@ -55,7 +55,7 @@ namespace WeatherWorryWonder.Controllers
             //grabs the closest sensor to your address
             List<Sensor> closestSensors = GeocodeController.ShortestToLongest(userLocation);
             //got all our weather info here
-            List<float> threeClosestAQIs = new List<float>(); 
+            List<float> twoClosestAQIs = new List<float>(); 
 
             List<float> ForecastedAQI = new List<float>();
 
@@ -64,7 +64,7 @@ namespace WeatherWorryWonder.Controllers
             //skips sensor if data is unreliable
             for (int i = 0; i < closestSensors.Count; i++)
             {
-                if(threeClosestAQIs.Count == 3)
+                if(twoClosestAQIs.Count == 2)
                 {
                     break;
                 }
@@ -100,8 +100,8 @@ namespace WeatherWorryWonder.Controllers
                 //if O3AQI is less than 5, it's bad data
                 if (AQIForO3 > 5)
                 {
-                    threeClosestAQIs.Add(AQIForO3);
-                    if(threeClosestAQIs.Count < 2)
+                    twoClosestAQIs.Add(AQIForO3);
+                    if(twoClosestAQIs.Count < 2)
                     {
                         rv.SensorName = closestSensor.CrossStreet;
                         UGM3 = PollutantController.ConvertToUGM3(eightHrPollutantPPM);
@@ -147,9 +147,9 @@ namespace WeatherWorryWonder.Controllers
 
             //pull list out and attach it to rv
          
-            rv.O3AQI = threeClosestAQIs[0];
-            rv.Second03AQI = threeClosestAQIs[1];
-            rv.Third03AQI = threeClosestAQIs[2];
+            rv.O3AQI = twoClosestAQIs[0];
+            rv.Second03AQI = twoClosestAQIs[1];
+            rv.Third03AQI = twoClosestAQIs[2];
             rv.PredictedAQITomorrow = ForecastedAQI[1];
             rv.PredictedAQI3Day = ForecastedAQI[2];
             rv.PredictedAQI5Day = ForecastedAQI[3];
