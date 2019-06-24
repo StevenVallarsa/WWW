@@ -2,8 +2,40 @@
     margin: 0px;
 }
 
+
+.main {
+    display: grid;
+    grid-template-rows: 200px 200px 200px 200px
+    grid-template-columns:  1fr 1fr 1fr 1fr;
+    grid-template-areas: "AQI AQI map map" 
+                        "recommend recommend map map"
+                        "weather weather future future"
+                        "VOC VOC other other";
+}
+
 #map {
-    height: 400px;
-    width: 600px;
+    grid-area: map;
+    height: 300px;
+    width: 400px;
     margin: auto;
+}
+
+.AQI {
+    grid-area: AQI;
+}
+
+.futureAQI {
+    grid-area: future;
+}
+
+.otherPollutants {
+    grid-area: other;
+}
+
+.recommendations {
+    grid-area: recommend;
+}
+
+.VOC {
+    grid-area: VOC;
 }

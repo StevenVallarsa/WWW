@@ -45,16 +45,9 @@ namespace WeatherWorryWonder.Models
 
             for(int i = 0; i < addressArr.Length; i++)
             {
-                if (i == addressArr.Length - 1)
-                {
-                    googleAddress += addressArr[i] + ",";
-                }
-                else
-                {
-                    googleAddress += addressArr[i] + "+";
-                }
+                googleAddress += addressArr[i] + "+";
             }
-            googleAddress += "+Grand+Rapids,+MI";
+            googleAddress += ",+Grand+Rapids,+MI";
 
             return googleAddress;
         }

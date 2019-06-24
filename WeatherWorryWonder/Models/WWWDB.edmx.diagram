@@ -8,7 +8,7 @@
         <EntityTypeShape EntityType="WeatherWorryWonderDBModel.EPA_GR_Data" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="WeatherWorryWonderDBModel.ost_data_Jan_June2019" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="WeatherWorryWonderDBModel.simms_data_Jan_June2019" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="WeatherWorryWonderDBModel.Factory_Pollution" Width="1.5" PointX="4.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WeatherWorryWonderDBModel.Factory_Pollution" Width="1.5" PointX="6.625" PointY="0.75" IsExpanded="true" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

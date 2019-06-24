@@ -15,7 +15,7 @@ namespace WeatherWorryWonder.Controllers
 
         public ActionResult Index()
         {
-            JToken weather = WeatherAPIDAL.Json();
+            //JToken weather = WeatherAPIDAL.Json();
             
             //decimal whatever = PollutantController.CalculateAQI((decimal)0.0, (decimal)0.088);
 
@@ -215,11 +215,10 @@ namespace WeatherWorryWonder.Controllers
         }
 
         // used for 
-        //public ActionResult ProcessAddress(string streetAddress)
-        //{
-        //    List<Sensor> sensors = GeocodeController.ShortestToLongest(streetAddress);
-        //    return View(sensors);
-        //}
+        public ActionResult ProcessAddress()
+        {
+            return View();
+        }
 
 
         public ActionResult OzoneReductionTips(string option)   //Callista

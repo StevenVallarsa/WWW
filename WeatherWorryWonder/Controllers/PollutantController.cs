@@ -71,10 +71,10 @@ namespace WeatherWorryWonder.Controllers
 
                     //sum all the O3(ozone) AQI readings from the list
                     // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
-                    decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)));
+                    decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3) * (decimal)0.509));
 
                     //This next line should be removed b/c PM25 needs to have a 24 hour reading
-                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
+                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 ) * (decimal)148.17));   //PM25 weighs a lot more than O3 BTW
 
                     decimal OSTO3Average = OSTDataO3sum / OSTData.Count;
                     //average the AQI readings by dividing by number of readings
@@ -224,7 +224,7 @@ namespace WeatherWorryWonder.Controllers
                         }
                     }
 
-                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
+                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25)) * (decimal)148.17);   //PM25 weighs a lot more than O3 BTW
 
 
                     //average the AQI readings by dividing by number of readings
@@ -257,7 +257,7 @@ namespace WeatherWorryWonder.Controllers
                 return PollutantPPM;
         }
 
-        List<List<decimal>> HistoricData(Sensor s, int month)
+        public static List<List<decimal>> HistoricData(Sensor s, int month)
         {
             //0 index is numbers for one week, 1 is number for one month
             List<decimal> oneWeekValues = new List<decimal>();
@@ -268,8 +268,10 @@ namespace WeatherWorryWonder.Controllers
             int Day = DateTime.Now.Day;
             string currentHour = DateTime.Now.ToString("HH");
             string oneMonthAgo = (month - 1).ToString();
-            string monthAgoTime = $"2019-{oneMonthAgo}-{Day}T{currentHour}";
-
+            if(oneMonthAgo.Length == 1)
+            {
+                oneMonthAgo = "0" + oneMonthAgo;
+            }
             if(s.Name.Contains("graq"))
             {
                 for(int i = 0; i < 30; i++)
@@ -285,14 +287,15 @@ namespace WeatherWorryWonder.Controllers
                         sDay = "0" + Day;
                     }
 
-                    monthAgoTime = $"2019-{oneMonthAgo}-{sDay}T{currentHour}";
-                    sensorData = PullOSTSensorData(s, 480, monthAgoTime);
+                    string monthAgoTime = $"2019-{oneMonthAgo}-{sDay}T{currentHour}";
+                    sensorData = PullOSTSensorData(s, 20, monthAgoTime);
                     oneMonthValues.Add(sensorData);
                     //when we get up to a week in the past, start adding to the week list as well
                     if(i > 23)
                     {
                         oneWeekValues.Add(sensorData);
                     }
+                    Day++;
                 }
             }
             else
@@ -303,15 +306,21 @@ namespace WeatherWorryWonder.Controllers
                     {
                         Day = 1;
                     }
+                    string sDay = Day.ToString();
+                    if (sDay.Length == 1)
+                    {
+                        sDay = "0" + Day;
+                    }
                     //grabs the day one month ago and then increments it
-                    monthAgoTime = $"2019-{oneMonthAgo}-{Day}T{currentHour}";
-                    sensorData = PullSimmsSensorData(s, 480, monthAgoTime);
+                    string monthAgoTime = $"2019-{oneMonthAgo}-{sDay}T{currentHour}";
+                    sensorData = PullSimmsSensorData(s, 20, monthAgoTime);
                     oneMonthValues.Add(sensorData);
                     //when we get up to a week in the past, start adding to the week list as well
                     if (i > 23)
                     {
                         oneWeekValues.Add(sensorData);
                     }
+                    Day++;
                 }
             }
             List<List<decimal>> oneWeekAndMonthHistoricData = new List<List<decimal>> {oneWeekValues, oneMonthValues };
@@ -343,7 +352,7 @@ namespace WeatherWorryWonder.Controllers
                     x++;
                 }
             }
-            decimal average = (decimal)OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)) / OSTData.Count;
+            decimal average = (decimal)OSTData.Sum(O3 => (O3.o3) / OSTData.Count) * (decimal)0.509;
             return ConvertPPBtoPPM(average);
         }
 
