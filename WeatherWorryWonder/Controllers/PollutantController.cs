@@ -265,8 +265,8 @@ namespace WeatherWorryWonder.Controllers
 
             decimal sensorData;
 
-            int Day = DateTime.Now.Day;
-            string currentHour = DateTime.Now.ToString("HH");
+            int Day = 23;
+            string currentHour = "20"; //DateTime.Now.ToString("HH");
             string oneMonthAgo = (month - 1).ToString();
             if(oneMonthAgo.Length == 1)
             {
@@ -289,11 +289,17 @@ namespace WeatherWorryWonder.Controllers
 
                     string monthAgoTime = $"2019-{oneMonthAgo}-{sDay}T{currentHour}";
                     sensorData = PullOSTSensorData(s, 20, monthAgoTime);
-                    oneMonthValues.Add(sensorData);
+                    if (sensorData != 0)
+                    {
+                        oneMonthValues.Add(sensorData);
+                    }
                     //when we get up to a week in the past, start adding to the week list as well
                     if(i > 23)
                     {
-                        oneWeekValues.Add(sensorData);
+                        if (sensorData != 0)
+                        {
+                            oneMonthValues.Add(sensorData);
+                        }
                     }
                     Day++;
                 }
@@ -314,11 +320,17 @@ namespace WeatherWorryWonder.Controllers
                     //grabs the day one month ago and then increments it
                     string monthAgoTime = $"2019-{oneMonthAgo}-{sDay}T{currentHour}";
                     sensorData = PullSimmsSensorData(s, 20, monthAgoTime);
-                    oneMonthValues.Add(sensorData);
+                    if (sensorData != 0)
+                    {
+                        oneMonthValues.Add(sensorData);
+                    }
                     //when we get up to a week in the past, start adding to the week list as well
                     if (i > 23)
                     {
-                        oneWeekValues.Add(sensorData);
+                        if (sensorData != 0)
+                        {
+                            oneMonthValues.Add(sensorData);
+                        }
                     }
                     Day++;
                 }
@@ -330,19 +342,25 @@ namespace WeatherWorryWonder.Controllers
         public static decimal PullOSTSensorData(Sensor s, int mins, string dateTime)
         {
             List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
-
+            int x = 0;
             //pulling the data based on user current time and location of sensor
-            ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
-                .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
-                .First();
-
-            //pulls row of data
-            int x = startingPoint.Id;
-            //mins are either 480 or 60
+            try
+            {
+                ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
+                    .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
+                    .First();
+                //pulls row of data
+                x = startingPoint.Id;
+                //mins are either 480 or 60
+            }
+            catch
+            {
+                return 0;
+            }
             for (int i = 0; i < mins; i++)
             {
                 ost_data_Jan_June2019 OSTAQIdata = db.ost_data_Jan_June2019.Find(x);
-                if ((decimal)OSTAQIdata.o3 != 0)
+                if ((decimal)OSTAQIdata.o3 != 0 || OSTAQIdata.o3 != null)
                 {
                     OSTData.Add(OSTAQIdata);
                     x++;
@@ -359,11 +377,19 @@ namespace WeatherWorryWonder.Controllers
         public static decimal PullSimmsSensorData(Sensor s, int mins, string dateTime)
         {
             List<simms_data_Jan_June2019> simsData = new List<simms_data_Jan_June2019>();
-            simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
-                .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
-                .First();
+            int x = 0;
+            try
+            {
+                simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
+                    .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
+                    .First();
 
-            int x = startingPoint.Id;
+                x = startingPoint.Id;
+            }
+            catch
+            {
+                return 0;
+            }
             //get 8 hr average AQI
             for (int i = 0; i < mins; i++)
             {

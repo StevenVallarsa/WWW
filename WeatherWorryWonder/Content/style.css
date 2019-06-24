@@ -5,7 +5,7 @@
 
 .main {
     display: grid;
-    grid-template-rows: 200px 200px 200px 200px
+    grid-template-rows: 300px 300px 300px 300px;
     grid-template-columns:  1fr 1fr 1fr 1fr;
     grid-template-areas: "AQI AQI map map" 
                         "recommend recommend map map"
@@ -15,8 +15,8 @@
 
 #map {
     grid-area: map;
-    height: 300px;
-    width: 400px;
+    height: 400px;
+    width: 600px;
     margin: auto;
 }
 

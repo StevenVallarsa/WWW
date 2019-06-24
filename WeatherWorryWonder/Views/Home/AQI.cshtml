@@ -78,7 +78,7 @@ function initMap() {
     var userLatLong = { lat: @lat, lng: @lng };
     var sensorLatLong = { lat: @sensorLat, lng: @sensorLong };
   var map = new google.maps.Map(
-      document.getElementById('map'), {zoom: 12, center: userLatLong});
+      document.getElementById('map'), {zoom: 14, center: userLatLong});
     var markerUser = new google.maps.Marker({ position: userLatLong, map: map });
     var markerSensor = new google.maps.Marker({ position: sensorLatLong, map: map });
 }
