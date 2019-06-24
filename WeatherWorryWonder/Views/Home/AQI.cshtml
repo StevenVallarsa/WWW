@@ -1,17 +1,5 @@
 ﻿@using WeatherWorryWonder.Models
 @model ResultView
-
-@{
-    ViewBag.Title = "AQI";
-}
-
-<style>
-    #map {
-        height: 400px;
-        width: 800px;
-    }
-</style>
-
 @{
     List<double> userLocation = (List<double>)Session["UserLocation"];
     double lat = userLocation[0];
@@ -22,43 +10,75 @@
     double sensorLong = s.Long;
 }
 
+<div class="main">
 
-<h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Math.Round(Model.O3AQI)</b></span></h2>
-<h3>Second Closest Sensor AQI: @Math.Round(Model.Second03AQI)</h3>
-<h4>Third Closest Sensor AQI: @Math.Round(Model.Third03AQI)</h4>
-<h4>EPA AQI: @Math.Round(Model.EpaAQI)</h4>
-<br />
+    <div class="AQI">
+        <h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Math.Round(Model.O3AQI)</b></span></h2>
+        <h3>Second Closest Sensor AQI: @Math.Round(Model.Second03AQI)</h3>
+        <h4>Third Closest Sensor AQI: @Math.Round(Model.Third03AQI)</h4>
+        <h4>EPA AQI: @Math.Round(Model.EpaAQI)</h4>
+        <h2>Sensor Location:</h2>
+        <p>@Model.SensorName</p>
+    </div>
 
-<h2>Forecast:</h2>
-<p>Tomorrow AQI: @Math.Round(Model.PredictedAQITomorrow)</p>
-<p>3-Day AQI: @Math.Round(Model.PredictedAQI3Day)</p>
-<p>5-Day AQI: @Math.Round(Model.PredictedAQI5Day)</p>
-<br />
+    <div class="futureAQI">
+        <h2>Forecast:</h2>
+        <p>Tomorrow AQI: @Math.Round(Model.PredictedAQITomorrow)</p>
+        <p>3-Day AQI: @Math.Round(Model.PredictedAQI3Day)</p>
+        <p>5-Day AQI: @Math.Round(Model.PredictedAQI5Day)</p>
+    </div>
 
-<h2>Current Weather:</h2>
-<p>Temperature: @Math.Round(Model.Weather[0].TemperatureF) F</p>
-<p>Cloud Coverage: @Model.Weather[0].Clouds</p>
-<p>Wind: @Math.Round(Model.Weather[0].WindDirection) degrees at @Model.Weather[0].WindSpeed m/s</p>
-<p>Humidity: @Model.Weather[0].Humidity %</p>
-<br />
+    <div class="otherPollutants">
+        <h2>Other AQIs</h2>
+        <p>No2: @Model.NO2AQI</p>
+        <p>PM25: @Model.PM25AQI</p>
+        <p>SO2: @Model.SO2AQI</p>
+        <p>CO: @Model.CO</p>
+    </div>
 
-<h2>Health Recommendation based on your AQI:</h2>
-<p>
-    @Model.Recommendations
-</p> 
+    <div class="recommendations">
+        <h2>Health Recommendation based on your AQI:</h2>
+        <p>
+            @Model.Recommendations
+        </p>
+    </div>
 
-<h2>Sensor Location:</h2>
-<p>@Model.SensorName</p>
-<br />
+    <div id="map"></div>
 
-<div id="map"></div>
+    <div class="weather">
+        <h2>Current Weather:</h2>
+        <p>Temperature: @Math.Round(Model.Weather[0].TemperatureF) F</p>
+        <p>Cloud Coverage: @Model.Weather[0].Clouds</p>
+        <p>Wind: @Math.Round(Model.Weather[0].WindDirection) degrees at @Model.Weather[0].WindSpeed m/s</p>
+        <p>Humidity: @Model.Weather[0].Humidity %</p>
+    </div>
+
+    <div class="VOC">
+        <p>Ethylene Oxide PPM: @Model.C2H4OPPM</p>
+        <p>Pollutant Message: @Model.PollutantWarning</p>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <script>
 function initMap() {
     var userLatLong = { lat: @lat, lng: @lng };
     var sensorLatLong = { lat: @sensorLat, lng: @sensorLong };
   var map = new google.maps.Map(
-      document.getElementById('map'), {zoom: 12, center: userLatLong});
+      document.getElementById('map'), {zoom: 14, center: userLatLong});
     var markerUser = new google.maps.Marker({ position: userLatLong, map: map });
     var markerSensor = new google.maps.Marker({ position: sensorLatLong, map: map });
 }
@@ -67,5 +87,3 @@ function initMap() {
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=@APIKeys.SteveGoogleMapAPI&callback=initMap">
 </script>
-
-<p>Ethylene Oxide PPM: @Model.Ethyleneoxide</p>

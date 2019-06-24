@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -15,15 +15,13 @@ namespace WeatherWorryWonder.Controllers
         public static WeatherWorryWonderDBEntities db = new WeatherWorryWonderDBEntities();
         public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
         public static List<decimal> MorePollutantDataReading = new List<decimal>();       //storing sensor readings in this list
-        public static List<decimal> PollutantAQIs = new List<int>();                          //storing all pollutant aqis in this list
+        public static List<decimal> PollutantAQIs = new List<decimal>();                          //storing all pollutant aqis in this list
 
         //Depending on the sensor and user time
         //OST an SIMMS are in seperate database tables therefore we need to know which table to pull using an if/else statement
         public static List<decimal> PollutantDataReading(Sensor s, int mins)
         {
             List<decimal> MorePollutantDataReading = new List<decimal>();
-
-
 
             //example of what the string date looks like "2019 - 03 - 01T"            
             //take the current hour            
@@ -73,10 +71,10 @@ namespace WeatherWorryWonder.Controllers
 
                     //sum all the O3(ozone) AQI readings from the list
                     // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
-                    decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)));
+                    decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3) * (decimal)0.509));
 
                     //This next line should be removed b/c PM25 needs to have a 24 hour reading
-                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
+                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 ) * (decimal)148.17));   //PM25 weighs a lot more than O3 BTW
 
                     decimal OSTO3Average = OSTDataO3sum / OSTData.Count;
                     //average the AQI readings by dividing by number of readings
@@ -159,18 +157,20 @@ namespace WeatherWorryWonder.Controllers
                     MorePollutantDataReading.Add(SimsPM25Average);      //index[4]
                     MorePollutantDataReading.Add(SimsSO2Average);      //index[5]
 
-                    
-                    return ConvertPPBtoPPM(SimsTOAverage);
                 }
 
             }
 
             //will return 0 which will then be caught by the HomeController loop as unreliable data, moving to the next sensor
-            catch (Exception e)
+            catch (Exception)
 
             {
-                string Message = "No data.";
-                Message = e.Message;
+                MorePollutantDataReading.Add(0);
+                MorePollutantDataReading.Add(0);
+                MorePollutantDataReading.Add(0);
+                MorePollutantDataReading.Add(0);
+                MorePollutantDataReading.Add(0);
+                MorePollutantDataReading.Add(0);
             }
             return MorePollutantDataReading;
         }
@@ -203,8 +203,8 @@ namespace WeatherWorryWonder.Controllers
                 {
                     //pulling the data based on user current time and location of sensor
                     ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
-                        .Where(ut => ut.time.Contains(currentDay) && ut.pm25 != null && ut.dev_id == sensorLocation)  //this does not like the currentDay variable
-                        .Average(ut => ut.pm25);
+                        .Where(ut => ut.time.Contains(currentDay) && ut.dev_id == sensorLocation) 
+                        .First();
                 //}
                 //pulls row of data
                 int x = startingPoint.Id;
@@ -212,7 +212,7 @@ namespace WeatherWorryWonder.Controllers
                     for (int i = 0; i < mins; i++)
                     {
                         ost_data_Jan_June2019 OSTPM25data = db.ost_data_Jan_June2019.Find(currentDay);
-                        if (OSTPM25data != null)
+                        if (OSTPM25data.pm25 != 0)
                         {
                             OSTData.Add(OSTPM25data);
                             x++;
@@ -224,7 +224,7 @@ namespace WeatherWorryWonder.Controllers
                         }
                     }
 
-                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 * (decimal)148.17)));   //PM25 weighs a lot more than O3 BTW
+                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25)) * (decimal)148.17);   //PM25 weighs a lot more than O3 BTW
 
 
                     //average the AQI readings by dividing by number of readings
@@ -257,7 +257,7 @@ namespace WeatherWorryWonder.Controllers
                 return PollutantPPM;
         }
 
-        List<List<decimal>> HistoricData(Sensor s, int month)
+        public static List<List<decimal>> HistoricData(Sensor s, int month)
         {
             //0 index is numbers for one week, 1 is number for one month
             List<decimal> oneWeekValues = new List<decimal>();
@@ -265,28 +265,43 @@ namespace WeatherWorryWonder.Controllers
 
             decimal sensorData;
 
-            int Day = DateTime.Now.Day;
-            string currentHour = DateTime.Now.ToString("HH");
+            int Day = 23;
+            string currentHour = "20"; //DateTime.Now.ToString("HH");
             string oneMonthAgo = (month - 1).ToString();
-            string monthAgoTime = $"2019-{oneMonthAgo}-{Day}T{currentHour}";
-
+            if(oneMonthAgo.Length == 1)
+            {
+                oneMonthAgo = "0" + oneMonthAgo;
+            }
             if(s.Name.Contains("graq"))
             {
                 for(int i = 0; i < 30; i++)
                 {
                     if(Day > 28)
                     {
-                        Day = 0;
+                        Day = 1;
                     }
                     //grabs the day one month ago and then increments it
-                    monthAgoTime = $"2019-{oneMonthAgo}-{Day}T{currentHour}";
-                    sensorData = PullOSTSensorData(s, 480, monthAgoTime);
-                    oneMonthValues.Add(sensorData);
+                    string sDay = Day.ToString();
+                    if(sDay.Length == 1)
+                    {
+                        sDay = "0" + Day;
+                    }
+
+                    string monthAgoTime = $"2019-{oneMonthAgo}-{sDay}T{currentHour}";
+                    sensorData = PullOSTSensorData(s, 20, monthAgoTime);
+                    if (sensorData != 0)
+                    {
+                        oneMonthValues.Add(sensorData);
+                    }
                     //when we get up to a week in the past, start adding to the week list as well
                     if(i > 23)
                     {
-                        oneWeekValues.Add(sensorData);
+                        if (sensorData != 0)
+                        {
+                            oneMonthValues.Add(sensorData);
+                        }
                     }
+                    Day++;
                 }
             }
             else
@@ -295,17 +310,29 @@ namespace WeatherWorryWonder.Controllers
                 {
                     if (Day > 28)
                     {
-                        Day = 0;
+                        Day = 1;
+                    }
+                    string sDay = Day.ToString();
+                    if (sDay.Length == 1)
+                    {
+                        sDay = "0" + Day;
                     }
                     //grabs the day one month ago and then increments it
-                    monthAgoTime = $"2019-{oneMonthAgo}-{Day}T{currentHour}";
-                    sensorData = PullSimmsSensorData(s, 480, monthAgoTime);
-                    oneMonthValues.Add(sensorData);
+                    string monthAgoTime = $"2019-{oneMonthAgo}-{sDay}T{currentHour}";
+                    sensorData = PullSimmsSensorData(s, 20, monthAgoTime);
+                    if (sensorData != 0)
+                    {
+                        oneMonthValues.Add(sensorData);
+                    }
                     //when we get up to a week in the past, start adding to the week list as well
                     if (i > 23)
                     {
-                        oneWeekValues.Add(sensorData);
+                        if (sensorData != 0)
+                        {
+                            oneMonthValues.Add(sensorData);
+                        }
                     }
+                    Day++;
                 }
             }
             List<List<decimal>> oneWeekAndMonthHistoricData = new List<List<decimal>> {oneWeekValues, oneMonthValues };
@@ -315,19 +342,25 @@ namespace WeatherWorryWonder.Controllers
         public static decimal PullOSTSensorData(Sensor s, int mins, string dateTime)
         {
             List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
-
+            int x = 0;
             //pulling the data based on user current time and location of sensor
-            ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
-                .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
-                .First();
-
-            //pulls row of data
-            int x = startingPoint.Id;
-            //mins are either 480 or 60
+            try
+            {
+                ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
+                    .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
+                    .First();
+                //pulls row of data
+                x = startingPoint.Id;
+                //mins are either 480 or 60
+            }
+            catch
+            {
+                return 0;
+            }
             for (int i = 0; i < mins; i++)
             {
                 ost_data_Jan_June2019 OSTAQIdata = db.ost_data_Jan_June2019.Find(x);
-                if ((decimal)OSTAQIdata.o3 != 0)
+                if ((decimal)OSTAQIdata.o3 != 0 || OSTAQIdata.o3 != null)
                 {
                     OSTData.Add(OSTAQIdata);
                     x++;
@@ -337,18 +370,26 @@ namespace WeatherWorryWonder.Controllers
                     x++;
                 }
             }
-            decimal average = (decimal)OSTData.Sum(O3 => (O3.o3 * (decimal)0.509)) / OSTData.Count;
+            decimal average = (decimal)OSTData.Sum(O3 => (O3.o3) / OSTData.Count) * (decimal)0.509;
             return ConvertPPBtoPPM(average);
         }
 
         public static decimal PullSimmsSensorData(Sensor s, int mins, string dateTime)
         {
             List<simms_data_Jan_June2019> simsData = new List<simms_data_Jan_June2019>();
-            simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
-                .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
-                .First();
+            int x = 0;
+            try
+            {
+                simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
+                    .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
+                    .First();
 
-            int x = startingPoint.Id;
+                x = startingPoint.Id;
+            }
+            catch
+            {
+                return 0;
+            }
             //get 8 hr average AQI
             for (int i = 0; i < mins; i++)
             {
@@ -611,7 +652,7 @@ namespace WeatherWorryWonder.Controllers
             return breakpointIndex;
         }
         //C2H4O = ethylene oxide
-        public static decimal ShortestDistancePollutantSensor(Sensor s)
+        public static decimal ShortestDistancePollutantSensor(List<double> s)
         {
             List<Factory_Pollution> pollutantSensors = db.Factory_Pollution.ToList();
 
@@ -619,7 +660,7 @@ namespace WeatherWorryWonder.Controllers
             Factory_Pollution pollutantSensor = new Factory_Pollution();
             foreach (Factory_Pollution f in pollutantSensors)
             {
-                double sensorDistance = GeocodeController.LatLongDistance(s.Lat,s.Long,f.Latitude,f.Longitude);
+                double sensorDistance = GeocodeController.LatLongDistance(s[0],s[1],f.Latitude,f.Longitude);
                 if (sensorDistance < largeNum)
                 {
                     largeNum = sensorDistance;
@@ -630,10 +671,10 @@ namespace WeatherWorryWonder.Controllers
             decimal ethyleneOxide = pollutantSensor.ETO_ppm.GetValueOrDefault();
             return ethyleneOxide;
         }
-        public static string PollutantWarning(decimal ethyleneOxidePPM)
+        public static string PollutantWarning(decimal ethyleneOxideUGM3)
         {
             //0.18 µg / m3  normal background concentration of ethylene oxide
-            if (ethyleneOxidePPM > (decimal)0.18)
+            if (ethyleneOxideUGM3 > (decimal)0.18)
             {
                 //grab current 24 hr average decimal of NO2
                 //grab current 24 hr average decimal of CO
@@ -641,7 +682,7 @@ namespace WeatherWorryWonder.Controllers
 
                 //air should contain less than 0.1 ppm ethylene oxide averaged over a 10-hour workday
 
-                decimal c2H4Oppm = (ethyleneOxidePPM / (decimal)(0.0409 * 44.05)) / 1000; //g/mol
+                decimal c2H4Oppm = (ethyleneOxideUGM3 / (decimal)(0.0409 * 44.05)) / 1000; //g/mol
                 if (c2H4Oppm > (decimal)0.1)
                 {
                     return "Warning! High Pollutant Level Alert!";
