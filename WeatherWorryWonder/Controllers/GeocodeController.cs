@@ -41,8 +41,8 @@ namespace WeatherWorryWonder.Controllers
         // to put in a Session in the HomeController AND for the rest of the "ShortestToLongest" method
         public static List<double> ParseUserLocation(string address)
         {
-            List<Sensor> sensors = Sensor.GetSensors();
-            List<Sensor> shortSensors = new List<Sensor>();
+            //List<Sensor> sensors = Sensor.GetSensors();
+            //List<Sensor> shortSensors = new List<Sensor>();
             //Changes the Address to a longitude and latitude coordinate from the google geocode API
             JToken jsonAddress = GoogleMapDAL.GoogleJson(address);
 

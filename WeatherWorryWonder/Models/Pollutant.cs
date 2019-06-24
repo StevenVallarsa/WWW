@@ -23,13 +23,13 @@ namespace WeatherWorryWonder.Models
             List<Pollutant> pollutants = new List<Pollutant>();
 
             pollutants.Add(new Pollutant(
-                "O3/1",
+                "O3/8",
                 new double[] {0, 0.06, 0.076, 0.096, 0.116, 0.00001, 0.00001 },
                 new double[] {0.059, 0.075, 0.095, 0.115, 0.374, 0.00001, 0.00001 }));
             //0.00001 are null values
             pollutants.Add(new Pollutant(
                 //pollutant/hr range
-                "O3/8",
+                "O3/1",
                 //low values break point of O3 value from EPA
                 new double[] {0.00001, 0.00001, 0.125, 0.165, 0.205, 0.405, 0.505 },
                 //high values break point value from EPA
