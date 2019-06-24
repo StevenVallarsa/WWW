@@ -57,7 +57,7 @@ namespace WeatherWorryWonder.Controllers
             //got all our weather info here
             List<decimal> threeClosestAQIs = new List<decimal>(); 
 
-            List<decimal> FutureAQIForO3ThreeAndFiveDays = new List<decimal>();
+            List<decimal> ForecastedAQI = new List<decimal>();
 
             List<decimal> PollutantAQIs = new List<decimal>();
 
@@ -73,7 +73,6 @@ namespace WeatherWorryWonder.Controllers
                 {
                     Session["ClosestSensor"] = closestSensor;
                 }
-                //Session["ClosestSensor"] = closestSensor;
 
                 //get sensor readings from OST and SIMMS
                 decimal eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480)[0];
@@ -115,7 +114,7 @@ namespace WeatherWorryWonder.Controllers
                             int EPABreakpointIndex = PollutantController.EPABreakpointTable(futureAQIO3PPM);
                             decimal FutureAQIForO3 = PollutantController.CalculateO3AQI(futureAQIO3PPM, EPABreakpointIndex, indexAndOneorEight[0]);
                             // add future AQIs to list
-                            FutureAQIForO3ThreeAndFiveDays.Add(FutureAQIForO3);
+                            ForecastedAQI.Add(FutureAQIForO3);
 
                         }
                         decimal c2H4O = PollutantController.ShortestDistancePollutantSensor(userLocation);
@@ -129,13 +128,7 @@ namespace WeatherWorryWonder.Controllers
                         }
                         else
                         {
-                            //MorePollutantDataReading.Add(SimsO3Average);   //index[0]
-                            //MorePollutantDataReading.Add(SimsCOToAverage);   //index[1]
-                            //MorePollutantDataReading.Add(SimsNO2Average);     //index[2]
-                            //MorePollutantDataReading.Add(SimsNO2_O3Average);    //index[3]
-                            //MorePollutantDataReading.Add(SimsPM25Average);      //index[4]
-                            //MorePollutantDataReading.Add(SimsSO2Average);      //index[5]
-                            rv.PM25AQI = PollutantAQIs[4];
+                            rv.PM25AQI = PollutantAQIs[4]; 
                             rv.NO2AQI = PollutantAQIs[2];
                             rv.SO2AQI = PollutantAQIs[5];
                             rv.CO = PollutantAQIs[1];
@@ -151,9 +144,9 @@ namespace WeatherWorryWonder.Controllers
             rv.O3AQI = threeClosestAQIs[0];
             rv.Second03AQI = threeClosestAQIs[1];
             rv.Third03AQI = threeClosestAQIs[2];
-            rv.PredictedAQITomorrow = FutureAQIForO3ThreeAndFiveDays[1];
-            rv.PredictedAQI3Day = FutureAQIForO3ThreeAndFiveDays[2];
-            rv.PredictedAQI5Day = FutureAQIForO3ThreeAndFiveDays[3];
+            rv.PredictedAQITomorrow = ForecastedAQI[1];
+            rv.PredictedAQI3Day = ForecastedAQI[2];
+            rv.PredictedAQI5Day = ForecastedAQI[3];
             rv.Weather = weather;
 
             decimal EPAAQI = PollutantController.EPAAQIData();
