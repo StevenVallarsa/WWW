@@ -12,20 +12,16 @@ namespace WeatherWorryWonder.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class simms_data_Jan_June2019
+    public partial class simms_Data_Feb_Apr_Final
     {
         public string dev_id { get; set; }
+        public System.DateTime date { get; set; }
         public string time { get; set; }
-        public decimal co { get; set; }
-        public decimal humdity { get; set; }
-        public decimal no2 { get; set; }
-        public decimal no2_o3 { get; set; }
-        public decimal o3 { get; set; }
-        public decimal pm25 { get; set; }
-        public decimal so2 { get; set; }
-        public decimal status { get; set; }
-        public decimal temperature { get; set; }
-        public decimal vin { get; set; }
-        public int Id { get; set; }
+        public double co { get; set; }
+        public double no2 { get; set; }
+        public double o3 { get; set; }
+        public double pm25 { get; set; }
+        public double so2 { get; set; }
+        public int id { get; set; }
     }
 }

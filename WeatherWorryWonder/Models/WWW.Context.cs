@@ -13,10 +13,10 @@ namespace WeatherWorryWonder.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class WeatherWorryWonderDBEntities : DbContext
+    public partial class WWWEntities : DbContext
     {
-        public WeatherWorryWonderDBEntities()
-            : base("name=WeatherWorryWonderDBEntities")
+        public WWWEntities()
+            : base("name=WWWEntities")
         {
         }
     
@@ -25,9 +25,9 @@ namespace WeatherWorryWonder.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<EPA_GR_Data> EPA_GR_Data { get; set; }
-        public virtual DbSet<ost_data_Jan_June2019> ost_data_Jan_June2019 { get; set; }
-        public virtual DbSet<simms_data_Jan_June2019> simms_data_Jan_June2019 { get; set; }
-        public virtual DbSet<Factory_Pollution> Factory_Pollution { get; set; }
+        public virtual DbSet<EPAGRDataFinal> EPAGRDataFinals { get; set; }
+        public virtual DbSet<Ost_Data_Feb_Apr_Final> Ost_Data_Feb_Apr_Final { get; set; }
+        public virtual DbSet<simms_Data_Feb_Apr_Final> simms_Data_Feb_Apr_Final { get; set; }
+        public virtual DbSet<Factory_Pollutant_Final> Factory_Pollutant_Finals { get; set; }
     }
 }

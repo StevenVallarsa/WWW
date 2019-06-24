@@ -12,16 +12,16 @@ namespace WeatherWorryWonder.Controllers
 
     public class PollutantController : Controller
     {
-        public static WeatherWorryWonderDBEntities db = new WeatherWorryWonderDBEntities();
+        public static WWWEntities db = new WWWEntities();
         public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
-        public static List<decimal> MorePollutantDataReading = new List<decimal>();       //storing sensor readings in this list
-        public static List<decimal> PollutantAQIs = new List<decimal>();                          //storing all pollutant aqis in this list
+        public static List<float> MorePollutantDataReading = new List<float>();       //storing sensor readings in this list
+        public static List<float> PollutantAQIs = new List<float>();                          //storing all pollutant aqis in this list
 
         //Depending on the sensor and user time
         //OST an SIMMS are in seperate database tables therefore we need to know which table to pull using an if/else statement
-        public static List<decimal> PollutantDataReading(Sensor s, int mins)
+        public static List<float> PollutantDataReading(Sensor s, int mins)
         {
-            List<decimal> MorePollutantDataReading = new List<decimal>();
+            List<float> MorePollutantDataReading = new List<float>();
 
             //example of what the string date looks like "2019 - 03 - 01T"            
             //take the current hour            
@@ -43,21 +43,21 @@ namespace WeatherWorryWonder.Controllers
             bool isOSTSensor = (sensorLocation.Contains("graq"));
             try 
             {
-                List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
+                List<Ost_Data_Feb_Apr_Final> OSTData = new List<Ost_Data_Feb_Apr_Final>();
                 if (isOSTSensor == true)
                 {
                     //pulling the data based on user current time and location of sensor
-                    ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
-                        .Where(ut => ut.time.Contains(currentTime) && ut.dev_id == sensorLocation)
+                    Ost_Data_Feb_Apr_Final startingPoint = db.Ost_Data_Feb_Apr_Final
+                        .Where(ut => ut.DateTime.Contains(currentTime) && ut.dev_id == sensorLocation)
                         .First();
 
                     //pulls row of data
-                    int x = startingPoint.Id;
+                    int x = startingPoint.id;
                     //mins are either 480 or 60
                     for (int i = 0; i < mins; i++)
                     {
-                        ost_data_Jan_June2019 OSTAQIdata = db.ost_data_Jan_June2019.Find(x);
-                        if((decimal)OSTAQIdata.o3 != 0 )
+                        Ost_Data_Feb_Apr_Final OSTAQIdata = db.Ost_Data_Feb_Apr_Final.Find(x);
+                        if((float)OSTAQIdata.o3 != 0 )
                         {
                             OSTData.Add(OSTAQIdata);
                             x++;
@@ -71,17 +71,17 @@ namespace WeatherWorryWonder.Controllers
 
                     //sum all the O3(ozone) AQI readings from the list
                     // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
-                    decimal OSTDataO3sum = Convert.ToDecimal(OSTData.Sum(O3 => (O3.o3) * (decimal)0.509));
+                    float OSTDataO3sum = (float)OSTData.Sum(O3 => (O3.o3) * 0.509f);
 
                     //This next line should be removed b/c PM25 needs to have a 24 hour reading
-                    decimal OSTDataPM25sum = Convert.ToDecimal(OSTData.Sum(PM25 => (PM25.pm25 ) * (decimal)148.17));   //PM25 weighs a lot more than O3 BTW
+                    float OSTDataPM25sum = (float)OSTData.Sum(PM25 => (PM25.pm25 ) * 148.17f);   //PM25 weighs a lot more than O3 BTW
 
-                    decimal OSTO3Average = OSTDataO3sum / OSTData.Count;
+                    float OSTO3Average = OSTDataO3sum / OSTData.Count;
                     //average the AQI readings by dividing by number of readings
-                    decimal OSTPM25Average = OSTDataPM25sum / OSTData.Count;
+                    float OSTPM25Average = OSTDataPM25sum / OSTData.Count;
 
-                    decimal ConvertedOSTO3 = ConvertPPBtoPPM(OSTO3Average);
-                    decimal ConvertedOSTPM25 = ConvertPPBtoPPM(OSTPM25Average);
+                    float ConvertedOSTO3 = ConvertPPBtoPPM(OSTO3Average);
+                    float ConvertedOSTPM25 = ConvertPPBtoPPM(OSTPM25Average);
 
                     MorePollutantDataReading.Add(ConvertedOSTO3);    //index[0]
                     MorePollutantDataReading.Add(ConvertedOSTPM25);   //index[1]
@@ -97,17 +97,17 @@ namespace WeatherWorryWonder.Controllers
                 //if sensor name contains simms
                 else
                 {
-                    List<simms_data_Jan_June2019> simsData = new List<simms_data_Jan_June2019>();
-                    simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
+                    List<simms_Data_Feb_Apr_Final> simsData = new List<simms_Data_Feb_Apr_Final>();
+                    simms_Data_Feb_Apr_Final startingPoint = db.simms_Data_Feb_Apr_Final
                         .Where(ut => ut.time.Contains(currentTime) && ut.dev_id == sensorLocation)
                         .First();
 
-                    int x = startingPoint.Id;
+                    int x = startingPoint.id;
                     //get 8 hr average AQI
                     for (int i = 0; i < mins; i++)
                     {
-                        simms_data_Jan_June2019 SimmsAQIdata = db.simms_data_Jan_June2019.Find(x);
-                        if ((decimal)SimmsAQIdata.o3 != 0)
+                        simms_Data_Feb_Apr_Final SimmsAQIdata = db.simms_Data_Feb_Apr_Final.Find(x);
+                        if ((float)SimmsAQIdata.o3 != 0)
                         {
                             simsData.Add(SimmsAQIdata);
                             x++;
@@ -120,42 +120,36 @@ namespace WeatherWorryWonder.Controllers
                     }
 
                     //sum all the O3(ozone) AQI readings from the list
-                    decimal SimsDataO3sum = Convert.ToDecimal(simsData.Sum(O3 => O3.o3));
+                    float SimsDataO3sum = (float)simsData.Sum(O3 => O3.o3);
 
                     //average the AQI readings by dividing by number of readings
-                    decimal SimsO3Average = SimsDataO3sum / simsData.Count;
+                    float SimsO3Average = SimsDataO3sum / simsData.Count;
 
                     //sum all the CO AQI readings from the list
-                    decimal SimsDataCOsum = Convert.ToDecimal(simsData.Sum(CO => CO.co));
+                    float SimsDataCOsum = (float)simsData.Sum(CO => CO.co);
                     //average the AQI readings by dividing by number of readings
-                    decimal SimsCOToAverage = SimsDataCOsum / simsData.Count;
+                    float SimsCOToAverage = SimsDataCOsum / simsData.Count;
 
                     //sum all the no2 readings from the list
-                    decimal SimsDataNO2sum = Convert.ToDecimal(simsData.Sum(NO2 => NO2.no2));
+                    float SimsDataNO2sum = (float)simsData.Sum(NO2 => NO2.no2);
                     //average the AQI readings by dividing by number of readings
-                    decimal SimsNO2Average = SimsDataNO2sum / simsData.Count;
+                    float SimsNO2Average = SimsDataNO2sum / simsData.Count;
 
                     //sum all the no2 readings from the list
-                    decimal SimsDataNO2_O3sum = Convert.ToDecimal(simsData.Sum(NO2o3 => NO2o3.no2_o3));
+                    float SimsDataPM25sum = (float)simsData.Sum(PM25 => PM25.pm25);
                     //average the AQI readings by dividing by number of readings
-                    decimal SimsNO2_O3Average = SimsDataNO2_O3sum / simsData.Count;
+                    float SimsPM25Average = SimsDataPM25sum / simsData.Count;
 
                     //sum all the no2 readings from the list
-                    decimal SimsDataPM25sum = Convert.ToDecimal(simsData.Sum(PM25 => PM25.pm25));
+                    float SimsDataSO2sum = (float)simsData.Sum(SO2 => SO2.so2);
                     //average the AQI readings by dividing by number of readings
-                    decimal SimsPM25Average = SimsDataPM25sum / simsData.Count;
-
-                    //sum all the no2 readings from the list
-                    decimal SimsDataSO2sum = Convert.ToDecimal(simsData.Sum(SO2 => SO2.so2));
-                    //average the AQI readings by dividing by number of readings
-                    decimal SimsSO2Average = SimsDataSO2sum / simsData.Count;
+                    float SimsSO2Average = SimsDataSO2sum / simsData.Count;
 
                     MorePollutantDataReading.Add(SimsO3Average);   //index[0]
                     MorePollutantDataReading.Add(SimsCOToAverage);   //index[1]
                     MorePollutantDataReading.Add(SimsNO2Average);     //index[2]
-                    MorePollutantDataReading.Add(SimsNO2_O3Average);    //index[3]
-                    MorePollutantDataReading.Add(SimsPM25Average);      //index[4]
-                    MorePollutantDataReading.Add(SimsSO2Average);      //index[5]
+                    MorePollutantDataReading.Add(SimsPM25Average);      //index[3]
+                    MorePollutantDataReading.Add(SimsSO2Average);      //index[4]
 
                 }
 
@@ -170,26 +164,25 @@ namespace WeatherWorryWonder.Controllers
                 MorePollutantDataReading.Add(0);
                 MorePollutantDataReading.Add(0);
                 MorePollutantDataReading.Add(0);
-                MorePollutantDataReading.Add(0);
             }
             return MorePollutantDataReading;
         }
 
-        public static decimal ConvertPPBtoPPM(decimal PollutantPPB)
+        public static float ConvertPPBtoPPM(float PollutantPPB)
         {
                 //1 ppm = 1000 ppb
-                decimal PollutantPPM = PollutantPPB / 1000;
+                float PollutantPPM = PollutantPPB / 1000;
 
                 return PollutantPPM;
         }
 
-        public static List<List<decimal>> HistoricData(Sensor s, int month)
+        public static List<List<float>> HistoricData(Sensor s, int month)
         {
             //0 index is numbers for one week, 1 is number for one month
-            List<decimal> oneWeekValues = new List<decimal>();
-            List<decimal> oneMonthValues = new List<decimal>();
+            List<float> oneWeekValues = new List<float>();
+            List<float> oneMonthValues = new List<float>();
 
-            decimal sensorData;
+            float sensorData;
 
             int Day = 23;
             string currentHour = "20"; //DateTime.Now.ToString("HH");
@@ -261,22 +254,22 @@ namespace WeatherWorryWonder.Controllers
                     Day++;
                 }
             }
-            List<List<decimal>> oneWeekAndMonthHistoricData = new List<List<decimal>> {oneWeekValues, oneMonthValues };
+            List<List<float>> oneWeekAndMonthHistoricData = new List<List<float>> {oneWeekValues, oneMonthValues };
             return oneWeekAndMonthHistoricData;
         }
 
-        public static decimal PullOSTSensorData(Sensor s, int mins, string dateTime)
+        public static float PullOSTSensorData(Sensor s, int mins, string dateTime)
         {
-            List<ost_data_Jan_June2019> OSTData = new List<ost_data_Jan_June2019>();
+            List<Ost_Data_Feb_Apr_Final> OSTData = new List<Ost_Data_Feb_Apr_Final>();
             int x = 0;
             //pulling the data based on user current time and location of sensor
             try
             {
-                ost_data_Jan_June2019 startingPoint = db.ost_data_Jan_June2019
-                    .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
+                Ost_Data_Feb_Apr_Final startingPoint = db.Ost_Data_Feb_Apr_Final
+                    .Where(ut => ut.DateTime.Contains(dateTime) && ut.dev_id == s.Name)
                     .First();
                 //pulls row of data
-                x = startingPoint.Id;
+                x = startingPoint.id;
                 //mins are either 480 or 60
             }
             catch
@@ -285,8 +278,8 @@ namespace WeatherWorryWonder.Controllers
             }
             for (int i = 0; i < mins; i++)
             {
-                ost_data_Jan_June2019 OSTAQIdata = db.ost_data_Jan_June2019.Find(x);
-                if ((decimal)OSTAQIdata.o3 != 0 || OSTAQIdata.o3 != null)
+                Ost_Data_Feb_Apr_Final OSTAQIdata = db.Ost_Data_Feb_Apr_Final.Find(x);
+                if ((float)OSTAQIdata.o3 != 0)
                 {
                     OSTData.Add(OSTAQIdata);
                     x++;
@@ -296,21 +289,21 @@ namespace WeatherWorryWonder.Controllers
                     x++;
                 }
             }
-            decimal average = (decimal)OSTData.Sum(O3 => (O3.o3) / OSTData.Count) * (decimal)0.509;
+            float average = (float)OSTData.Sum(O3 => (O3.o3) / OSTData.Count) * (float)0.509;
             return ConvertPPBtoPPM(average);
         }
 
-        public static decimal PullSimmsSensorData(Sensor s, int mins, string dateTime)
+        public static float PullSimmsSensorData(Sensor s, int mins, string dateTime)
         {
-            List<simms_data_Jan_June2019> simsData = new List<simms_data_Jan_June2019>();
+            List<simms_Data_Feb_Apr_Final> simsData = new List<simms_Data_Feb_Apr_Final>();
             int x = 0;
             try
             {
-                simms_data_Jan_June2019 startingPoint = db.simms_data_Jan_June2019
+                simms_Data_Feb_Apr_Final startingPoint = db.simms_Data_Feb_Apr_Final
                     .Where(ut => ut.time.Contains(dateTime) && ut.dev_id == s.Name)
                     .First();
 
-                x = startingPoint.Id;
+                x = startingPoint.id;
             }
             catch
             {
@@ -319,8 +312,8 @@ namespace WeatherWorryWonder.Controllers
             //get 8 hr average AQI
             for (int i = 0; i < mins; i++)
             {
-                simms_data_Jan_June2019 SimmsAQIdata = db.simms_data_Jan_June2019.Find(x);
-                if ((decimal)SimmsAQIdata.o3 != 0)
+                simms_Data_Feb_Apr_Final SimmsAQIdata = db.simms_Data_Feb_Apr_Final.Find(x);
+                if ((float)SimmsAQIdata.o3 != 0)
                 {
                     simsData.Add(SimmsAQIdata);
                     x++;
@@ -331,14 +324,14 @@ namespace WeatherWorryWonder.Controllers
                     continue;
                 }
             }
-            decimal SimsDataO3sum = Convert.ToDecimal(simsData.Sum(O3 => O3.o3));
+            float SimsDataO3sum = (float)simsData.Sum(O3 => O3.o3);
             //average the AQI readings by dividing by number of readings
-            decimal average = SimsDataO3sum / simsData.Count;
+            float average = SimsDataO3sum / simsData.Count;
 
             return ConvertPPBtoPPM(average);
         }
 
-        public static List<int> EightorOneHour(decimal oneHrPollutantPPM, decimal eightHrPollutantPPM)
+        public static List<int> EightorOneHour(float oneHrPollutantPPM, float eightHrPollutantPPM)
         {
             List<int> indexAndOneOrEight = new List<int>();
             //using 7 for testing purposes to throw an error if if/else does not work
@@ -346,7 +339,7 @@ namespace WeatherWorryWonder.Controllers
             int breakPoingIndex = 0;
             //EPA if ppm > .125 use 1 hr readings
             //using 8 hr reading
-            if (oneHrPollutantPPM <= (decimal)0.125)
+            if (oneHrPollutantPPM <= (float)0.125)
             {
                 //8 hr reading: 5 and 6 index are null values on table
                 for (int i = 0; i < 5; i++)
@@ -355,7 +348,7 @@ namespace WeatherWorryWonder.Controllers
                     double high = pollutants[0].High[i];
 
                     //takes a reading a looks for the range of low and high
-                    if (eightHrPollutantPPM >= (decimal)low && eightHrPollutantPPM <= (decimal)high)
+                    if (eightHrPollutantPPM >= (float)low && eightHrPollutantPPM <= (float)high)
                     {
                         //should we use 8 hr reading
                         oneOrEightHour = 0;
@@ -374,7 +367,7 @@ namespace WeatherWorryWonder.Controllers
                 {
                     double low = pollutants[1].Low[i];
                     double high = pollutants[1].High[i];
-                    if (oneHrPollutantPPM >= (decimal)low && oneHrPollutantPPM <= (decimal)high)
+                    if (oneHrPollutantPPM >= (float)low && oneHrPollutantPPM <= (float)high)
                     {
                         oneOrEightHour = 1;
                         breakPoingIndex = i;
@@ -391,21 +384,21 @@ namespace WeatherWorryWonder.Controllers
 
         // for AQI equation from EPA
         // isEight: 0 index = 8h reading; 1 index = 1h reading
-        public static decimal CalculateO3AQI(decimal PollutantPPM, int breakPointIndex, int isEight)
+        public static float CalculateO3AQI(float PollutantPPM, int breakPointIndex, int isEight)
         {
             // must round to 3 digits for O3 EPA standards
-            decimal Cp = Math.Round(PollutantPPM, 3);
+            float Cp = (float)Math.Round(PollutantPPM, 3);
 
             // 7 = AQI standards in Pollutant Model
-            decimal Ihi = (decimal)pollutants[7].High[breakPointIndex];
-            decimal Ilo = (decimal)pollutants[7].Low[breakPointIndex];
+            float Ihi = (float)pollutants[7].High[breakPointIndex];
+            float Ilo = (float)pollutants[7].Low[breakPointIndex];
 
             // index = breakpoint found from OneOrEight method
-            decimal BPhi = (decimal)pollutants[isEight].High[breakPointIndex];
-            decimal BPlow = (decimal)pollutants[isEight].Low[breakPointIndex];
+            float BPhi = (float)pollutants[isEight].High[breakPointIndex];
+            float BPlow = (float)pollutants[isEight].Low[breakPointIndex];
 
             //calculate using 8 hr Ozone
-            decimal AQIForO3Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+            float AQIForO3Pollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
 
             PollutantAQIs.Add(AQIForO3Pollutant);              //added O3 to PollutantAQI list
             return AQIForO3Pollutant;
@@ -415,17 +408,17 @@ namespace WeatherWorryWonder.Controllers
 
         //----------------------------------------------------------------------------------------------------------------------------------------------------
         // converts to UG/M3
-        public static decimal ConvertToUGM3(decimal PPM)
+        public static float ConvertToUGM3(float PPM)
         {
             // Convert back to PPB then to UG/M3 -- 0.0409 is a conversion constant in order to go to UG/M3-- 48 is molecular weight of O3 
-            decimal UGM3 = (PPM * 1000) * (decimal)0.0409 * 48;
+            float UGM3 = (PPM * 1000) * (float)0.0409 * 48;
             return UGM3;
         }
 
         // converts to PPM
-        public static decimal UGM3ConvertToPPM(decimal UGM3)
+        public static float UGM3ConvertToPPM(float UGM3)
         {
-            decimal PPM = (UGM3 / ((decimal)0.0409 * 48)) / 1000;
+            float PPM = (UGM3 / ((float)0.0409 * 48)) / 1000;
             return PPM;
         }
 
@@ -445,37 +438,37 @@ namespace WeatherWorryWonder.Controllers
         //    return (EPAO3DailyReading);
         //}
 
-        public static decimal EPAAQIData()
+        public static float EPAAQIData()
         {
             string s = "2019-03-20";
 
             DateTime dt = DateTime.ParseExact(s, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
-            EPA_GR_Data ePADataReading = db.EPA_GR_Data
+            EPAGRDataFinal ePADataReading = db.EPAGRDataFinals
                 .Where(ut => ut.Date == dt)
                 .First();
 
 
             //int EPAO3DailyReading = ePADataReading.DAILY_AQI_VALUE;
-            decimal EPA03Reading = ePADataReading.Daily_Max_8_hour_Ozone_Concentration;
+            float EPA03Reading = (float)ePADataReading.Daily_Max_8_hour_Ozone_Concentration;
             return (EPA03Reading);
         }
 
-        public static decimal CalculateEPA(decimal EPA, int breakpointIndex)
+        public static float CalculateEPA(float EPA, int breakpointIndex)
         {
 
-            decimal pollutant = Math.Round(EPA, 3);
-            decimal Ihi = (decimal)pollutants[7].High[breakpointIndex];
-            decimal Ilo = (decimal)pollutants[7].Low[breakpointIndex];
-            decimal BPhi = (decimal)pollutants[0].High[breakpointIndex];
-            decimal BPlow = (decimal)pollutants[0].Low[breakpointIndex];
-            decimal Cp = pollutant;
+            float pollutant = (float)Math.Round(EPA, 3);
+            float Ihi = (float)pollutants[7].High[breakpointIndex];
+            float Ilo = (float)pollutants[7].Low[breakpointIndex];
+            float BPhi = (float)pollutants[0].High[breakpointIndex];
+            float BPlow = (float)pollutants[0].Low[breakpointIndex];
+            float Cp = pollutant;
             //calculate using 8 hr Ozone
-            decimal AQIForPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+            float AQIForPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
             return AQIForPollutant;
         }
 
-        public static int EPABreakpointTable(decimal eightHrPollutantPPM)
+        public static int EPABreakpointTable(float eightHrPollutantPPM)
         {
             //using 7 for testing purposes to throw an error if if/else does not work
             int breakpointIndex = 0;
@@ -487,7 +480,7 @@ namespace WeatherWorryWonder.Controllers
                 double high = pollutants[0].High[i];
 
                 //takes a reading a looks for the range of low and high
-                if (eightHrPollutantPPM >= (decimal)low && eightHrPollutantPPM <= (decimal)high)
+                if (eightHrPollutantPPM >= (float)low && eightHrPollutantPPM <= (float)high)
                 {
                     //take an index for the range of low and high
                     breakpointIndex = i;
@@ -498,13 +491,13 @@ namespace WeatherWorryWonder.Controllers
             return breakpointIndex;
         }
         //C2H4O = ethylene oxide
-        public static decimal ShortestDistancePollutantSensor(List<double> s)
+        public static float ShortestDistancePollutantSensor(List<double> s)
         {
-            List<Factory_Pollution> pollutantSensors = db.Factory_Pollution.ToList();
+            List<Factory_Pollutant_Final> pollutantSensors = db.Factory_Pollutant_Finals.ToList();
 
             double largeNum = double.MaxValue;
-            Factory_Pollution pollutantSensor = new Factory_Pollution();
-            foreach (Factory_Pollution f in pollutantSensors)
+            Factory_Pollutant_Final pollutantSensor = new Factory_Pollutant_Final();
+            foreach (Factory_Pollutant_Final f in pollutantSensors)
             {
                 double sensorDistance = GeocodeController.LatLongDistance(s[0],s[1],f.Latitude,f.Longitude);
                 if (sensorDistance < largeNum)
@@ -514,22 +507,22 @@ namespace WeatherWorryWonder.Controllers
                 }
             }
 
-            decimal ethyleneOxide = pollutantSensor.ETO_ppm.GetValueOrDefault();
+            float ethyleneOxide = (float)pollutantSensor.EtO_ugm3;
             return ethyleneOxide;
         }
-        public static string PollutantWarning(decimal ethyleneOxideUGM3)
+        public static string PollutantWarning(float ethyleneOxideUGM3)
         {
             //0.18 µg / m3  normal background concentration of ethylene oxide
-            if (ethyleneOxideUGM3 > (decimal)0.18)
+            if (ethyleneOxideUGM3 > (float)0.18)
             {
-                //grab current 24 hr average decimal of NO2
-                //grab current 24 hr average decimal of CO
+                //grab current 24 hr average float of NO2
+                //grab current 24 hr average float of CO
                 //grab wind speed and direction
 
                 //air should contain less than 0.1 ppm ethylene oxide averaged over a 10-hour workday
 
-                decimal c2H4Oppm = (ethyleneOxideUGM3 / (decimal)(0.0409 * 44.05)) / 1000; //g/mol
-                if (c2H4Oppm > (decimal)0.1)
+                float c2H4Oppm = (ethyleneOxideUGM3 / (float)(0.0409 * 44.05)) / 1000; //g/mol
+                if (c2H4Oppm > (float)0.1)
                 {
                     return "Warning! High Pollutant Level Alert!";
                 }

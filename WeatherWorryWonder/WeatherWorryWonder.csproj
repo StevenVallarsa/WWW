@@ -136,54 +136,39 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\APIKeys.cs" />
-    <Compile Include="Models\EPA_GR_Data.cs">
-      <DependentUpon>WWWDB.tt</DependentUpon>
+    <Compile Include="Models\EPAGRDataFinal.cs">
+      <DependentUpon>WWW.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\Factory_Pollution.cs">
-      <DependentUpon>WWWDB.tt</DependentUpon>
+    <Compile Include="Models\Factory_Pollutant_Final.cs">
+      <DependentUpon>WWW.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\GoogleMapDAL.cs" />
-    <Compile Include="Models\ost_data_Jan_June2019.cs">
-      <DependentUpon>WWWDB.tt</DependentUpon>
+    <Compile Include="Models\Ost_Data_Feb_Apr_Final.cs">
+      <DependentUpon>WWW.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\OzoneRecommendations.cs" />
     <Compile Include="Models\Pollutant.cs" />
     <Compile Include="Models\ResultView.cs" />
     <Compile Include="Models\Sensor.cs" />
-    <Compile Include="Models\simms_data_Jan_June2019.cs">
-      <DependentUpon>WWWDB.tt</DependentUpon>
+    <Compile Include="Models\simms_Data_Feb_Apr_Final.cs">
+      <DependentUpon>WWW.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\WeatherAPIDAL.cs" />
     <Compile Include="Models\WeatherDataFromAPI.cs" />
-    <Compile Include="Models\WWWDB.Context.cs">
+    <Compile Include="Models\WWW.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>WWWDB.Context.tt</DependentUpon>
+      <DependentUpon>WWW.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\WWWDB.cs">
+    <Compile Include="Models\WWW.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>WWWDB.tt</DependentUpon>
+      <DependentUpon>WWW.tt</DependentUpon>
     </Compile>
-    <Compile Include="Models\WWWDB.Designer.cs">
+    <Compile Include="Models\WWW.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>WWWDB.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\WWWDBRemote.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WWWDBRemote.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\WWWDBRemote.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WWWDBRemote.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\WWWDBRemote.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>WWWDBRemote.edmx</DependentUpon>
+      <DependentUpon>WWW.edmx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -199,25 +184,15 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Models\WWWDB.Context.tt">
+    <Content Include="Models\WWW.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>WWWDB.edmx</DependentUpon>
-      <LastGenOutput>WWWDB.Context.cs</LastGenOutput>
+      <DependentUpon>WWW.edmx</DependentUpon>
+      <LastGenOutput>WWW.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\WWWDB.tt">
+    <Content Include="Models\WWW.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>WWWDB.edmx</DependentUpon>
-      <LastGenOutput>WWWDB.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\WWWDBRemote.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>WWWDBRemote.edmx</DependentUpon>
-      <LastGenOutput>WWWDBRemote.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\WWWDBRemote.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>WWWDBRemote.edmx</DependentUpon>
-      <LastGenOutput>WWWDBRemote.cs</LastGenOutput>
+      <DependentUpon>WWW.edmx</DependentUpon>
+      <LastGenOutput>WWW.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -241,19 +216,12 @@
     <Content Include="Scripts\esm\popper.js.map" />
     <Content Include="Scripts\esm\popper-utils.min.js.map" />
     <Content Include="Scripts\esm\popper-utils.js.map" />
-    <EntityDeploy Include="Models\WWWDB.edmx">
+    <EntityDeploy Include="Models\WWW.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>WWWDB.Designer.cs</LastGenOutput>
+      <LastGenOutput>WWW.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\WWWDB.edmx.diagram">
-      <DependentUpon>WWWDB.edmx</DependentUpon>
-    </Content>
-    <EntityDeploy Include="Models\WWWDBRemote.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>WWWDBRemote.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\WWWDBRemote.edmx.diagram">
-      <DependentUpon>WWWDBRemote.edmx</DependentUpon>
+    <Content Include="Models\WWW.edmx.diagram">
+      <DependentUpon>WWW.edmx</DependentUpon>
     </Content>
     <None Include="Properties\PublishProfiles\WeatherWorryWonder - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\WeatherWorryWonder20190621024520 - Web Deploy.pubxml" />
