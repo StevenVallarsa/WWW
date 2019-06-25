@@ -6,9 +6,9 @@
     <edmx:Diagrams>
       <Diagram DiagramId="92792636032d4cf8a6034eea8c47eb92" Name="Diagram1">
         <EntityTypeShape EntityType="WWWModel.EPAGRDataFinal" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="WWWModel.Ost_Data_Feb_Apr_Final" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="WWWModel.simms_Data_Feb_Apr_Final" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="WWWModel.Factory_Pollutant_Final" Width="1.5" PointX="0.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WWWModel.Factory_Pollutant_Final" Width="1.5" PointX="7" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="WWWModel.Ost_Data_March_Final" Width="1.5" PointX="2.75" PointY="1.375" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

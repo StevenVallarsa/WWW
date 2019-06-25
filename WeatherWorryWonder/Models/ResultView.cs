@@ -8,18 +8,18 @@ namespace WeatherWorryWonder.Models
     public class ResultView
     {
         public string PollutantWarning{ get; set; }
-        public float CO { get; set; }
-        public float C2H4OPPM { get; set; }
-        public float O3AQI { get; set; }
-        public float Second03AQI { get; set; }
-        public float Third03AQI { get; set;}
-        public float PM25AQI { get; set; }
-        public float NO2AQI { get; set; }
-        public float SO2AQI { get; set; }
-        public float PredictedAQITomorrow { get; set; }
-        public float PredictedAQI3Day { get; set; }
-        public float PredictedAQI5Day { get; set; }
-        public float EpaAQI { get; set; }
+        public double CO { get; set; }
+        public double C2H4OPPM { get; set; }
+        public double O3AQI { get; set; }
+        public double Second03AQI { get; set; }
+        public double Third03AQI { get; set;}
+        public double PM25AQI { get; set; }
+        public double NO2AQI { get; set; }
+        public double SO2AQI { get; set; }
+        public double PredictedAQITomorrow { get; set; }
+        public double PredictedAQI3Day { get; set; }
+        public double PredictedAQI5Day { get; set; }
+        public double EpaAQI { get; set; }
         public string SensorName { get; set; }
         public double UserLatitude { get; set; }
         public double UserLongitude { get; set; }

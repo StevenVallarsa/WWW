@@ -12,14 +12,14 @@ namespace WeatherWorryWonder.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Ost_Data_Feb_Apr_Final
+    public partial class Ost_Data_March_Final
     {
         public string dev_id { get; set; }
-        public System.DateTime Date { get; set; }
-        public string DateTime { get; set; }
+        public System.DateTime date { get; set; }
+        public string time { get; set; }
         public double o3 { get; set; }
         public double pm25 { get; set; }
-        public double pm25Count { get; set; }
+        public double pm25Average { get; set; }
         public int id { get; set; }
     }
 }

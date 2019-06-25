@@ -26,8 +26,8 @@ namespace WeatherWorryWonder.Models
         }
     
         public virtual DbSet<EPAGRDataFinal> EPAGRDataFinals { get; set; }
-        public virtual DbSet<Ost_Data_Feb_Apr_Final> Ost_Data_Feb_Apr_Final { get; set; }
         public virtual DbSet<simms_Data_Feb_Apr_Final> simms_Data_Feb_Apr_Final { get; set; }
         public virtual DbSet<Factory_Pollutant_Final> Factory_Pollutant_Finals { get; set; }
+        public virtual DbSet<Ost_Data_March_Final> Ost_Data_March_Final { get; set; }
     }
 }
