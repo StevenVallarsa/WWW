@@ -15,7 +15,6 @@
     <div class="AQI">
         <h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Math.Round(Model.O3AQI)</b></span></h2>
         <h3>Second Closest Sensor AQI: @Math.Round(Model.Second03AQI)</h3>
-        <h4>Third Closest Sensor AQI: @Math.Round(Model.Third03AQI)</h4>
         <h4>EPA AQI: @Math.Round(Model.EpaAQI)</h4>
         <h2>Sensor Location:</h2>
         <p>@Model.SensorName</p>

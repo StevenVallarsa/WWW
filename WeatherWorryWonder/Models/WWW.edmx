@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="WWWModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="WWWModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="EPAGRDataFinal">
           <Key>
             <PropertyRef Name="id" />
@@ -34,16 +34,16 @@ warning 6002: The table/view 'WWW.dbo.Factory Pollutant Final' does not have a p
           <Property Name="Longitude" Type="float" Nullable="false" />
           <Property Name="EtO_ugm3" Type="float" Nullable="false" />
         </EntityType>
-        <EntityType Name="Ost_Data_Feb_Apr_Final">
+        <EntityType Name="Ost_Data_March_Final">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="dev_id" Type="nvarchar" MaxLength="50" Nullable="false" />
-          <Property Name="Date" Type="date" Nullable="false" />
-          <Property Name="DateTime" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="date" Type="date" Nullable="false" />
+          <Property Name="time" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="o3" Type="float" Nullable="false" />
           <Property Name="pm25" Type="float" Nullable="false" />
-          <Property Name="pm25Count" Type="float" Nullable="false" />
+          <Property Name="pm25Average" Type="float" Nullable="false" />
           <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
         </EntityType>
         <EntityType Name="simms_Data_Feb_Apr_Final">
@@ -62,7 +62,7 @@ warning 6002: The table/view 'WWW.dbo.Factory Pollutant Final' does not have a p
         </EntityType>
         <EntityContainer Name="WWWModelStoreContainer">
           <EntitySet Name="EPAGRDataFinal" EntityType="Self.EPAGRDataFinal" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Ost_Data_Feb_Apr_Final" EntityType="Self.Ost_Data_Feb_Apr_Final" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Ost_Data_March_Final" EntityType="Self.Ost_Data_March_Final" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="simms_Data_Feb_Apr_Final" EntityType="Self.simms_Data_Feb_Apr_Final" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Factory Pollutant Final" EntityType="Self.Factory Pollutant Final" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
@@ -74,8 +74,7 @@ warning 6002: The table/view 'WWW.dbo.Factory Pollutant Final' does not have a p
     FROM [dbo].[Factory Pollutant Final] AS [Factory Pollutant Final]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="WWWModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -90,18 +89,6 @@ warning 6002: The table/view 'WWW.dbo.Factory Pollutant Final' does not have a p
           <Property Name="Site_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="SITE_LATITUDE" Type="Double" Nullable="false" />
           <Property Name="SITE_LONGITUDE" Type="Double" Nullable="false" />
-          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-        </EntityType>
-        <EntityType Name="Ost_Data_Feb_Apr_Final">
-          <Key>
-            <PropertyRef Name="id" />
-          </Key>
-          <Property Name="dev_id" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="DateTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="o3" Type="Double" Nullable="false" />
-          <Property Name="pm25" Type="Double" Nullable="false" />
-          <Property Name="pm25Count" Type="Double" Nullable="false" />
           <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
         </EntityType>
         <EntityType Name="simms_Data_Feb_Apr_Final">
@@ -134,10 +121,22 @@ warning 6002: The table/view 'WWW.dbo.Factory Pollutant Final' does not have a p
         </EntityType>
         <EntityContainer Name="WWWEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="EPAGRDataFinals" EntityType="Self.EPAGRDataFinal" />
-          <EntitySet Name="Ost_Data_Feb_Apr_Final" EntityType="Self.Ost_Data_Feb_Apr_Final" />
           <EntitySet Name="simms_Data_Feb_Apr_Final" EntityType="Self.simms_Data_Feb_Apr_Final" />
           <EntitySet Name="Factory_Pollutant_Finals" EntityType="Self.Factory_Pollutant_Final" />
+          <EntitySet Name="Ost_Data_March_Final" EntityType="WWWModel.Ost_Data_March_Final" />
         </EntityContainer>
+        <EntityType Name="Ost_Data_March_Final">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="dev_id" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="time" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="o3" Type="Double" Nullable="false" />
+          <Property Name="pm25" Type="Double" Nullable="false" />
+          <Property Name="pm25Average" Type="Double" Nullable="false" />
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -154,19 +153,6 @@ warning 6002: The table/view 'WWW.dbo.Factory Pollutant Final' does not have a p
                 <ScalarProperty Name="Site_Name" ColumnName="Site_Name" />
                 <ScalarProperty Name="SITE_LATITUDE" ColumnName="SITE_LATITUDE" />
                 <ScalarProperty Name="SITE_LONGITUDE" ColumnName="SITE_LONGITUDE" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Ost_Data_Feb_Apr_Final">
-            <EntityTypeMapping TypeName="WWWModel.Ost_Data_Feb_Apr_Final">
-              <MappingFragment StoreEntitySet="Ost_Data_Feb_Apr_Final">
-                <ScalarProperty Name="dev_id" ColumnName="dev_id" />
-                <ScalarProperty Name="Date" ColumnName="Date" />
-                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
-                <ScalarProperty Name="o3" ColumnName="o3" />
-                <ScalarProperty Name="pm25" ColumnName="pm25" />
-                <ScalarProperty Name="pm25Count" ColumnName="pm25Count" />
                 <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -194,6 +180,19 @@ warning 6002: The table/view 'WWW.dbo.Factory Pollutant Final' does not have a p
                 <ScalarProperty Name="Latitude" ColumnName="Latitude" />
                 <ScalarProperty Name="Longitude" ColumnName="Longitude" />
                 <ScalarProperty Name="EtO_ugm3" ColumnName="EtO_ugm3" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Ost_Data_March_Final">
+            <EntityTypeMapping TypeName="WWWModel.Ost_Data_March_Final">
+              <MappingFragment StoreEntitySet="Ost_Data_March_Final">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="pm25Average" ColumnName="pm25Average" />
+                <ScalarProperty Name="pm25" ColumnName="pm25" />
+                <ScalarProperty Name="o3" ColumnName="o3" />
+                <ScalarProperty Name="time" ColumnName="time" />
+                <ScalarProperty Name="date" ColumnName="date" />
+                <ScalarProperty Name="dev_id" ColumnName="dev_id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
