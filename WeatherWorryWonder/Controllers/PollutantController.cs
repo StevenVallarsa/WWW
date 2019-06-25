@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Web;
@@ -14,166 +15,106 @@ namespace WeatherWorryWonder.Controllers
     {
         public static WWWEntities db = new WWWEntities();
         public static List<Pollutant> pollutants = Pollutant.GetPollutantTypes();
-        public static List<float> MorePollutantDataReading = new List<float>();       //storing sensor readings in this list
-        public static List<float> PollutantAQIs = new List<float>();                          //storing all pollutant aqis in this list
+        public static List<Ost_Data_Feb_Apr_Final> OSTPollutantData = new List<Ost_Data_Feb_Apr_Final>();
+        public static List<Ost_Data_Feb_Apr_Final> SelectedOstReadings = new List<Ost_Data_Feb_Apr_Final>();
+        public static List<simms_Data_Feb_Apr_Final> SimmsPollutantData = new List<simms_Data_Feb_Apr_Final>();
+        public static List<simms_Data_Feb_Apr_Final> SelectedSimmsReadings = new List<simms_Data_Feb_Apr_Final>();
+        public static List<float> PollutantAverages = new List<float>();
+        public static List<float> PollutantAQIs = new List<float>();
 
-        //Depending on the sensor and user time
-        //OST an SIMMS are in seperate database tables therefore we need to know which table to pull using an if/else statement
-        public static List<float> PollutantDataReading(Sensor s, int mins)
+        //take in the sensor that is closest to the user
+        public static void PullData (Sensor s)
         {
-            List<float> MorePollutantDataReading = new List<float>();
-
-            //example of what the string date looks like "2019 - 03 - 01T"            
             //take the current hour            
             string currentHour = DateTime.Now.ToString("HH");
-
-            //DateTime datevalue = (Convert.ToDateTime(currentHour.ToString()));
-            //string dy = datevalue.Day.ToString();
-
-
-            //take the DeLorean and go back to a date in the past
-            string currentTime = $"2019-03-20T{currentHour}";
             //pulls sensor name
             string sensorLocation = s.Name;
 
-            //take in the sensor that is closest to the user
-            //string sensorLocation = "graqm0107";
+            Ost_Data_Feb_Apr_Final ostData = new Ost_Data_Feb_Apr_Final();
+            simms_Data_Feb_Apr_Final simmsData = new simms_Data_Feb_Apr_Final();
 
-            //if contains graq = ost sensor
-            bool isOSTSensor = (sensorLocation.Contains("graq"));
-            try 
+            
+            if (sensorLocation.Contains("graq"))
             {
-                List<Ost_Data_Feb_Apr_Final> OSTData = new List<Ost_Data_Feb_Apr_Final>();
-                if (isOSTSensor == true)
+
+                var startingPoint = db.Ost_Data_Feb_Apr_Final
+                .Where(ut => ut.DateTime.Contains(currentHour) && ut.dev_id == s.Name)
+                .FirstOrDefault();
+
+                if (startingPoint != null)
                 {
-                    //pulling the data based on user current time and location of sensor
-                    Ost_Data_Feb_Apr_Final startingPoint = db.Ost_Data_Feb_Apr_Final
-                    .Where(ut => ut.DateTime.Contains(currentTime) && ut.dev_id == s.Name)
-                    .First();
-
-                    //pulls row of data
-                    int x = startingPoint.id;
-                    OSTData = db.Ost_Data_Feb_Apr_Final.Where(o3 => o3.id == x).Take(mins).ToList();
-                    //mins are either 480 or 60
-                    //for (int i = 0; i < mins; i++)
-                    //{
-                    //    Ost_Data_Feb_Apr_Final OSTAQIdata = db.Ost_Data_Feb_Apr_Final.Find(x);
-                    //    if((float)OSTAQIdata.o3 != 0 )
-                    //    {
-                    //        OSTData.Add(OSTAQIdata);
-                    //        x++;
-                    //    }
-                    //    else
-                    //    {
-                    //        x++;
-                    //        continue;
-                    //    }
-                    //}
-
-                    //sum all the O3(ozone) AQI readings from the list
-                    // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
-                    float OSTDataO3sum = (float)OSTData.Sum(O3 => (O3.o3) * 0.509f);
-
-                    //This next line should be removed b/c PM25 needs to have a 24 hour reading
-                    float OSTDataPM25sum = (float)OSTData.Sum(PM25 => (PM25.pm25 ) * 148.17f);   //PM25 weighs a lot more than O3 BTW
-
-                    float OSTO3Average = OSTDataO3sum / OSTData.Count;
-                    //average the AQI readings by dividing by number of readings
-                    float OSTPM25Average = OSTDataPM25sum / OSTData.Count;
-
-                    float ConvertedOSTO3 = ConvertPPBtoPPM(OSTO3Average);
-                    float ConvertedOSTPM25 = ConvertPPBtoPPM(OSTPM25Average);
-
-                    MorePollutantDataReading.Add(ConvertedOSTO3);    //index[0]
-                    MorePollutantDataReading.Add(ConvertedOSTPM25);   //index[1]
-
-                //sum all the O3(ozone) AQI readings from the list
-                // ADDED UG/M3 TO PPB CONVERSION CONSTANT TO O3 DATA BEING DRAWN FROM DB TO MAKE DATA MATCH SIMM SENSORS 
-
-                    //average the AQI readings by dividing by number of readings
-
-
-
+                    int firstRow = startingPoint.id;
+                    //pull rows of data
+                    OSTPollutantData = db.Ost_Data_Feb_Apr_Final
+                        .Where(x => x.id == firstRow).Take(480).ToList();
                 }
-                //if sensor name contains simms
-                else
-                {
-                    List<simms_Data_Feb_Apr_Final> simsData = new List<simms_Data_Feb_Apr_Final>();
-                    simms_Data_Feb_Apr_Final startingPoint = db.simms_Data_Feb_Apr_Final
-                        .Where(ut => ut.time.Contains(currentTime) && ut.dev_id == sensorLocation)
-                        .First();
-
-                    int x = startingPoint.id;
-                    //get 8 hr average AQI
-                    for (int i = 0; i < mins; i++)
-                    {
-                        simms_Data_Feb_Apr_Final SimmsAQIdata = db.simms_Data_Feb_Apr_Final.Find(x);
-                        if ((float)SimmsAQIdata.o3 != 0)
-                        {
-                            simsData.Add(SimmsAQIdata);
-                            x++;
-                        }
-                        else
-                        {
-                            x++;
-                            continue;
-                        }
-                    }
-
-                    //sum all the O3(ozone) AQI readings from the list
-                    float SimsDataO3sum = (float)simsData.Sum(O3 => O3.o3);
-
-                    //average the AQI readings by dividing by number of readings
-                    float SimsO3Average = SimsDataO3sum / simsData.Count;
-
-                    //sum all the CO AQI readings from the list
-                    float SimsDataCOsum = (float)simsData.Sum(CO => CO.co);
-                    //average the AQI readings by dividing by number of readings
-                    float SimsCOToAverage = SimsDataCOsum / simsData.Count;
-
-                    //sum all the no2 readings from the list
-                    float SimsDataNO2sum = (float)simsData.Sum(NO2 => NO2.no2);
-                    //average the AQI readings by dividing by number of readings
-                    float SimsNO2Average = SimsDataNO2sum / simsData.Count;
-
-                    //sum all the no2 readings from the list
-                    float SimsDataPM25sum = (float)simsData.Sum(PM25 => PM25.pm25);
-                    //average the AQI readings by dividing by number of readings
-                    float SimsPM25Average = SimsDataPM25sum / simsData.Count;
-
-                    //sum all the no2 readings from the list
-                    float SimsDataSO2sum = (float)simsData.Sum(SO2 => SO2.so2);
-                    //average the AQI readings by dividing by number of readings
-                    float SimsSO2Average = SimsDataSO2sum / simsData.Count;
-
-                    MorePollutantDataReading.Add(SimsO3Average);   //index[0]
-                    MorePollutantDataReading.Add(SimsCOToAverage);   //index[1]
-                    MorePollutantDataReading.Add(SimsNO2Average);     //index[2]
-                    MorePollutantDataReading.Add(SimsPM25Average);      //index[3]
-                    MorePollutantDataReading.Add(SimsSO2Average);      //index[4]
-
-                }
-
             }
-
-            //will return 0 which will then be caught by the HomeController loop as unreliable data, moving to the next sensor
-            catch (Exception)
-
+            else
             {
-                MorePollutantDataReading.Add(0);
-                MorePollutantDataReading.Add(0);
-                MorePollutantDataReading.Add(0);
-                MorePollutantDataReading.Add(0);
-                MorePollutantDataReading.Add(0);
+                var startingPoint = db.simms_Data_Feb_Apr_Final
+                .Where(ut => ut.time.Contains(currentHour) && ut.dev_id == s.Name)
+                .FirstOrDefault();
+
+                if (startingPoint != null)
+                {
+                    int firstRow = startingPoint.id;
+                    //pull rows of data
+                    SimmsPollutantData = db.simms_Data_Feb_Apr_Final
+                        .Where(x => x.id == firstRow).Take(480).ToList();
+                    
+                }
             }
-            return MorePollutantDataReading;
+            
+        }
+
+        public static void PollutantListReadings(int numberofReadings)
+        {
+            SelectedOstReadings = OSTPollutantData.Take(numberofReadings).ToList();
+            SelectedSimmsReadings = SimmsPollutantData.Take(numberofReadings).ToList();
+
+        }
+
+        public static void PollutantListReadings(Sensor s)
+        {
+            string sensorLocation = s.Name;
+            if (sensorLocation.Contains("graq"))
+            {
+                //sum all the 03 readings from the list
+                float ostO3Sum = (float)SelectedOstReadings.Sum(x => x.o3);
+                //average the AQI readings
+                float ostO3Average = ostO3Sum / SelectedOstReadings.Count;
+                float ostPM25Sum = (float)SelectedOstReadings.Sum(x => x.pm25);
+                float ostPM25Average = ostPM25Sum / SelectedOstReadings.Count;
+
+                PollutantAverages.Add(ostO3Average);   //index[0]
+                PollutantAverages.Add(ostPM25Average); //index[1]
+            }
+            else
+            {
+                float simsO3Sum = (float)SelectedSimmsReadings.Sum(x => x.o3);
+                float simsO3Average = simsO3Sum / SelectedSimmsReadings.Count;
+                float simsCOsum = (float)SelectedSimmsReadings.Sum(x => x.co);
+                float simsCOToAverage = simsCOsum / SelectedSimmsReadings.Count;
+                float simsNO2sum = (float)SelectedSimmsReadings.Sum(x => x.no2);
+                float simsNO2Average = simsNO2sum / SelectedSimmsReadings.Count;
+                float simsPM25sum = (float)SelectedSimmsReadings.Sum(x => x.pm25);
+                float simsPM25Average = simsPM25sum / SelectedSimmsReadings.Count;
+                float simsSO2sum = (float)SelectedSimmsReadings.Sum(x => x.so2);
+                float simsSO2Average = simsSO2sum / SelectedSimmsReadings.Count;
+
+
+                PollutantAverages.Add(simsO3Average);   //index[0]
+                PollutantAverages.Add(simsCOToAverage); //index[1]
+                PollutantAverages.Add(simsNO2Average);  //index[2]
+                PollutantAverages.Add(simsPM25Average); //index[3]
+                PollutantAverages.Add(simsSO2Average);  //index[4]
+            }
         }
 
         public static float ConvertPPBtoPPM(float PollutantPPB)
         {
                 //1 ppm = 1000 ppb
                 float PollutantPPM = PollutantPPB / 1000;
-
                 return PollutantPPM;
         }
 
@@ -277,19 +218,6 @@ namespace WeatherWorryWonder.Controllers
             {
                 return 0;
             }
-            //for (int i = 0; i < mins; i++)
-            //{
-            //    Ost_Data_Feb_Apr_Final OSTAQIdata = db.Ost_Data_Feb_Apr_Final.Find(x);
-            //    if ((float)OSTAQIdata.o3 != 0)
-            //    {
-            //        OSTData.Add(OSTAQIdata);
-            //        x++;
-            //    }
-            //    else
-            //    {
-            //        x++;
-            //    }
-            //}
             float average = (float)OSTData.Sum(O3 => (O3.o3) / OSTData.Count) * (float)0.509;
             return ConvertPPBtoPPM(average);
         }

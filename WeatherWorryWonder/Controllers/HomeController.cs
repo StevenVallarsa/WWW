@@ -56,9 +56,7 @@ namespace WeatherWorryWonder.Controllers
             List<Sensor> closestSensors = GeocodeController.ShortestToLongest(userLocation);
             //got all our weather info here
             List<float> twoClosestAQIs = new List<float>(); 
-
-            List<float> ForecastedAQI = new List<float>();
-
+            List<float> ForecastedAQI = new List<float>()
             List<float> PollutantAQIs = new List<float>();
 
             //skips sensor if data is unreliable
@@ -75,7 +73,7 @@ namespace WeatherWorryWonder.Controllers
                 }
 
                 //get sensor readings from OST and SIMMS
-                float eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 480)[0];
+                float eightHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor)[0];
                 float oneHrPollutantPPM = PollutantController.PollutantDataReading(closestSensor, 60)[0];
                 //if((eightHrPollutantPPM != null || oneHrPollutantPPM != null) && (eightHrPollutantPPM < 5 && oneHrPollutantPPM)
                 //index zero = index of model pollutant and index one = whether we use one or eight hour
