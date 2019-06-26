@@ -2,9 +2,9 @@
 @using WeatherWorryWonder.Controllers
 @{
     Sensor s = Sensor.GetSensors()[2];
-    List<List<decimal>> historicData = PollutantController.HistoricData(s, 04);
+    List<double> historicData = PollutantController.HistoricData(s);
 }
-@foreach (decimal d in historicData[0])
+@foreach (double d in historicData)
 {
     <p>@d</p>
 }
@@ -18,7 +18,7 @@
 
     var trace1 = {
         x: [1,2,3,4,5,6,7],
-        y: [@historicData[0][0], @historicData[0][1], @historicData[0][2], @historicData[0][3]]
+        y: [@historicData[0], @historicData[1], @historicData[2], @historicData[3]],
         type: 'scatter',
     };
 
