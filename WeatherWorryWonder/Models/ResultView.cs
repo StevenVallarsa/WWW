@@ -26,6 +26,15 @@ namespace WeatherWorryWonder.Models
         public string Address { get; set; }
         public string Recommendations { get; set; }
         public Sensor UserSensor { get; set; }
+        public string AQIColor1 { get; set; }
+        public string AQIColor2 { get; set; }
+        public string AQIColor3 { get; set; }
+        public double Distance { get; set; }
+        public string Suggestion { get; set; }
         public List<WeatherDataFromAPI> Weather { get; set; }
+        public List<Sensor> TwoClosestSensors { get; set; }
+
+        public double Factorylat { get; set; }
+        public double Factorylong { get; set; }
     }
 }
