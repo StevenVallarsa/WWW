@@ -213,7 +213,10 @@ namespace WeatherWorryWonder.Controllers
             return View();
         }
 
-
+        public ActionResult OzoneRecommendationTips()
+        {
+            return View();
+        }
         public ActionResult OzoneReductionTips(string option)   //Callista
         {
 

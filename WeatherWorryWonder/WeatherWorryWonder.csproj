@@ -180,6 +180,12 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\GoogleMaps.js" />
+    <Content Include="Content\img\atHome.jpg" />
+    <Content Include="Content\img\driving.jpg" />
+    <Content Include="Content\img\grilling.jpg" />
+    <Content Include="Content\img\office.jpg" />
+    <Content Include="Content\img\yardwork.jpg" />
+    <Content Include="Content\OzoneRecommendations.css" />
     <Content Include="Content\style.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -238,6 +244,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\OzoneRecs.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />
@@ -281,6 +288,7 @@
     <Content Include="Views\Home\OzoneReductionTips.cshtml" />
     <Content Include="Views\Home\YardWork.cshtml" />
     <Content Include="Views\Home\TestforPrintingOutIndividualAQI.cshtml" />
+    <Content Include="Views\Home\OzoneRecommendationTips.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
