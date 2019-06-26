@@ -24,6 +24,8 @@
 <div class="main">
     <div class="AQI">
         <h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Model.O3AQI</b></span></h2>
+        <div id="myDiv"></div>
+
         <h3>Second Closest Sensor AQI: @Model.Second03AQI</h3>
         <h4>EPA AQI: @Model.EpaAQI</h4>
         <h2>Sensor Location:</h2>
@@ -34,6 +36,8 @@
         <p>Tomorrow AQI: @Model.PredictedAQITomorrow</p>
         <p>3-Day AQI: @Model.PredictedAQI3Day</p>
         <p>5-Day AQI: @Model.PredictedAQI5Day</p>
+        
+
     </div>
     <div class="otherPollutants">
         <h2>Other AQIs</h2>
@@ -83,7 +87,7 @@ function initMap() {
     });
 
     var markerSensor1 = new google.maps.Marker({
-        position: sensor1LatLong @*{ lat: @Model.ThreeClosestSensors[0].Lat, @Model.ThreeClosestSensors[0].Long }*@,
+        position: sensor1LatLong,
         title: "@Model.O3AQI",
         label: { color: 'black', fontWeight: 'bold', fontSize: '20px', text: '@Model.O3AQI' },
         icon: {
@@ -97,7 +101,7 @@ function initMap() {
     });
 
     var markerSensor2 = new google.maps.Marker({
-        position: sensor2LatLong @*{ lat: @Model.ThreeClosestSensors[1].Lat, @Model.ThreeClosestSensors[1].Long }*@,
+        position: sensor2LatLong,
         title: "@Model.Second03AQI",
         label: { color: 'black', fontWeight: 'bold', fontSize: '20px', text: '@Model.Second03AQI' },
         icon: {
@@ -120,6 +124,42 @@ function initMap() {
     });
 
 }
+</script>
+
+<script>
+
+
+    var trace1 = {
+        x: ["03/22", "03/23", "03/24", "03/25", "03/26", "03/27", "03/28"],
+        y: [@Model.HistoricData[0], @Model.HistoricData[1], @Model.HistoricData[2], @Model.HistoricData[3], @Model.HistoricData[4], @Model.HistoricData[5], @Model.HistoricData[6]],
+        type: 'scatter',
+    };
+
+    var layout = {
+        xaxis: {
+            autotick: false,
+            ticks: 'outside',
+            tick0: 0,
+            dtick: 1,
+            ticklen: 8,
+            tickwidth: 4,
+            tickcolor: '#000'
+        },
+        yaxis: {
+            autotick: false,
+            ticks: 'outside',
+            tick0: 0,
+            dtick: .025,
+            ticklen: 8,
+            tickwidth: 4,
+            tickcolor: '#000'
+        }
+    }
+    var data = [trace1];
+
+    Plotly.newPlot('myDiv', data, {}, { showSendToCloud: true });
+
+
 </script>
 
 <script async defer

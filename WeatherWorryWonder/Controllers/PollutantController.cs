@@ -206,14 +206,6 @@ namespace WeatherWorryWonder.Controllers
                     {
                         oneWeekValues.Add(sensorData);
                     }
-                    //when we get up to a week in the past, start adding to the week list as well
-                    //if (i > 23)
-                    //{
-                    //    if (sensorData != 0)
-                    //    {
-                    //        oneMonthValues.Add(sensorData);
-                    //    }
-                    //}
                     Day++;
                 }
             return oneWeekValues;

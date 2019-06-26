@@ -1,5 +1,11 @@
 ﻿@using WeatherWorryWonder.Models
-<h1>Welcome!</h1>
+<h2>Enter Your Street Address</h2>
+
+<form action="~/Home/AQI" method="post">
+    <input type="text" placeholder="Enter Address" name="streetAddress" /> , Grand Rapids, MI
+    <input type="submit" />
+</form>
+
 
 <div id="map"></div>
 
