@@ -131,14 +131,23 @@ namespace WeatherWorryWonder.Controllers
 
                         if (closestSensor.Name.Contains("graq"))
                         {
-                            rv.PM25AQI = Math.Round(PollutantController.ConvertPPBtoPPM((PollutantController.CalculateEPA(PollutantController.PollutantAverages[2],3)))); //PM25
+                            int pm25BreakpointIndex = PollutantController.BreakpointIndex(PollutantController.PollutantAverages[2], 3);
+                            rv.PM25AQI = Math.Round(PollutantController.CalculateEPA(PollutantController.PollutantAverages[2], pm25BreakpointIndex, 3));
                         }
                         else
                         {
-                            rv.PM25AQI = Math.Round(PollutantController.PollutantAverages[4]); //PM25
-                            rv.NO2AQI = Math.Round(PollutantController.CalculateEPA(PollutantController.PollutantAverages[3],6)); //NO2
-                            rv.SO2AQI = Math.Round(PollutantController.CalculateEPA(PollutantController.PollutantAverages[5],5)); //SO2
-                            rv.CO = Math.Round(PollutantController.CalculateEPA(PollutantController.PollutantAverages[2],4)); //CO
+                            int pm25BreakpointIndex = PollutantController.BreakpointIndex(PollutantController.PollutantAverages[4],3); 
+                            rv.PM25AQI = Math.Round(PollutantController.CalculateEPA(PollutantController.PollutantAverages[4], pm25BreakpointIndex,3));
+
+                            int no2BreakpointIndex = PollutantController.BreakpointIndex(PollutantController.PollutantAverages[3], 6); 
+                            rv.NO2AQI = Math.Round(PollutantController.CalculateEPA(PollutantController.PollutantAverages[3], no2BreakpointIndex, 6)); 
+
+                            int so2BreakpointIndex = PollutantController.BreakpointIndex(PollutantController.PollutantAverages[5], 5); 
+                            rv.SO2AQI = Math.Round(PollutantController.CalculateEPA(PollutantController.PollutantAverages[5], so2BreakpointIndex, 5));
+
+                            int coBreakpointIndex = PollutantController.BreakpointIndex(PollutantController.PollutantAverages[2], 4);
+                            rv.CO = Math.Round(PollutantController.CalculateEPA(PollutantController.PollutantAverages[2], coBreakpointIndex, 4));
+                           
                         }
                     }
                 }
