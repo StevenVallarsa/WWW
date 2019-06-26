@@ -19,6 +19,7 @@ namespace WeatherWorryWonder.Controllers
         public static List<simms_Data_Feb_Apr_Final> SelectedSimmsReadings = new List<simms_Data_Feb_Apr_Final>();
         public static List<double> PollutantAverages = new List<double>();
         public static List<double> PollutantAQIs = new List<double>();
+        public static int FirstRow = 0;
         public static double eighthourO3 = 0;
         public static double pollutantlat = 0;
         public static double pollutantlong = 0;
@@ -45,10 +46,10 @@ namespace WeatherWorryWonder.Controllers
 
                 if (startingPoint != null)
                 {
-                    int firstRow = startingPoint.id;
+                    FirstRow = startingPoint.id;
                     //pull rows of data
                     OSTPollutantData = db.Ost_Data_March_Final
-                        .Where(x => x.id == firstRow).Take(480).ToList();
+                        .Where(x => x.id >= FirstRow && x.id <= (FirstRow + 480)).Take(480).ToList();
                 }
             }
             else
@@ -62,18 +63,77 @@ namespace WeatherWorryWonder.Controllers
                     int firstRow = startingPoint.id;
                     //pull rows of data
                     SimmsPollutantData = db.simms_Data_Feb_Apr_Final
-                        .Where(x => x.id == firstRow).Take(480).ToList();
+                        .Where(x => x.id >= firstRow && x.id <= firstRow + 480).Take(480).ToList();
                     
                 }
             }
             
         }
 
+        public static double PullHistoricData(Sensor s, int pulls, string date)
+        {
+            //take the current hour            
+            string currentHour = DateTime.Now.ToString("HH");
+            //take the DeLorean and go back to a date in the past
+            string currentTime = date;
+            //pulls sensor name
+            string sensorLocation = s.Name;
+
+            if (sensorLocation.Contains("graq"))
+            {
+                var startingPoint = db.Ost_Data_March_Final
+                .Where(ut => ut.time.Contains(currentTime) && ut.dev_id == s.Name)
+                .FirstOrDefault();
+
+                if (startingPoint != null)
+                {
+                    int firstRow = startingPoint.id;
+                    //pull rows of data
+                    List<Ost_Data_March_Final> ostData = db.Ost_Data_March_Final
+                        .Where(x => x.id >= firstRow && x.id <= firstRow + pulls).Take(pulls).ToList();
+                    double average = ostData.Sum(o => o.o3) / ostData.Count;
+                    double o3PPM = UGM3ConvertToPPM(average, 48);
+                    int breakPointIndex = EPABreakpointTable(o3PPM);
+                    double o3APIAQI = Math.Round(CalculateO3AQI(o3PPM, breakPointIndex, 0));
+                    return o3APIAQI;
+                }
+                return 0;
+            }
+            else
+            {
+                var startingPoint = db.simms_Data_Feb_Apr_Final
+                .Where(ut => ut.time.Contains(currentTime) && ut.dev_id == s.Name)
+                .FirstOrDefault();
+
+                if (startingPoint != null)
+                {
+                    int firstRow = startingPoint.id;
+                    //pull rows of data
+                    List<simms_Data_Feb_Apr_Final> simmsData = db.simms_Data_Feb_Apr_Final
+                        .Where(x => x.id >= firstRow && x.id <= firstRow + pulls).Take(pulls).ToList();
+                    double average = simmsData.Sum(o => o.o3) / simmsData.Count;
+                    double o3PPM = UGM3ConvertToPPM(average, 48);
+                    int breakPointIndex = EPABreakpointTable(o3PPM);
+                    double o3APIAQI = CalculateO3AQI(o3PPM, breakPointIndex, 0);
+                    return o3APIAQI;
+                }
+                return 0;
+            }
+
+        }
+
         public static void PollutantListReadings(int numberofReadings)
         {
-            SelectedOstReadings = OSTPollutantData.Take(numberofReadings).ToList();
-            SelectedSimmsReadings = SimmsPollutantData.Take(numberofReadings).ToList();
+            if (OSTPollutantData.Count > 0)
+            {
+                SelectedOstReadings = OSTPollutantData.GetRange(0, numberofReadings).ToList();
+            }
+            if (SimmsPollutantData.Count > 0)
+            {
+                SelectedSimmsReadings = SimmsPollutantData.GetRange(0, numberofReadings).ToList();
+            }
         }
+
 
 
         public static void PollutantAverageReadings(Sensor s)
@@ -89,7 +149,7 @@ namespace WeatherWorryWonder.Controllers
                 double ostPM25Sum = (double)SelectedOstReadings.Sum(x => x.pm25);
                 double ostPM25Average = ostPM25Sum/ SelectedOstReadings.Count;
                 double ost8hrO3Sum = (double)OSTPollutantData.Sum(x => x.o3);
-                eighthourO3 = UGM3ConvertToPPM((ostO3Sum / OSTPollutantData.Count), 48); //8 hr ppm
+                eighthourO3 = UGM3ConvertToPPM((ost8hrO3Sum / OSTPollutantData.Count), 48); //8 hr ppm
                 PollutantAverages.Add(eighthourO3);   //index[0] 8 hr ppm
                 PollutantAverages.Add(ostO3Average);   //index[1] 1 hr ppm
                 PollutantAverages.Add(ostPM25Average); //index[2] ug/m3
@@ -118,88 +178,46 @@ namespace WeatherWorryWonder.Controllers
             }
         }
 
-        //public static List<List<double>> HistoricData(Sensor s, int month)
-        //{
-        //    //0 index is numbers for one week, 1 is number for one month
-        //    List<double> oneWeekValues = new List<double>();
-        //    List<double> oneMonthValues = new List<double>();
+        public static List<double> HistoricData(Sensor s)
+        {
+            //0 index is numbers for one week, 1 is number for one month
+            List<double> oneWeekValues = new List<double>();
 
-        //    double sensorData;
+            double sensorData;
 
-        //    int Day = 23;
-        //    string currentHour = "20"; //DateTime.Now.ToString("HH");
-        //    string oneMonthAgo = (month - 1).ToString();
-        //    if(oneMonthAgo.Length == 1)
-        //    {
-        //        oneMonthAgo = "0" + oneMonthAgo;
-        //    }
-        //    if(s.Name.Contains("graq"))
-        //    {
-        //        for(int i = 0; i < 30; i++)
-        //        {
-        //            if(Day > 28)
-        //            {
-        //                Day = 1;
-        //            }
-        //            //grabs the day one month ago and then increments it
-        //            string sDay = Day.ToString();
-        //            if(sDay.Length == 1)
-        //            {
-        //                sDay = "0" + Day;
-        //            }
+            int Day = 21;
+            string currentHour = "20"; //DateTime.Now.ToString("HH");
+            for (int i = 0; i < 7; i++)
+                {
+                    if (Day > 31)
+                    {
+                        Day = 1;
+                    }
+                    //grabs the day one month ago and then increments it
+                    string sDay = Day.ToString();
+                    if (sDay.Length == 1)
+                    {
+                        sDay = "0" + Day;
+                    }
 
-        //            string monthAgoTime = $"2019-{oneMonthAgo}-{sDay}T{currentHour}";
-        //            sensorData = PullOSTSensorData(s, 20, monthAgoTime);
-        //            if (sensorData != 0)
-        //            {
-        //                oneMonthValues.Add(sensorData);
-        //            }
-        //            //when we get up to a week in the past, start adding to the week list as well
-        //            if(i > 23)
-        //            {
-        //                if (sensorData != 0)
-        //                {
-        //                    oneMonthValues.Add(sensorData);
-        //                }
-        //            }
-        //            Day++;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        for (int i = 0; i < 30; i++)
-        //        {
-        //            if (Day > 28)
-        //            {
-        //                Day = 1;
-        //            }
-        //            string sDay = Day.ToString();
-        //            if (sDay.Length == 1)
-        //            {
-        //                sDay = "0" + Day;
-        //            }
-        //            //grabs the day one month ago and then increments it
-        //            string monthAgoTime = $"2019-{oneMonthAgo}-{sDay}T{currentHour}";
-        //            sensorData = PullSimmsSensorData(s, 20, monthAgoTime);
-        //            if (sensorData != 0)
-        //            {
-        //                oneMonthValues.Add(sensorData);
-        //            }
-        //            //when we get up to a week in the past, start adding to the week list as well
-        //            if (i > 23)
-        //            {
-        //                if (sensorData != 0)
-        //                {
-        //                    oneMonthValues.Add(sensorData);
-        //                }
-        //            }
-        //            Day++;
-        //        }
-        //    }
-        //    List<List<double>> oneWeekAndMonthHistoricData = new List<List<double>> {oneWeekValues, oneMonthValues };
-        //    return oneWeekAndMonthHistoricData;
-        //}
-
+                    string monthAgoTime = $"2019-03-{sDay}T{currentHour}";
+                    sensorData = PullHistoricData(s, 20, monthAgoTime);
+                    if (sensorData != 0)
+                    {
+                        oneWeekValues.Add(sensorData);
+                    }
+                    //when we get up to a week in the past, start adding to the week list as well
+                    //if (i > 23)
+                    //{
+                    //    if (sensorData != 0)
+                    //    {
+                    //        oneMonthValues.Add(sensorData);
+                    //    }
+                    //}
+                    Day++;
+                }
+            return oneWeekValues;
+        }
 
         public static List<int> EightorOneHour(double oneHrPollutantPPM, double eightHrPollutantPPM)
         {
