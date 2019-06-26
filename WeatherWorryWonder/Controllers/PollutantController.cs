@@ -20,6 +20,9 @@ namespace WeatherWorryWonder.Controllers
         public static List<double> PollutantAverages = new List<double>();
         public static List<double> PollutantAQIs = new List<double>();
         public static double eighthourO3 = 0;
+        public static double pollutantlat = 0;
+        public static double pollutantlong = 0;
+
 
         //take in the sensor that is closest to the user
         public static void PullData (Sensor s)
@@ -315,7 +318,6 @@ namespace WeatherWorryWonder.Controllers
 
         public static double CalculateEPA(double EPA, int breakpointIndex)
         {
-
             double pollutant = (double)Math.Round(EPA, 3);
             double Ihi = (double)pollutants[7].High[breakpointIndex];
             double Ilo = (double)pollutants[7].Low[breakpointIndex];
@@ -363,10 +365,13 @@ namespace WeatherWorryWonder.Controllers
                 {
                     largeNum = sensorDistance;
                     pollutantSensor = f;
+                    pollutantlat = f.Latitude;
+                    pollutantlong = f.Longitude;
                 }
             }
 
             double ethyleneOxide = (double)pollutantSensor.EtO_ugm3;
+
             return ethyleneOxide;
         }
         public static string PollutantWarning(double ethyleneOxideUGM3)
