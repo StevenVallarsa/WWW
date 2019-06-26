@@ -5,28 +5,36 @@
     double lat = userLocation[0];
     double lng = userLocation[1];
 
-    Sensor s = (Sensor)Session["ClosestSensor"];
-    double sensorLat = s.Lat;
-    double sensorLong = s.Long;
+    //Sensor s = (Sensor)Session["ClosestSensor"];
+
+    //double sensorLat = s.Lat;
+    //double sensorLong = s.Long;
+
+    double sLat1 = Model.TwoClosestSensors[0].Lat;
+    double sLng1 = Model.TwoClosestSensors[0].Long;
+
+
+    double sLat2 = Model.TwoClosestSensors[1].Lat;
+    double sLng2 = Model.TwoClosestSensors[1].Long;
+
+    double fLat = Model.Factorylat;
+    double fLng = Model.Factorylong;
+
 }
-
 <div class="main">
-
     <div class="AQI">
-        <h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Math.Round(Model.O3AQI)</b></span></h2>
-        <h3>Second Closest Sensor AQI: @Math.Round(Model.Second03AQI)</h3>
-        <h4>EPA AQI: @Math.Round(Model.EpaAQI)</h4>
+        <h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Model.O3AQI</b></span></h2>
+        <h3>Second Closest Sensor AQI: @Model.Second03AQI</h3>
+        <h4>EPA AQI: @Model.EpaAQI</h4>
         <h2>Sensor Location:</h2>
         <p>@Model.SensorName</p>
     </div>
-
     <div class="futureAQI">
         <h2>Forecast:</h2>
-        <p>Tomorrow AQI: @Math.Round(Model.PredictedAQITomorrow)</p>
-        <p>3-Day AQI: @Math.Round(Model.PredictedAQI3Day)</p>
-        <p>5-Day AQI: @Math.Round(Model.PredictedAQI5Day)</p>
+        <p>Tomorrow AQI: @Model.PredictedAQITomorrow</p>
+        <p>3-Day AQI: @Model.PredictedAQI3Day</p>
+        <p>5-Day AQI: @Model.PredictedAQI5Day</p>
     </div>
-
     <div class="otherPollutants">
         <h2>Other AQIs</h2>
         <p>No2: @Model.NO2AQI</p>
@@ -34,7 +42,6 @@
         <p>SO2: @Model.SO2AQI</p>
         <p>CO: @Model.CO</p>
     </div>
-
     <div class="recommendations">
         <h2>Health Recommendation based on your AQI:</h2>
         <p>
@@ -44,7 +51,6 @@
     </div>
 
     <div id="map"></div>
-
     <div class="weather">
         <h2>Current Weather:</h2>
         <p>Temperature: @Math.Round(Model.Weather[0].TemperatureF) F</p>
@@ -52,35 +58,67 @@
         <p>Wind: @Math.Round(Model.Weather[0].WindDirection) degrees at @Model.Weather[0].WindSpeed m/s</p>
         <p>Humidity: @Model.Weather[0].Humidity %</p>
     </div>
-
     <div class="VOC">
         <p>Ethylene Oxide PPM: @Model.C2H4OPPM</p>
         <p>Pollutant Message: @Model.PollutantWarning</p>
     </div>
-
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <script>
 function initMap() {
     var userLatLong = { lat: @lat, lng: @lng };
-    var sensorLatLong = { lat: @sensorLat, lng: @sensorLong };
-  var map = new google.maps.Map(
-      document.getElementById('map'), {zoom: 14, center: userLatLong});
-    var markerUser = new google.maps.Marker({ position: userLatLong, map: map });
-    var markerSensor = new google.maps.Marker({ position: sensorLatLong, map: map });
+    var sensor1LatLong = { lat: @sLat1, lng: @sLng1 };
+    var sensor2LatLong = { lat: @sLat2, lng: @sLng2 };
+    var factorySensor = { lat: @fLat, lng: @fLng };
+
+    var map = new google.maps.Map(
+        document.getElementById('map'),
+        { zoom: 13, center: userLatLong });
+    var iconBase = "http://maps.google.com/mapfiles/kml/pal2/";
+
+    var markerUser = new google.maps.Marker({
+        position: userLatLong,
+        icon: { url: iconBase + "icon10.png"},
+        map: map
+    });
+
+    var markerSensor1 = new google.maps.Marker({
+        position: sensor1LatLong @*{ lat: @Model.ThreeClosestSensors[0].Lat, @Model.ThreeClosestSensors[0].Long }*@,
+        title: "@Model.O3AQI",
+        label: { color: 'black', fontWeight: 'bold', fontSize: '20px', text: '@Model.O3AQI' },
+        icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 20,
+            fillColor: "@Model.AQIColor1",
+            fillOpacity: 1,
+            strokeWeight: 0
+        },
+        map: map
+    });
+
+    var markerSensor2 = new google.maps.Marker({
+        position: sensor2LatLong @*{ lat: @Model.ThreeClosestSensors[1].Lat, @Model.ThreeClosestSensors[1].Long }*@,
+        title: "@Model.Second03AQI",
+        label: { color: 'black', fontWeight: 'bold', fontSize: '20px', text: '@Model.Second03AQI' },
+        icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 20,
+            fillColor: "@Model.AQIColor2",
+            fillOpacity: 1,
+            strokeWeight: 0
+        },
+        map: map
+    });
+
+    var Marker = new google.maps.Marker({
+        position: factorySensor,
+        title:"Factory Sensor",
+        icon: {
+            url: "http://maps.google.com/mapfiles/kml/pal3/icon59.png"
+        },
+        map: map
+    });
+
 }
 </script>
 

@@ -20,6 +20,9 @@ namespace WeatherWorryWonder.Controllers
         public static List<double> PollutantAverages = new List<double>();
         public static List<double> PollutantAQIs = new List<double>();
         public static double eighthourO3 = 0;
+        public static double pollutantlat = 0;
+        public static double pollutantlong = 0;
+
 
         //take in the sensor that is closest to the user
         public static void PullData (Sensor s)
@@ -196,7 +199,7 @@ namespace WeatherWorryWonder.Controllers
         //    List<List<double>> oneWeekAndMonthHistoricData = new List<List<double>> {oneWeekValues, oneMonthValues };
         //    return oneWeekAndMonthHistoricData;
         //}
-        
+
 
         public static List<int> EightorOneHour(double oneHrPollutantPPM, double eightHrPollutantPPM)
         {
@@ -247,6 +250,24 @@ namespace WeatherWorryWonder.Controllers
             indexAndOneOrEight.Add(breakPoingIndex);
             indexAndOneOrEight.Add(oneOrEightHour);
             return indexAndOneOrEight;
+        }
+        public static int BreakpointIndex(double Pollutant, int pollutantIndex)
+        {
+            int breakPointIndex = 0;
+
+            for (int i = 0; i < 6; i++)
+            {
+                double low = pollutants[pollutantIndex].Low[i];
+                double high = pollutants[pollutantIndex].High[i];
+
+                if (Pollutant >= low && Pollutant <= high)
+                {
+                    breakPointIndex = i;
+                    break;
+                }
+            }
+
+            return breakPointIndex;
         }
 
         // for AQI equation from EPA
@@ -312,10 +333,20 @@ namespace WeatherWorryWonder.Controllers
             double EPA03Reading = (double)ePADataReading.Daily_Max_8_hour_Ozone_Concentration;
             return (EPA03Reading);
         }
-
+        public static double CalculateEPA(double EPA, int breakpointIndex, int pollutantIndex)
+        {
+            double pollutant = (double)Math.Round(EPA, 3);
+            double Ihi = (double)pollutants[7].High[breakpointIndex];
+            double Ilo = (double)pollutants[7].Low[breakpointIndex];
+            double BPhi = (double)pollutants[pollutantIndex].High[breakpointIndex];
+            double BPlow = (double)pollutants[pollutantIndex].Low[breakpointIndex];
+            double Cp = pollutant;
+            //calculate using 8 hr Ozone
+            double AQIForPollutant = ((Ihi - Ilo) / (BPhi - BPlow)) * (Cp - BPlow) + Ilo;
+            return AQIForPollutant;
+        }
         public static double CalculateEPA(double EPA, int breakpointIndex)
         {
-
             double pollutant = (double)Math.Round(EPA, 3);
             double Ihi = (double)pollutants[7].High[breakpointIndex];
             double Ilo = (double)pollutants[7].Low[breakpointIndex];
@@ -363,10 +394,13 @@ namespace WeatherWorryWonder.Controllers
                 {
                     largeNum = sensorDistance;
                     pollutantSensor = f;
+                    pollutantlat = f.Latitude;
+                    pollutantlong = f.Longitude;
                 }
             }
 
             double ethyleneOxide = (double)pollutantSensor.EtO_ugm3;
+
             return ethyleneOxide;
         }
         public static string PollutantWarning(double ethyleneOxideUGM3)
