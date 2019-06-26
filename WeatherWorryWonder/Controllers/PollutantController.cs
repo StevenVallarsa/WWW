@@ -255,7 +255,7 @@ namespace WeatherWorryWonder.Controllers
         {
             int breakPointIndex = 0;
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 6; i++)
             {
                 double low = pollutants[pollutantIndex].Low[i];
                 double high = pollutants[pollutantIndex].High[i];
