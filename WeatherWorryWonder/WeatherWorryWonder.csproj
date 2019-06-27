@@ -179,11 +179,14 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\GoogleMaps.js" />
+    <Content Include="Scripts\GoogleMaps.js" />
     <Content Include="Content\img\atHome.jpg" />
     <Content Include="Content\img\driving.jpg" />
+    <Content Include="Content\img\Expectancy.jpg" />
     <Content Include="Content\img\grilling.jpg" />
+    <Content Include="Content\img\MarchGraph.jpg" />
     <Content Include="Content\img\office.jpg" />
+    <Content Include="Content\img\MarchAQI.JPG" />
     <Content Include="Content\img\yardwork.jpg" />
     <Content Include="Content\OzoneRecommendations.css" />
     <Content Include="Content\style.css" />
