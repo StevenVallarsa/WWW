@@ -158,19 +158,19 @@ namespace WeatherWorryWonder.Controllers
             {
                 double sims1hrO3Sum = (double)SelectedSimmsReadings.Sum(x => x.o3);
                 double simsO31hrAverage = sims1hrO3Sum / SelectedSimmsReadings.Count;
-                double simsCOsum = (double)SimmsPollutantData.Sum(x => x.co);
-                double simsCOToAverage = simsCOsum / SimmsPollutantData.Count;
+                double simsCOsum = (double)SelectedSimmsReadings.Sum(x => x.co);
+                double simsCOToAverage = simsCOsum / SelectedSimmsReadings.Count;
                 double simsNO2sum = (double)SelectedSimmsReadings.Sum(x => x.no2);
                 double simsNO2Average = simsNO2sum / SelectedSimmsReadings.Count;
-                double simsPM25sum = (double)SimmsPollutantData.Sum(x => x.pm25);
-                double simsPM25Average = simsPM25sum / SimmsPollutantData.Count;
+                double simsPM25sum = (double)SelectedSimmsReadings.Sum(x => x.pm25);
+                double simsPM25Average = simsPM25sum / SelectedSimmsReadings.Count;
                 double simsSO2sum = (double)SelectedSimmsReadings.Sum(x => x.so2);
                 double simsSO2Average = simsSO2sum / SelectedSimmsReadings.Count;
 
                 double simms8hrO3Sum = (double)SimmsPollutantData.Sum(x => x.o3);
                 eighthourO3 = ConvertPPBtoPPM(simms8hrO3Sum / SimmsPollutantData.Count); //8 hr ppm
                 PollutantAverages.Add(eighthourO3);   //index[0] 8 hr ppm
-                PollutantAverages.Add(ConvertPPBtoPPM(simsO31hrAverage)); //index[1[ 1 hr ppm
+                PollutantAverages.Add(ConvertPPBtoPPM(simsO31hrAverage)); //index[1] 1 hr ppm
                 PollutantAverages.Add(simsCOToAverage); //index[2] 8 hr
                 PollutantAverages.Add(simsNO2Average);  //index[3] ppb 1 hr
                 PollutantAverages.Add(simsPM25Average); //index[4] ug/m3 24 hr
