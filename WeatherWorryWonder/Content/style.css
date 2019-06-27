@@ -19,11 +19,16 @@ body {
 
 .main {
     display: grid;
-    grid-template-rows: 300px 300px 300px 300px;
+    grid-template-rows: 50px 250px auto 250px auto auto 250px auto auto;
     grid-template-columns:  1fr 1fr 1fr 1fr;
-    grid-template-areas: "AQI AQI map map" 
+    grid-template-areas: "AQI AQI AQI AQI" 
+                         "recommend recommend map map"
                         "recommend recommend map map"
-                        "weather weather future future"
+                        "future future weather weather"
+                        "future future weather weather"
+                        "future future weather weather"
+                        "VOC VOC weather weather"
+                        "VOC VOC other other"
                         "VOC VOC other other";
 }
 
@@ -69,6 +74,11 @@ img{
 
 .AQI {
     grid-area: AQI;
+    height: 
+}
+
+.weather {
+    grid-area: weather;
 }
 
 .futureAQI {
@@ -85,6 +95,7 @@ img{
 
 .VOC {
     grid-area: VOC;
+    margin-top:25px;
 }
 
 .header {
