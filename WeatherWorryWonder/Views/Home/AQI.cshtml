@@ -1,4 +1,5 @@
 ﻿@using WeatherWorryWonder.Models
+@using WeatherWorryWonder.Controllers
 @model ResultView
 @{
     List<double> userLocation = (List<double>)Session["UserLocation"];
@@ -22,80 +23,65 @@
 
 }
 <div class="main">
-    <div class="AQI">
-        <h2 style="padding:10px; background-color: @Model.AQIColor1">The AQI For Your Location is <span><b>@Model.O3AQI</b></span></h2>
+    <div class="AQI" style="padding:10px; background-color: @Model.AQIColor1">
+
+        <h2>
+            The Air Quality(AQI) For Your Location is <span><b>@Model.O3AQI</b></span>
+        </h2>
+        <p>@Model.Recommendations</p>
     </div>
+
     <div class="futureAQI">
+        <img src="~/Content/img/air_quality.png" />
+        <br />
         <div id="predictedAQI"></div>
 
+        <h2 class="header">Tomorrow's Forcast</h2>
+        <table id="forecast">
+            <tr>
+                <th>TEMPERATURE</th>
+                <th>WIND</th>
+                <th>HUMIDITY</th>
+            </tr>
+            <tr>
+                <td>@Math.Round(Model.Weather[1].TemperatureF) °F</td>
+                <td>@Math.Round(Model.Weather[1].WindSpeed * 2.2) MPH</td>
+                <td>@Model.Weather[1].Humidity %</td>
+            </tr>
+
+        </table>
     </div>
+
     <div class="otherPollutants">
 
     </div>
+
     <div class="recommendations">
         <br />
-        <h4>EPA AQI: @Model.EpaAQI</h4>
 
-        <p>
-            @Model.Recommendations
-        </p>
-        <p>Would you like to help reduce ozone? Click <a href="~/Home/OzoneRecommendationTips/">here</a> to find out how!</p>
+
         <div id="myDiv"></div>
+
     </div>
 
-    <div id="map"></div>
+    <div class="map">
+        <h4>Next Closest Sensor AQI: @Model.Second03AQI</h4>
+        <h4>EPA's AQI For Grand Rapids: @Model.EpaAQI</h4>
+        <div id="map"></div>
+        <h4 style="background-color: @HomeController.ColorWarningEO(Model.C2H4OPPM)">
+            Ethylene Oxide: @Model.C2H4OPPM PPM
+            <br />
+            @Model.PollutantWarning
+        </h4>
+        <p>Would you like to help reduce ozone? Click <a href="~/Home/OzoneRecommendationTips/">here</a> to find out how!</p>
+    </div>
+
     <div class="weather">
-        <p>Ethylene Oxide PPM: @Model.C2H4OPPM</p>
-        <p>Pollutant Message: @Model.PollutantWarning</p>
-        <br />
-        <h2>Current Weather:</h2>
-        <p>Temperature: @Math.Round(Model.Weather[0].TemperatureF) F</p>
-        <p>Cloud Coverage: @Model.Weather[0].Clouds</p>
-        <p>Wind: @Math.Round(Model.Weather[0].WindDirection) degrees at @Model.Weather[0].WindSpeed m/s</p>
-        <p>Humidity: @Model.Weather[0].Humidity %</p>
-        <br />
-        <h2>Other AQIs</h2>
-        @if (Model.NO2AQI < 1)
-        {
-            <p></p>
-        }
-        else
-        {
-            <p>No2: @Model.NO2AQI</p>
-        }
-        @if (Model.PM25AQI < 1)
-        {
-            <p></p>
-        }
-        else
-        {
-            <p>PM2.5: @Model.PM25AQI</p>
-
-        }
-        @if (Model.NO2AQI < 1)
-        {
-            <p></p>
-        }
-        else
-        {
-            <p>SO2: @Model.SO2AQI</p>
-        }
-        @if (Model.CO < 1)
-        {
-            <p></p>
-        }
-        else
-        {
-            <p>CO: @Model.CO</p>
-        }
-
-        <h3>Second Closest Sensor AQI: @Model.Second03AQI</h3>
-        <h2>Sensor Location:</h2>
-        <p>@Model.SensorName</p>
     </div>
-    <div class="VOC">
 
-    </div>
+<div class="VOC">
+
+</div>
 </div>
 
 <script>

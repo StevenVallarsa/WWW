@@ -179,6 +179,7 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\img\air_quality.png" />
     <Content Include="Scripts\GoogleMaps.js" />
     <Content Include="Content\img\atHome.jpg" />
     <Content Include="Content\img\driving.jpg" />
@@ -269,9 +270,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\EnterAddress.cshtml" />
-    <Content Include="Views\Home\ProcessAddress.cshtml" />
-    <Content Include="Views\Home\Result.cshtml" />
     <Content Include="Scripts\umd\popper.min.js.map" />
     <Content Include="Scripts\umd\popper.js.map" />
     <Content Include="Scripts\umd\popper-utils.min.js.map" />
@@ -281,17 +279,9 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Views\Weather\Index.cshtml" />
-    <Content Include="Views\Home\Equation.cshtml" />
+    <Content Include="Views\Home\OtherAQI.cshtml" />
     <Content Include="Views\Home\AQI.cshtml" />
-    <Content Include="Views\Home\Driving.cshtml" />
-    <Content Include="Views\Home\Grilling.cshtml" />
-    <Content Include="Views\Yardwork.cshtml" />
-    <Content Include="Views\Home\Office.cshtml" />
     <Content Include="Views\View.cshtml" />
-    <Content Include="Views\Home\OzoneReductionTips.cshtml" />
-    <Content Include="Views\Home\YardWork.cshtml" />
-    <Content Include="Views\Home\TestforPrintingOutIndividualAQI.cshtml" />
     <Content Include="Views\Home\OzoneRecommendationTips.cshtml" />
   </ItemGroup>
   <ItemGroup>

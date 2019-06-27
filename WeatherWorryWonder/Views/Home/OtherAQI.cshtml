@@ -1,0 +1,48 @@
+﻿@using WeatherWorryWonder.Models
+@{
+    ResultView rv = (ResultView)Session["ResultView"];
+}
+@{ 
+    if (rv != null)
+        {
+
+        <h1>Other Pollutant AQIs</h1>
+        if (rv.NO2AQI < 1)
+        {
+            <p></p>
+        }
+        else
+        {
+            <p>No2: @rv.NO2AQI</p>
+        }
+        if (rv.PM25AQI < 1)
+        {
+            <p></p>
+        }
+        else
+        {
+            <p>PM2.5: @rv.PM25AQI</p>
+
+        }
+        if (rv.NO2AQI < 1)
+        {
+            <p></p>
+        }
+        else
+        {
+            <p>SO2: @rv.SO2AQI</p>
+        }
+        if (rv.CO < 1)
+        {
+            <p></p>
+        }
+        else
+        {
+            <p>CO: @rv.CO</p>
+        }
+    }
+    else
+    {
+        <p>Please go to home page and enter your address!</p>
+    }
+    }

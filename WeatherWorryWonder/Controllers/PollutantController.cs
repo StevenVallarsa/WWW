@@ -427,7 +427,7 @@ namespace WeatherWorryWonder.Controllers
                 double c2H4Oppm = (UGM3ConvertToPPM(ethyleneOxideUGM3, 44f));
                 if (c2H4Oppm > (double)0.1)
                 {
-                    return "Warning! High Pollutant Level Alert!";
+                    return "High Pollutant Level Alert!";
                 }
                 else
                 {
