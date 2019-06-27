@@ -23,48 +23,78 @@
 }
 <div class="main">
     <div class="AQI">
-        <h2 style="padding:10px; background-color: @ViewBag.AQIColor">The Ozone AQI For Your Location is <span><b>@Model.O3AQI</b></span></h2>
-        <div id="myDiv"></div>
-
-        <h3>Second Closest Sensor AQI: @Model.Second03AQI</h3>
-        <h4>EPA AQI: @Model.EpaAQI</h4>
-        <h2>Sensor Location:</h2>
-        <p>@Model.SensorName</p>
+        <h2 style="padding:10px; background-color: @Model.AQIColor1">The AQI For Your Location is <span><b>@Model.O3AQI</b></span></h2>
     </div>
     <div class="futureAQI">
-        <h2>Forecast:</h2>
-        <p>Tomorrow AQI: @Model.PredictedAQITomorrow</p>
-        <p>3-Day AQI: @Model.PredictedAQI3Day</p>
-        <p>5-Day AQI: @Model.PredictedAQI5Day</p>
-        
+        <div id="predictedAQI"></div>
 
     </div>
     <div class="otherPollutants">
-        <h2>Other AQIs</h2>
-        <p>No2: @Model.NO2AQI</p>
-        <p>PM25: @Model.PM25AQI</p>
-        <p>SO2: @Model.SO2AQI</p>
-        <p>CO: @Model.CO</p>
+
     </div>
     <div class="recommendations">
-        <h2>Health Recommendation based on your AQI:</h2>
+        <br />
+        <h4>EPA AQI: @Model.EpaAQI</h4>
+
         <p>
             @Model.Recommendations
         </p>
         <p>Would you like to help reduce ozone? Click <a href="~/Home/OzoneRecommendationTips/">here</a> to find out how!</p>
+        <div id="myDiv"></div>
     </div>
 
     <div id="map"></div>
     <div class="weather">
+        <p>Ethylene Oxide PPM: @Model.C2H4OPPM</p>
+        <p>Pollutant Message: @Model.PollutantWarning</p>
+        <br />
         <h2>Current Weather:</h2>
         <p>Temperature: @Math.Round(Model.Weather[0].TemperatureF) F</p>
         <p>Cloud Coverage: @Model.Weather[0].Clouds</p>
         <p>Wind: @Math.Round(Model.Weather[0].WindDirection) degrees at @Model.Weather[0].WindSpeed m/s</p>
         <p>Humidity: @Model.Weather[0].Humidity %</p>
+        <br />
+        <h2>Other AQIs</h2>
+        @if (Model.NO2AQI < 1)
+        {
+            <p></p>
+        }
+        else
+        {
+            <p>No2: @Model.NO2AQI</p>
+        }
+        @if (Model.PM25AQI < 1)
+        {
+            <p></p>
+        }
+        else
+        {
+            <p>PM2.5: @Model.PM25AQI</p>
+
+        }
+        @if (Model.NO2AQI < 1)
+        {
+            <p></p>
+        }
+        else
+        {
+            <p>SO2: @Model.SO2AQI</p>
+        }
+        @if (Model.CO < 1)
+        {
+            <p></p>
+        }
+        else
+        {
+            <p>CO: @Model.CO</p>
+        }
+
+        <h3>Second Closest Sensor AQI: @Model.Second03AQI</h3>
+        <h2>Sensor Location:</h2>
+        <p>@Model.SensorName</p>
     </div>
     <div class="VOC">
-        <p>Ethylene Oxide PPM: @Model.C2H4OPPM</p>
-        <p>Pollutant Message: @Model.PollutantWarning</p>
+
     </div>
 </div>
 
@@ -127,6 +157,41 @@ function initMap() {
 </script>
 
 <script>
+    var trace2 = {
+    x: ["Today", "Tomorrow", "3-Day", "5-day"],
+    y: [@Model.O3AQI, @Model.PredictedAQITomorrow, @Model.PredictedAQI3Day, @Model.PredictedAQI5Day],
+    type: 'scatter',
+    };
+
+    layout2 = {
+        title: "5-day Predicted AQI",
+        xaxis: {
+            title: "Day"
+            //autotick: false,
+            //ticks: 'outside',
+            //tick0: 0,
+            //dtick: 1,
+            //ticklen: 8,
+            //tickwidth: 4,
+            //tickcolor: '#000'
+        },
+        yaxis: {
+            title: "AQI"
+            //autotick: false,
+            //ticks: 'outside',
+            //tick0: 0,
+            //dtick: 25,
+            //ticklen: 200,
+            //tickwidth: 4,
+            //tickcolor: '#000'
+        }
+    }
+
+    var data2 = [trace2];
+
+    Plotly.newPlot('predictedAQI', data2, layout2, { showSendToCloud: true });
+</script>
+<script>
 
 
     var trace1 = {
@@ -135,29 +200,33 @@ function initMap() {
         type: 'scatter',
     };
 
+
     var layout = {
+        title: "Past 7-Days AQI",
         xaxis: {
-            autotick: false,
-            ticks: 'outside',
-            tick0: 0,
-            dtick: 1,
-            ticklen: 8,
-            tickwidth: 4,
-            tickcolor: '#000'
+            title: "Date"
+            //autotick: false,
+            //ticks: 'outside',
+            //tick0: 0,
+            //dtick: 1,
+            //ticklen: 8,
+            //tickwidth: 4,
+            //tickcolor: '#000'
         },
         yaxis: {
-            autotick: false,
-            ticks: 'outside',
-            tick0: 0,
-            dtick: .025,
-            ticklen: 8,
-            tickwidth: 4,
-            tickcolor: '#000'
+            title: "AQI"
+            //autotick: false,
+            //ticks: 'outside',
+            //tick0: 0,
+            //dtick: 25,
+            //ticklen: 8,
+            //tickwidth: 4,
+            //tickcolor: '#000'
         }
     }
     var data = [trace1];
 
-    Plotly.newPlot('myDiv', data, {}, { showSendToCloud: true });
+    Plotly.newPlot('myDiv', data, layout, { showSendToCloud: true });
 
 
 </script>
