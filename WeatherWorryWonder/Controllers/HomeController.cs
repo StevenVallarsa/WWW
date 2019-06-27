@@ -111,6 +111,8 @@ namespace WeatherWorryWonder.Controllers
 
                     if (twoClosestAQIs.Count < 2)
                     {
+                        List<double> historicData = PollutantController.HistoricData(closestSensor);
+                        rv.HistoricData = historicData;
                         rv.SensorName = closestSensor.CrossStreet;
                         UGM3 = PollutantController.ConvertToUGM3(PollutantController.eighthourO3);
                         for (int j = 0; j < 4; j++)

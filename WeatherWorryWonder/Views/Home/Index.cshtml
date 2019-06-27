@@ -1,8 +1,32 @@
 ﻿@using WeatherWorryWonder.Models
-<h1>Welcome!</h1>
 
-<div id="map"></div>
 
-<script src="~/Content/GoogleMaps.js"></script>
-<script src="https://maps.googleapis.com/maps/api/js?key=@APIKeys.GoogleMapsAPI&callback=initMap"
-        async defer></script>
+<div id="flexBox">
+    @*https://www.google.com/maps/d/u/0/viewer?hl=en&mid=1QfrEDCXu0o5pOeAj5yq3cc_MPrt6merO&ll=42.94429989708349%2C-85.63306569999997&z=13*@
+    <div class="flexItem submit">
+        <h2>Enter Your Street Address</h2>
+        <form action="~/Home/AQI" method="post">
+            <input type="text" placeholder="Enter Street Address" name="streetAddress" /> , Grand Rapids, MI
+            <input type="submit" value="Check Air Quality" />
+        </form>
+        @*<div class="flexItem" id="indexMap"></div>*@
+    </div> 
+    <div class="flexItem movie">
+        <iframe id="video" title="Video Player" frameborder="0"
+                src="https://s3.amazonaws.com/embed.animoto.com/play.html?w=swf/production/vp1&e=1561577384&f=sgRyvmQdqfvxYECcVtv8SA&d=0&m=a&r=360p+480p+720p&volume=75&start_res=720p&i=m&asset_domain=s3-p.animoto.com&animoto_domain=animoto.com&options="
+                allowfullscreen></iframe>
+    </div>
+    <div class="flexItem graph">
+        <img src="~/Content/img/Expectancy.jpg" />
+    </div>
+    <div class="flexItem graph">
+        <h3 class="header">Average Pollutants In March</h3>
+        <img src="~/Content/img/MarchGraph.jpg" />
+    </div>
+    <div class="flexItem graph">
+        <img src="~/Content/img/MarchAQI.jpg" />
+    </div>
+</div>
+    <script src="~/Scripts/GoogleMaps.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=@APIKeys.GoogleMapsAPI&callback=initMap"
+            async defer></script>

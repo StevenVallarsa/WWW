@@ -33,6 +33,7 @@ namespace WeatherWorryWonder.Models
         public string Suggestion { get; set; }
         public List<WeatherDataFromAPI> Weather { get; set; }
         public List<Sensor> TwoClosestSensors { get; set; }
+        public List<double> HistoricData { get; set; }
 
         public double Factorylat { get; set; }
         public double Factorylong { get; set; }

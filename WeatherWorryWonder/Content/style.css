@@ -1,4 +1,6 @@
-﻿body {
+﻿
+body {
+    height: auto;
     margin: 0px;
 }
 
@@ -23,6 +25,39 @@
                         "recommend recommend map map"
                         "weather weather future future"
                         "VOC VOC other other";
+}
+
+#welcome {
+    margin: 20px 0px 20px 0px;
+    text-align: center;
+    width: 100%;
+}
+#flexBox {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-content:center;
+    height: auto;
+}
+
+#indexMap {
+    height: 300px;
+    width: 400px;
+}
+
+#video {
+    width: 800px;
+    height: 460px;
+    margin: auto;
+}
+.flexItem {
+    width: 800px;
+    height: auto;
+}
+
+img{
+    width: 100%;
+    margin: auto;
 }
 
 #map {
@@ -50,4 +85,13 @@
 
 .VOC {
     grid-area: VOC;
+}
+
+.header {
+    text-align: center;
+}
+
+.submit {
+    width: 600px;
+    margin: 20px 0px 20px 0px;
 }
