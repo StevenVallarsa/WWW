@@ -8,6 +8,10 @@ body {
     float: left;
     width: 50%;
 }
+td, th{
+    border: 1px solid gray;
+    width: 33%;
+}
 
 /* Clear floats after the columns */
 
@@ -19,18 +23,26 @@ body {
 
 .main {
     display: grid;
-    grid-template-rows: 50px 250px auto 250px auto auto 250px auto auto;
+    grid-template-rows: 90px 250px 250px auto auto auto;
     grid-template-columns:  1fr 1fr 1fr 1fr;
     grid-template-areas: "AQI AQI AQI AQI" 
-                         "recommend recommend map map"
-                        "recommend recommend map map"
-                        "future future weather weather"
-                        "future future weather weather"
-                        "future future weather weather"
-                        "VOC VOC weather weather"
-                        "VOC VOC other other"
-                        "VOC VOC other other";
+                        "map map future future"
+                        "map map future future"
+                        "weather weather future future"
+                        "weather weather recommend recommend"
+                        "weather weather recommend recommend"
+                        "weather weather VOC VOC"
+
 }
+col:nth-child(2n+3) {
+    background: #CCC;
+}
+
+#forecast {
+    width: 100%;
+    text-align: center;
+}
+
 
 #welcome {
     margin: 20px 0px 20px 0px;
@@ -65,16 +77,19 @@ img{
     margin: auto;
 }
 
-#map {
+.map {
     grid-area: map;
+}
+
+#map {
     height: 400px;
-    width: 600px;
     margin: auto;
+    width: 555px;
 }
 
 .AQI {
     grid-area: AQI;
-    height: 
+    height: auto;
 }
 
 .weather {

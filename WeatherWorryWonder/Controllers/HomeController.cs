@@ -175,6 +175,7 @@ namespace WeatherWorryWonder.Controllers
 
             rv.EpaAQI = Math.Round(AQIForEPA);
             ViewBag.AQI = AQIForO3;
+            Session["ResultView"] = rv;
 
             return View(rv);
         }
@@ -207,6 +208,27 @@ namespace WeatherWorryWonder.Controllers
             }
 
         }
+        public static string ColorWarningEO(double reading)
+        {
+            if (reading >= 0 && reading < 0.18)
+            {
+                return "limegreen";
+            }
+            else if (reading >= 0.18 && reading <= 1)
+            {
+                return "yellow";
+            }
+            else
+            {
+                return "red";
+            }
+        }
+
+        public ActionResult OtherAQI()
+        {
+            return View();
+        }
+
         public ActionResult ProcessAddress()
         {
             return View();
